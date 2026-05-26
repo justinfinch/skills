@@ -28,6 +28,8 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 ## Skills
 
 - **[write-a-skill](skills/write-a-skill/SKILL.md)** — meta-skill that walks the agent through authoring new skills.
+- **[devbox-init](skills/devbox-init/SKILL.md)** — scaffold an isolated, declarative dev env (Devbox + direnv) for the current repo; agent-agnostic, with an optional Claude-Code-only env-snapshot hook.
+- **[devbox-add](skills/devbox-add/SKILL.md)** — add an infra dep (db/queue/cache/search) or app dep to the repo's `devbox.json` instead of installing on the host; wires `devbox services` and records the policy in the repo's agent context file.
 - **[wiki-init](skills/wiki-init/SKILL.md)** — bootstrap an LLM Wiki at `./wiki/` (Karpathy's pattern): schema, index, log.
 - **[wiki-ingest](skills/wiki-ingest/SKILL.md)** — ingest a source (URL/file/text) into the wiki and update affected pages.
 - **[wiki-query](skills/wiki-query/SKILL.md)** — answer a question from the wiki with inline citations, optionally file the synthesis back.
