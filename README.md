@@ -4,23 +4,15 @@ Justin Finch's library of agent skills. Compatible with the open [agent skills](
 
 ## Install
 
-Once this repo is on GitHub:
-
 ```bash
 # Install all skills to your detected agents
-npx skills add <owner>/skills
+npx skills add justinfinch/skills
 
 # Install a specific skill
-npx skills add <owner>/skills --skill write-a-skill
+npx skills add justinfinch/skills --skill write-a-skill
 
 # Install globally (available across all projects)
-npx skills add <owner>/skills -g
-```
-
-While local-only, you can install directly from disk:
-
-```bash
-npx skills add /Users/justinfinch/Source/skills
+npx skills add justinfinch/skills -g
 ```
 
 ## Layout
