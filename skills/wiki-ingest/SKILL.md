@@ -1,0 +1,47 @@
+---
+name: wiki-ingest
+description: Ingest a source into the project's LLM wiki at ./wiki/. Accepts a URL, a file path, pasted text, OR — with no argument — processes every file in ./wiki/raw/ not yet referenced by a source page (batch mode). Snapshots the raw input to ./wiki/raw/, writes a source-summary page, updates index.md, revises affected entity and concept pages, and appends a log entry — following the conventions in ./wiki/SCHEMA.md. Use when the user provides a source to add to a wiki, says "ingest", "add to wiki", "remember this article", "process the raw folder", or shares an article/paper/PDF/transcript they want filed.
+---
+
+# wiki-ingest
+
+Add one or more sources to the project wiki.
+
+## Preflight
+
+1. Verify `./wiki/SCHEMA.md` exists. If not, tell the user to run `/wiki-init` first and stop.
+2. Read `./wiki/SCHEMA.md` end to end. The schema is authoritative — follow its slug rules, page-type definitions, frontmatter shape, cross-linking rules, and log format.
+3. Read `./wiki/index.md` so you know what entities and concepts already exist (you'll be linking into them and possibly extending them).
+
+## Dispatch
+
+- **Explicit argument** (URL, file path, pasted text): single-source ingest. Continue to Workflow.
+- **No argument**: batch mode. List every file in `./wiki/raw/` that no existing `sources/*.md` page references via its `raw:` frontmatter field. Show the user the list and ask which to ingest (default: all). Then run the Workflow once per file, in order.
+
+## Workflow (per source)
+
+1. **Land the raw file in `./wiki/raw/`.**
+   - File path → copy (don't move; leave the original alone) to `raw/<slug>.<ext>`.
+   - URL → fetch the page, convert to markdown, save as `raw/<slug>.md`. Record the canonical URL for frontmatter.
+   - Pasted text → save verbatim to `raw/<slug>.md` with a header noting the date and source description.
+   - If a file with that slug already exists in `raw/`, ask before overwriting.
+2. **Discuss with the user first** (one short message): name the 3–5 key points you saw and the entities/concepts you plan to touch. Stop and let them redirect before writing anything. This is the "discuss key points with you" step from Karpathy's pattern. Skip the discussion step in batch mode unless the user asked for it explicitly.
+3. **Write the source summary** at `wiki/sources/<slug>.md` per schema. Frontmatter (including `raw: raw/<slug>.<ext>` and `url:` if applicable) + summary (within the length cap from SCHEMA.md) + a `## See also` list of every entity/concept page touched.
+4. **Update or create entity/concept pages.** For each entity/concept the source touches:
+   - If the page exists: add new claims with inline citations to the source page, update the `sources:` frontmatter list, bump `updated:`.
+   - If the page is new: create it with full frontmatter and at least the claims this source supports.
+   - Do not duplicate facts already present — extend, don't restate.
+5. **Update `index.md`.** Add the new source under Sources. Add any new entities/concepts under their sections. Each entry: title, one-line gloss, link, tags.
+6. **Append to `log.md`** in the format from SCHEMA.md. List every page touched (including the new `raw/` file). Notes line: one sentence on what the source contributed.
+
+## Discipline
+
+- Touch as many pages as the source warrants. A rich source legitimately updates 10–15 pages; a thin one might update 2.
+- Cite at the point of claim, not just in frontmatter.
+- If the source contradicts an existing claim, do NOT silently rewrite. Use `~~strikethrough~~` on the old claim, add the new one with citation, and note the contradiction in log.md so `/wiki-lint` can pick it up later.
+- Bump `updated:` on every page you edit. Never on pages you only read.
+- If you're unsure whether to create a new entity or extend an existing one, ask the user — slug churn is expensive.
+
+## Output
+
+End with a one-line summary: `Ingested <title> → N pages updated (list them).` Nothing longer.

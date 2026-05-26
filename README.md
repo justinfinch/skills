@@ -28,6 +28,10 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 ## Skills
 
 - **[write-a-skill](skills/write-a-skill/SKILL.md)** — meta-skill that walks the agent through authoring new skills.
+- **[wiki-init](skills/wiki-init/SKILL.md)** — bootstrap an LLM Wiki at `./wiki/` (Karpathy's pattern): schema, index, log.
+- **[wiki-ingest](skills/wiki-ingest/SKILL.md)** — ingest a source (URL/file/text) into the wiki and update affected pages.
+- **[wiki-query](skills/wiki-query/SKILL.md)** — answer a question from the wiki with inline citations, optionally file the synthesis back.
+- **[wiki-lint](skills/wiki-lint/SKILL.md)** — audit the wiki for contradictions, stale dates, orphans, broken links, gaps.
 
 ## Add a new skill
 
