@@ -35,13 +35,21 @@ Based on Andrej Karpathy's LLM Wiki pattern: humans curate, the LLM maintains.
 - Stable: prefer renaming via redirect (leave a stub pointing to the new file) over deleting.
 - Brainstorms re-run on the same topic use `-session-N` suffixes (e.g., `auth-rewrite.md`, then `auth-rewrite-session-2.md`). Date stays in frontmatter only.
 
+### Slug derivation
+
+When generating a slug from a source (URL, file path, or pasted text):
+
+1. Pick a stem: URL → page title or final path segment; file → filename without extension; pasted text → user-supplied title or first heading.
+2. Lowercase. Strip accents (NFD then drop combining marks). Replace any non-ASCII or non-alphanumeric character with `-`. Collapse repeated `-`. Trim leading/trailing `-`.
+3. On collision in the target directory: if the new raw file is byte-identical to the existing one, treat it as already-ingested and skip; otherwise append `-2`, `-3`, etc.
+
 ## Page frontmatter
 
 Every page (except files in `raw/`, which are not wiki pages) starts with YAML frontmatter:
 
 ```yaml
 ---
-type: source | entity | concept | query | brainstorm
+type: source | entity | concept | query | brainstorm | schema | index | log
 title: Human-readable title
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -53,6 +61,10 @@ url: https://...            # source pages only — canonical URL if web-based
 ```
 
 For a source page, at least one of `raw:` or `url:` must be set. If both: `raw:` is the snapshot, `url:` is the canonical location.
+
+`schema`, `index`, and `log` are reserved for the three system files at the wiki root (`SCHEMA.md`, `index.md`, `log.md`). All other pages use one of the content types.
+
+For `brainstorm` pages, `sources:` is bidirectional: it lists both (a) the wiki pages cited inline during the session AND (b) the entity/concept pages the brainstorm promoted ideas to. This keeps navigation symmetric with the forward references those pages add back.
 
 ## Cross-linking
 
@@ -76,7 +88,17 @@ Append-only chronological record. Entry format:
 - notes: one-line summary
 ```
 
-Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `brainstorm`.
+Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `brainstorm`.
+
+**Contradiction marker.** When an ingest finds a source that contradicts an existing claim, the log entry's notes line starts with `contradiction —`. Example:
+
+```
+## [2026-05-27] ingest | New paper on X
+- pages touched: sources/new-paper.md, entities/foo.md, index.md
+- notes: contradiction — new paper disputes earlier dating in entities/foo.md (struck through, replacement cited)
+```
+
+`/wiki-lint` scans for this prefix to find unresolved contradictions. A `~~strikethrough~~` claim counts as **resolved** when the same paragraph contains a follow-up claim with a `[source link](...)` citation; otherwise lint flags it.
 
 ## Operations summary
 
@@ -85,6 +107,9 @@ Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `brainstorm`.
 - **query**: read index → read relevant pages → answer with inline citations. If the synthesis is reusable, file it as `queries/<slug>.md` and update index + log.
 - **lint**: scan for contradictions, stale dates, orphan pages (no inbound links), orphan raw files (raw file with no source page citing it), broken links, frontmatter drift, gaps in coverage. Report findings; do not auto-fix without confirmation.
 - **brainstorm**: facilitated ideation session. Reads wiki context (relevant entity/concept/query/prior-brainstorm pages) → runs interactive ideation with the user → files the session as `brainstorms/<slug>.md` with the full idea inventory → promotes user-selected top ideas to concept or entity pages with citations back → updates index and log. Aims for 100+ ideas before organization.
+- **migrate**: `/wiki-init` re-run against an existing wiki. Detects missing or stale system files (e.g., absent `_templates/`, outdated SCHEMA), proposes additive changes, applies what the user accepts, and logs the result. Never rewrites content pages.
+
+Empty subdirectories carry a `.gitkeep` file so git tracks the structure; these have no other meaning.
 
 ## Editing rules for the LLM
 

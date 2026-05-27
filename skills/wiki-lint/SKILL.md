@@ -16,7 +16,7 @@ Audit the project wiki and report issues. Do not fix without asking.
 
 Run these against every page under `./wiki/`:
 
-1. **Contradictions.** Grep `log.md` for past entries that noted contradictions. List each unresolved one. Also scan pages for `~~strikethrough~~` claims and flag any that don't have a paired replacement.
+1. **Contradictions.** Grep `log.md` for entries whose `notes:` line starts with `contradiction —` (per SCHEMA's contradiction marker convention). For each, locate the strikethrough(s) on the pages listed in `pages touched:` — a strikethrough is **resolved** if the same paragraph contains a follow-up claim with an inline `[source link](...)` citation; otherwise flag it. Also scan all pages for stray `~~strikethrough~~` claims that have no corresponding `contradiction —` log entry — flag as untracked.
 2. **Stale dates.** Any page whose `updated:` is older than 90 days AND that links to a source page updated more recently → flag as possibly stale.
 3. **Orphan pages.** Any entity/concept/query/brainstorm page with zero inbound links from other wiki pages (excluding `index.md`) → flag. New pages get a grace pass — only flag if `created:` is older than 14 days. Brainstorms are expected to be linked from at least the concept/entity pages that promoted their top ideas; a brainstorm with no inbound links after the grace period likely means no promotions stuck.
 4. **Orphan raw files.** Any file in `./wiki/raw/` not referenced by any `sources/*.md` page's `raw:` frontmatter → flag as unprocessed. This is the "inbox not drained" signal; suggest `/wiki-ingest` (batch mode) to handle them.

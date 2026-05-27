@@ -1,5 +1,7 @@
 # Adding brainstorm support to an existing wiki
 
+> **Most users should re-run `/wiki-init` instead.** Since the base SCHEMA template now ships with brainstorm support, `/wiki-init` in migration mode will detect a stale SCHEMA, propose the schema patches, and apply them with one confirmation. This file is the manual back-port — useful only if you want to hand-edit your SCHEMA.md or your wiki predates `/wiki-init`'s migration mode.
+
 If your `./wiki/SCHEMA.md` predates the `brainstorm` page type, append the changes below before running `/wiki-brainstorm`. New wikis bootstrapped with `/wiki-init` ship with brainstorm support already wired in.
 
 Show this file to the user during Phase 0 preflight and ask permission before editing their SCHEMA.md.

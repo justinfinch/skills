@@ -48,10 +48,10 @@ Only when the user signals readiness to wrap up:
 
 1. **Cluster** ideas into 3–6 themes; identify breakthrough concepts and cross-cutting threads.
 2. **Prioritize** with the user across impact / feasibility / innovation / alignment. See FACILITATION.md.
-3. **Write `wiki/brainstorms/<slug>.md`** per SCHEMA. Frontmatter: `type: brainstorm`, today's date, topic, techniques used, total idea count, wiki pages loaded as context. Body: themes with full idea inventory, prioritized top ideas with action plans, technique narrative + creative breakthroughs, and a `## See also` section listing every wiki page touched.
+3. **Write `wiki/brainstorms/<slug>.md`** using this skill's [brainstorm.template.md](brainstorm.template.md) as the layout. Frontmatter: `type: brainstorm`, today's date, topic, techniques used, total idea count, `context_pages:` (wiki pages loaded in Phase 1), and `sources:` — bidirectional per SCHEMA: the union of (a) wiki pages cited inline during the session and (b) any pages this brainstorm promoted ideas to (filled in after Phase 4 step 4). Body: themes with full idea inventory, prioritized top ideas with action plans, technique narrative + creative breakthroughs, and a `## See also` section listing every wiki page touched.
 4. **Promote top ideas.** For each user-selected top idea:
-   - Extends an existing concept/entity page → append with inline citation to this brainstorm; bump `updated:`; add the brainstorm to that page's `sources:` list.
-   - New concept warranted → create `concepts/<slug>.md` with frontmatter, the concept body, and `sources: [brainstorms/<slug>.md]`.
+   - Extends an existing concept/entity page → append with inline citation to this brainstorm; bump `updated:`; add the brainstorm to that page's `sources:` list; **and** add the page to this brainstorm's `sources:` list (forward and back).
+   - New concept warranted → create `concepts/<slug>.md` from `/wiki-ingest`'s [concept.template.md](../wiki-ingest/concept.template.md) with `sources: [brainstorms/<slug>.md]`; add the new page to this brainstorm's `sources:` list.
    - If unsure whether to extend or create, ask. Slug churn is expensive.
 5. **Update `index.md`.** Add the brainstorm under a `## Brainstorms` section (create the section if missing). Add any new concept/entity pages under their sections.
 6. **Append to `log.md`** with op `brainstorm`. List every page touched. Notes line: topic + idea count + count of promoted ideas.
@@ -71,6 +71,7 @@ End with one line: `Brainstormed <topic> → <N> ideas across <T> techniques, <M
 
 - [TECHNIQUES.md](TECHNIQUES.md) — the 61-technique library
 - [FACILITATION.md](FACILITATION.md) — coaching patterns, idea format, energy checkpoints, prioritization framework
-- [SCHEMA-additions.md](SCHEMA-additions.md) — text to append to existing `wiki/SCHEMA.md` to register the brainstorm page type
+- [brainstorm.template.md](brainstorm.template.md) — page skeleton this skill writes
+- [SCHEMA-additions.md](SCHEMA-additions.md) — manual back-port for legacy wikis (most users should re-run `/wiki-init` instead)
 
 _Adapted from [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)'s `bmad-brainstorming` skill (MIT-licensed)._

@@ -17,7 +17,7 @@ Answer a question from the project wiki.
 
 1. **Pick candidate pages.** From the index, list the entities/concepts/queries plausibly relevant to the question. Aim for high recall — better to read one page too many than miss one. If nothing in the index looks relevant, say so and recommend an `/wiki-ingest`; do not fabricate.
 2. **Read the candidates.** For each candidate page, read the full file. Note the sources cited at each claim — you may need to read source summaries too if the question hinges on provenance.
-3. **Synthesize an answer.** Inline-cite every non-trivial claim with a relative link to the wiki page that supports it: `... per [Concept Name](../wiki/concepts/foo.md).` If a claim rests on a specific source, cite the source page as well.
+3. **Synthesize an answer.** Inline-cite every non-trivial claim with **both** the wiki page that synthesizes it and the underlying source page: `... per [Concept Name](../concepts/foo.md) citing [Source Title](../sources/bar.md).` Provenance traces to the original source, not just the synthesis layer. If a claim is supported by multiple sources, cite the strongest one; the others can be implied by the wiki page's own `sources:` list.
 4. **Flag gaps.** If the wiki doesn't fully answer the question, say what's missing and suggest a source to ingest. Do not guess past the wiki's coverage.
 5. **Offer to file the synthesis.** If the answer is non-trivial and reusable, ask: "Want me to file this as `queries/<slug>.md`?" Default: do not file unless asked or unless the question itself was framed as a wiki investigation.
 
@@ -25,14 +25,14 @@ Answer a question from the project wiki.
 
 If the user says yes:
 
-1. Create `wiki/queries/<slug>.md` with frontmatter (`type: query`, today's date, tags, sources list — every wiki page and source you cited).
-2. Body: the question (verbatim) as the first heading, then the answer with citations preserved.
+1. Create `wiki/queries/<slug>.md` using this skill's [query.template.md](query.template.md) as the layout (frontmatter: `type: query`, today's date, tags, `sources:` listing every wiki page and source you cited).
+2. Body per template: the question (verbatim) as a blockquote, then the answer with citations preserved.
 3. Add an entry under Queries in `index.md`.
 4. Append a `query` entry to `log.md`.
 
 ## Discipline
 
-- Citations are mandatory — every non-obvious claim needs a link to the wiki page that supports it. Uncited claims should not appear; if you'd write one, you don't know enough from the wiki and should flag the gap instead.
+- Citations are mandatory — every non-obvious claim needs a link to the wiki page that synthesizes it AND the underlying source page. Uncited claims should not appear; if you'd write one, you don't know enough from the wiki and should flag the gap instead.
 - Prefer answers grounded in concept/entity pages over raw source summaries — concepts and entities exist precisely to be the synthesis layer.
 - Do not modify any wiki page during a query unless you're filing the synthesis back. Queries are read-mostly.
 
