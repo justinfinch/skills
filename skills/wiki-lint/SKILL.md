@@ -1,6 +1,6 @@
 ---
 name: wiki-lint
-description: Audit the project's LLM wiki at ./wiki/ for health. Finds contradictions flagged during ingest, stale dates, orphan pages with no inbound links, broken or missing cross-references, frontmatter drift, and coverage gaps; suggests next investigations. Reports findings — does not auto-fix without confirmation. Use when the user says "lint the wiki", "wiki health check", "audit the wiki", or after a batch of ingests when they want a tidy-up.
+description: Audit the project's LLM wiki at ./wiki/ for health. Finds contradictions flagged during ingest, stale dates, orphan pages with no inbound links, broken or missing cross-references, frontmatter drift, coverage gaps, and brainstorm-promotion drift (top ideas never filed back); suggests next investigations. Reports findings — does not auto-fix without confirmation. Use when the user says "lint the wiki", "wiki health check", "audit the wiki", or after a batch of ingests or brainstorm sessions when they want a tidy-up.
 ---
 
 # wiki-lint
@@ -18,12 +18,13 @@ Run these against every page under `./wiki/`:
 
 1. **Contradictions.** Grep `log.md` for past entries that noted contradictions. List each unresolved one. Also scan pages for `~~strikethrough~~` claims and flag any that don't have a paired replacement.
 2. **Stale dates.** Any page whose `updated:` is older than 90 days AND that links to a source page updated more recently → flag as possibly stale.
-3. **Orphan pages.** Any entity/concept/query page with zero inbound links from other wiki pages (excluding `index.md`) → flag. New pages get a grace pass — only flag if `created:` is older than 14 days.
+3. **Orphan pages.** Any entity/concept/query/brainstorm page with zero inbound links from other wiki pages (excluding `index.md`) → flag. New pages get a grace pass — only flag if `created:` is older than 14 days. Brainstorms are expected to be linked from at least the concept/entity pages that promoted their top ideas; a brainstorm with no inbound links after the grace period likely means no promotions stuck.
 4. **Orphan raw files.** Any file in `./wiki/raw/` not referenced by any `sources/*.md` page's `raw:` frontmatter → flag as unprocessed. This is the "inbox not drained" signal; suggest `/wiki-ingest` (batch mode) to handle them.
 5. **Broken links.** Resolve every relative markdown link inside `./wiki/`. Flag any whose target file doesn't exist.
 6. **Frontmatter drift.** For every page, check that required fields from SCHEMA.md's frontmatter spec are present and well-formed (valid date, valid `type:`, `sources:` is a list, etc.). Flag mismatches.
-7. **Index/log integrity.** Every page in `./wiki/{sources,entities,concepts,queries}/` should appear in `index.md`. Every `ingest`/`query` entry in `log.md` should reference pages that exist. Flag mismatches both directions.
+7. **Index/log integrity.** Every page in `./wiki/{sources,entities,concepts,queries,brainstorms}/` should appear in `index.md`. Every `ingest`/`query`/`brainstorm` entry in `log.md` should reference pages that exist. Flag mismatches both directions.
 8. **Coverage gaps.** Concepts that are referenced from other pages but have no page of their own → flag as candidates to create. Entities mentioned in ≥3 sources but with thin entity pages (<5 lines of body) → flag for expansion.
+9. **Brainstorm promotion drift.** For every `brainstorms/*.md` page older than 14 days, check that at least one concept or entity page lists it in their `sources:` frontmatter (i.e., a top idea was actually filed back). Brainstorms with zero promoted pages → flag with note "promotion never filed — was that intentional, or did the session end before Phase 4 wrote back?". Skip this check if the user explicitly chose "self-contained brainstorm" in the session.
 
 ## Report format
 

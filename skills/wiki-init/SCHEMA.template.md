@@ -6,32 +6,34 @@ updated: {{DATE}}
 
 # LLM Wiki Schema
 
-This file tells the LLM how to maintain `./wiki/`. The operation skills (`/wiki-ingest`, `/wiki-query`, `/wiki-lint`) read it before acting. Keep it short and authoritative — when conventions change, edit this file rather than the skills.
+This file tells the LLM how to maintain `./wiki/`. The operation skills (`/wiki-ingest`, `/wiki-query`, `/wiki-lint`, `/wiki-brainstorm`) read it before acting. Keep it short and authoritative — when conventions change, edit this file rather than the skills.
 
 Based on Andrej Karpathy's LLM Wiki pattern: humans curate, the LLM maintains.
 
 ## Three layers
 
 1. **Raw** — immutable source files stored in `raw/`. PDFs, transcripts, downloaded articles, pasted text saved as `.md`. The human (or `/wiki-ingest`) drops files here; the LLM reads them but never modifies them. This is the audit trail.
-2. **Wiki** — markdown pages the LLM owns: source summaries (which cite back into `raw/`), entity pages, concept pages, query-result pages.
+2. **Wiki** — markdown pages the LLM owns: source summaries (which cite back into `raw/`), entity pages, concept pages, query-result pages, and brainstorm pages.
 3. **Schema** — this file. The LLM-readable contract that keeps the wiki coherent.
 
 `raw/` doubles as a drop zone: dragging a file into `raw/` is the capture step. Processing is a separate step (`/wiki-ingest`), so capture stays frictionless.
 
 ## Page types
 
-| Type    | Path                  | Purpose                                                                  |
-| :------ | :-------------------- | :----------------------------------------------------------------------- |
-| raw     | `raw/<filename>`      | The actual source file (PDF, MD, transcript). Immutable. Not summarized in-place. |
-| source  | `sources/<slug>.md`   | LLM-written summary + key claims for one raw file (or external URL)      |
-| entity  | `entities/<slug>.md`  | A person, org, system, place — facts aggregated across sources            |
-| concept | `concepts/<slug>.md`  | An idea, pattern, or technique — explanation + examples                  |
-| query   | `queries/<slug>.md`   | A filed-back synthesis from a `/wiki-query` worth keeping                |
+| Type       | Path                     | Purpose                                                                  |
+| :--------- | :----------------------- | :----------------------------------------------------------------------- |
+| raw        | `raw/<filename>`         | The actual source file (PDF, MD, transcript). Immutable. Not summarized in-place. |
+| source     | `sources/<slug>.md`      | LLM-written summary + key claims for one raw file (or external URL)      |
+| entity     | `entities/<slug>.md`     | A person, org, system, place — facts aggregated across sources            |
+| concept    | `concepts/<slug>.md`     | An idea, pattern, or technique — explanation + examples                  |
+| query      | `queries/<slug>.md`      | A filed-back synthesis from a `/wiki-query` worth keeping                |
+| brainstorm | `brainstorms/<slug>.md`  | Captured ideation session: full idea inventory, themes, technique narrative; cites concept/entity pages and may be cited back by them |
 
 ## Slug rules
 
 - Kebab-case, ASCII only, no dates in filename.
 - Stable: prefer renaming via redirect (leave a stub pointing to the new file) over deleting.
+- Brainstorms re-run on the same topic use `-session-N` suffixes (e.g., `auth-rewrite.md`, then `auth-rewrite-session-2.md`). Date stays in frontmatter only.
 
 ## Page frontmatter
 
@@ -39,12 +41,12 @@ Every page (except files in `raw/`, which are not wiki pages) starts with YAML f
 
 ```yaml
 ---
-type: source | entity | concept | query
+type: source | entity | concept | query | brainstorm
 title: Human-readable title
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 tags: [tag1, tag2]
-sources: [sources/foo.md]   # entities/concepts/queries cite their sources
+sources: [sources/foo.md]   # entities/concepts/queries/brainstorms cite their sources
 raw: raw/foo.pdf            # source pages only — points to the raw file if one exists
 url: https://...            # source pages only — canonical URL if web-based
 ---
@@ -60,7 +62,7 @@ For a source page, at least one of `raw:` or `url:` must be set. If both: `raw:`
 
 ## index.md
 
-The catalog. Read first when answering queries. Organized by section: Sources, Entities, Concepts, Queries. Each entry: bullet with title, one-line gloss, link, tags.
+The catalog. Read first when answering queries. Organized by section: Sources, Entities, Concepts, Queries, Brainstorms. Each entry: bullet with title, one-line gloss, link, tags.
 
 Append new entries on ingest. Never remove without leaving a redirect note.
 
@@ -74,7 +76,7 @@ Append-only chronological record. Entry format:
 - notes: one-line summary
 ```
 
-Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`.
+Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `brainstorm`.
 
 ## Operations summary
 
@@ -82,6 +84,7 @@ Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`.
   - **Batch mode**: `/wiki-ingest` can also process every file in `raw/` not yet referenced from any `sources/` page — useful after dropping several files in at once.
 - **query**: read index → read relevant pages → answer with inline citations. If the synthesis is reusable, file it as `queries/<slug>.md` and update index + log.
 - **lint**: scan for contradictions, stale dates, orphan pages (no inbound links), orphan raw files (raw file with no source page citing it), broken links, frontmatter drift, gaps in coverage. Report findings; do not auto-fix without confirmation.
+- **brainstorm**: facilitated ideation session. Reads wiki context (relevant entity/concept/query/prior-brainstorm pages) → runs interactive ideation with the user → files the session as `brainstorms/<slug>.md` with the full idea inventory → promotes user-selected top ideas to concept or entity pages with citations back → updates index and log. Aims for 100+ ideas before organization.
 
 ## Editing rules for the LLM
 

@@ -23,3 +23,7 @@ _None yet._
 ## Queries
 
 _None yet._
+
+## Brainstorms
+
+_None yet. Run `/wiki-brainstorm` to facilitate an ideation session._

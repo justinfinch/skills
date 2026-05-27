@@ -22,6 +22,7 @@ Bootstrap an LLM Wiki at `./wiki/`.
      entities/
      concepts/
      queries/
+     brainstorms/ # captured ideation sessions (see /wiki-brainstorm)
    ```
    Add `.gitkeep` to each empty subdir so git tracks the structure.
 4. Copy `SCHEMA.template.md` from this skill's directory to `wiki/SCHEMA.md`, replacing every `{{DATE}}` token with today's date.
@@ -30,7 +31,7 @@ Bootstrap an LLM Wiki at `./wiki/`.
 
 ## Notes
 
-- The schema is the source of truth for conventions — `/wiki-ingest`, `/wiki-query`, and `/wiki-lint` all read `wiki/SCHEMA.md` before acting. If the user later changes conventions, they edit the schema; the operation skills follow.
+- The schema is the source of truth for conventions — `/wiki-ingest`, `/wiki-query`, `/wiki-lint`, and `/wiki-brainstorm` all read `wiki/SCHEMA.md` before acting. If the user later changes conventions, they edit the schema; the operation skills follow.
 - Do not embed wiki content in the schema. The schema describes *how* pages are written, not what they contain.
 
 ## Templates
