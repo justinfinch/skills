@@ -1,6 +1,6 @@
 ---
 name: wiki-ingest
-description: Ingest a source into the project's LLM wiki at ./wiki/. Accepts a URL, a file path, pasted text, OR — with no argument — processes every file in ./wiki/raw/ not yet referenced by a source page (batch mode). Snapshots the raw input to ./wiki/raw/, writes a source-summary page, updates index.md, revises affected entity and concept pages, and appends a log entry — following the conventions in ./wiki/SCHEMA.md. Use when the user provides a source to add to a wiki, says "ingest", "add to wiki", "remember this article", "process the raw folder", or shares an article/paper/PDF/transcript they want filed.
+description: Ingest a source into the project's LLM wiki at ./.wiki/. The wiki captures **institutional context** (business domain, SME knowledge, ARB-style architectural decisions, research) — not code documentation. Accepts a URL, a file path, pasted text, OR — with no argument — processes every file in ./.wiki/raw/ not yet referenced by a source page (batch mode). Snapshots the raw input to ./.wiki/raw/, writes a source-summary page, updates index.md, revises affected entity and concept pages, and appends a log entry — following the conventions in ./.wiki/SCHEMA.md. Use when the user provides a source to add to a wiki, says "ingest", "add to wiki", "remember this article", "process the raw folder", or shares an article/paper/PDF/transcript/SME-interview/ADR they want filed.
 ---
 
 # wiki-ingest
@@ -9,25 +9,25 @@ Add one or more sources to the project wiki.
 
 ## Preflight
 
-1. Verify `./wiki/SCHEMA.md` exists. If not, tell the user to run `/wiki-init` first and stop.
-2. Read `./wiki/SCHEMA.md` end to end. The schema is authoritative — follow its slug rules (including the "Slug derivation" subsection), page-type definitions, frontmatter shape, cross-linking rules, contradiction marker convention, and log format.
-3. Read `./wiki/index.md` so you know what entities and concepts already exist (you'll be linking into them and possibly extending them).
+1. Verify `./.wiki/SCHEMA.md` exists. If not, tell the user to run `/wiki-init` first and stop.
+2. Read `./.wiki/SCHEMA.md` end to end. The schema is authoritative — follow its slug rules (including the "Slug derivation" subsection), page-type definitions, frontmatter shape, cross-linking rules, contradiction marker convention, and log format.
+3. Read `./.wiki/index.md` so you know what entities and concepts already exist (you'll be linking into them and possibly extending them).
 4. Read this skill's own page templates so new pages follow the canonical layout: [source.template.md](source.template.md), [entity.template.md](entity.template.md), [concept.template.md](concept.template.md).
 
 ## Dispatch
 
 - **Explicit argument** (URL, file path, pasted text): single-source ingest. Continue to Workflow.
-- **No argument**: batch mode. List every file in `./wiki/raw/` that no existing `sources/*.md` page references via its `raw:` frontmatter field. Show the user the list and ask which to ingest (default: all). Then run the Workflow once per file, in order.
+- **No argument**: batch mode. List every file in `./.wiki/raw/` that no existing `sources/*.md` page references via its `raw:` frontmatter field. Show the user the list and ask which to ingest (default: all). Then run the Workflow once per file, in order.
 
 ## Workflow (per source)
 
-1. **Land the raw file in `./wiki/raw/`.** Derive the slug per SCHEMA's "Slug derivation" rules.
+1. **Land the raw file in `./.wiki/raw/`.** Derive the slug per SCHEMA's "Slug derivation" rules.
    - File path → copy (don't move; leave the original alone) to `raw/<slug>.<ext>`.
    - URL → fetch the page, convert to markdown, save as `raw/<slug>.md`. Record the canonical URL for frontmatter.
    - Pasted text → save verbatim to `raw/<slug>.md` with a header noting the date and source description.
    - On slug collision: if the incoming file is byte-identical to the existing one, skip ingest and tell the user it's already captured. Otherwise append `-2`/`-3` to the slug (do not silently overwrite).
 2. **Discuss with the user first** (one short message): name the 3–5 key points you saw and the entities/concepts you plan to touch. Stop and let them redirect before writing anything. This is the "discuss key points with you" step from Karpathy's pattern. Skip the discussion step in batch mode unless the user asked for it explicitly.
-3. **Write the source summary** at `wiki/sources/<slug>.md` using this skill's [source.template.md](source.template.md) as the layout (frontmatter including `raw:` and/or `url:`, summary within SCHEMA.md's length cap, `## Key claims`, `## See also` listing every entity/concept page touched).
+3. **Write the source summary** at `.wiki/sources/<slug>.md` using this skill's [source.template.md](source.template.md) as the layout (frontmatter including `raw:` and/or `url:`, summary within SCHEMA.md's length cap, `## Key claims`, `## See also` listing every entity/concept page touched).
 4. **Update or create entity/concept pages.** For each entity/concept the source touches:
    - If the page exists: add new claims with inline citations to the source page, update the `sources:` frontmatter list, bump `updated:`.
    - If the page is new: create it using this skill's [entity.template.md](entity.template.md) or [concept.template.md](concept.template.md) as the layout, with full frontmatter and at least the claims this source supports.

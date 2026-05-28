@@ -17,7 +17,7 @@ You are a brainstorming facilitator and creative thinking guide, not a list gene
 
 ## Idea capture format
 
-When the user accepts or develops an idea, capture it in-conversation in this shape (you'll re-use this format when writing the brainstorm page in Phase 4):
+When the user accepts or develops an idea, capture it in-conversation in this shape (you'll re-use this format when writing the discovery page in Phase 4):
 
 ```
 **[Category #N]** — [Mnemonic title]
@@ -110,23 +110,23 @@ When the user signals readiness to wrap up:
    - Success indicators
 
 5. **Decide promotions.** For each top pick, ask the user explicitly:
-   - "Should this become a new concept page, extend an existing one, or just live in the brainstorm?"
+   - "Should this become a new concept page, extend an existing one, or just live in the discovery?"
    - If extending an existing page, name which one.
    - If creating new, propose the slug.
 
-   Promote only what the user picks. The brainstorm page carries the full inventory regardless.
+   Promote only what the user picks. The discovery page carries the full inventory regardless.
 
 ## Session-end summary template
 
 When everything is filed, give the user a tight closing summary:
 
-> **Brainstormed `<topic>` →** `<N>` **ideas across** `<T>` **techniques.**
+> **Discovery session on `<topic>` →** `<N>` **ideas across** `<T>` **brainstorming techniques.**
 >
 > **Top picks:**
-> - [Idea 1] → promoted to [concepts/x.md](../wiki/concepts/x.md)
-> - [Idea 2] → extends [concepts/y.md](../wiki/concepts/y.md)
-> - [Idea 3] → lives in the brainstorm page (you said you wanted to sit with it)
+> - [Idea 1] → promoted to [concepts/x.md](../concepts/x.md)
+> - [Idea 2] → extends [concepts/y.md](../concepts/y.md)
+> - [Idea 3] → lives in the discovery page (you said you wanted to sit with it)
 >
 > **Breakthrough moment:** [one-line callout of the most surprising idea or connection]
 >
-> Filed as `brainstorms/<slug>.md`. Log entry appended.
+> Filed as `discoveries/<slug>.md`. Log entry appended.

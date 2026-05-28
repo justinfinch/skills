@@ -1,6 +1,6 @@
 ---
 name: wiki-query
-description: Answer a question using the project's LLM wiki at ./wiki/. Reads index.md, walks to the relevant pages, synthesizes an answer with inline citations to wiki pages and their sources, and optionally files the synthesis back as queries/<slug>.md when the user wants it kept. Use when the user asks something that should be answered from their wiki, says "query the wiki", "what does the wiki say about X", or asks a question after having ingested sources into ./wiki/.
+description: Answer a question using the project's LLM wiki at ./.wiki/ — the wiki holds **institutional context** (business domain, SME knowledge, ARB-style architectural decisions, research) that the code doesn't carry. Reads index.md, walks to the relevant pages, synthesizes an answer with inline citations to wiki pages and their sources, and optionally files the synthesis back as queries/<slug>.md when the user wants it kept. Use when the user asks something that should be answered from their wiki, says "query the wiki" / "what does the wiki say about X", asks a question after having ingested sources, **OR** is about to plan / design / scope / brainstorm a feature in a repo with a ./.wiki/ and could benefit from surfacing relevant ADRs, domain constraints, customer context, or prior research before the planning step runs. Fires as a cold-start orientation step alongside agentic dev methodologies (e.g. superpowers, mattpocock skills) — does not replace their planning/brainstorming/TDD skills, only feeds context into them.
 ---
 
 # wiki-query
@@ -9,9 +9,9 @@ Answer a question from the project wiki.
 
 ## Preflight
 
-1. Verify `./wiki/SCHEMA.md` and `./wiki/index.md` exist. If either is missing, tell the user to run `/wiki-init` and `/wiki-ingest` first and stop.
-2. Read `./wiki/SCHEMA.md` so you cite and link in the project's house style.
-3. Read `./wiki/index.md` — this is the entry point. Use it to choose which pages to read next.
+1. Verify `./.wiki/SCHEMA.md` and `./.wiki/index.md` exist. If either is missing, tell the user to run `/wiki-init` and `/wiki-ingest` first and stop.
+2. Read `./.wiki/SCHEMA.md` so you cite and link in the project's house style.
+3. Read `./.wiki/index.md` — this is the entry point. Use it to choose which pages to read next.
 
 ## Workflow
 
@@ -25,7 +25,7 @@ Answer a question from the project wiki.
 
 If the user says yes:
 
-1. Create `wiki/queries/<slug>.md` using this skill's [query.template.md](query.template.md) as the layout (frontmatter: `type: query`, today's date, tags, `sources:` listing every wiki page and source you cited).
+1. Create `.wiki/queries/<slug>.md` using this skill's [query.template.md](query.template.md) as the layout (frontmatter: `type: query`, today's date, tags, `sources:` listing every wiki page and source you cited).
 2. Body per template: the question (verbatim) as a blockquote, then the answer with citations preserved.
 3. Add an entry under Queries in `index.md`.
 4. Append a `query` entry to `log.md`.

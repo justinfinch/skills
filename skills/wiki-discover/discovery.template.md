@@ -1,5 +1,5 @@
 ---
-type: brainstorm
+type: discovery
 title: {{TITLE}}
 created: {{DATE}}
 updated: {{DATE}}
@@ -40,4 +40,4 @@ Brief notes on which techniques produced which breakthroughs, and any anti-bias 
 ## See also
 
 - [Pages cited inline during the session](../concepts/example.md)
-- [Pages this brainstorm promoted ideas to](../concepts/example.md)
+- [Pages this discovery promoted ideas to](../concepts/example.md)

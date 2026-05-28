@@ -24,6 +24,6 @@ _None yet._
 
 _None yet._
 
-## Brainstorms
+## Discoveries
 
-_None yet. Run `/wiki-brainstorm` to facilitate an ideation session._
+_None yet. Run `/wiki-discover` to facilitate a discovery / ideation session._
