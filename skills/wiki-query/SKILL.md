@@ -19,13 +19,14 @@ Answer a question from the project wiki.
 2. **Read the candidates.** For each candidate page, read the full file. Note the sources cited at each claim — you may need to read source summaries too if the question hinges on provenance.
 3. **Synthesize an answer.** Inline-cite every non-trivial claim with **both** the wiki page that synthesizes it and the underlying source page: `... per [Concept Name](../concepts/foo.md) citing [Source Title](../sources/bar.md).` Provenance traces to the original source, not just the synthesis layer. If a claim is supported by multiple sources, cite the strongest one; the others can be implied by the wiki page's own `sources:` list.
 4. **Flag gaps.** If the wiki doesn't fully answer the question, say what's missing and suggest a source to ingest. Do not guess past the wiki's coverage.
-5. **Offer to file the synthesis.** If the answer is non-trivial and reusable, ask: "Want me to file this as `queries/<slug>.md`?" Default: do not file unless asked or unless the question itself was framed as a wiki investigation.
+5. **Architectural-gap signal.** If the question is framed for planning/design/scoping a feature ("how should we build X", "what's the right approach for Y", "design a Z") AND no relevant ARD/SAD/ADR concept page exists in the wiki, surface that gap explicitly: *"The wiki has no decision filed for this. Want to run `/wiki-architect` to grill the design and file ARD/SAD/ADRs before planning starts?"* Suggest it; do not auto-invoke.
+6. **Offer to file the synthesis.** If the answer is non-trivial and reusable, ask: "Want me to file this as `queries/<slug>.md`?" Default: do not file unless asked or unless the question itself was framed as a wiki investigation.
 
 ## Filing a query back
 
 If the user says yes:
 
-1. Create `.wiki/queries/<slug>.md` using this skill's [query.template.md](query.template.md) as the layout (frontmatter: `type: query`, today's date, tags, `sources:` listing every wiki page and source you cited).
+1. Create `.wiki/queries/<slug>.md` using this skill's [query.template.md](assets/query.template.md) as the layout (frontmatter: `type: query`, today's date, tags, `sources:` listing every wiki page and source you cited).
 2. Body per template: the question (verbatim) as a blockquote, then the answer with citations preserved.
 3. Add an entry under Queries in `index.md`.
 4. Append a `query` entry to `log.md`.

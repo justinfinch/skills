@@ -16,7 +16,7 @@ This wiki captures **institutional context that does not live in the code**:
 
 - **Business domain** — customer context, product positioning, market signals, the *why* this product exists.
 - **SME knowledge** — subject-matter expert insights, interview transcripts, regulatory/compliance constraints, the things "the senior person in the room" carries in their head.
-- **Architectural decisions (ADRs)** — the decision, alternatives considered, rationale, constraints, supersession chain. See [ADRs](#adrs-architecture-decision-records) below.
+- **Architectural decisions (ARD, SAD, ADR)** — solution-architecture work as a chain of concept-page conventions: requirements (ARD) → chosen solution (SAD) → individual reversible decisions (ADRs) with alternatives and supersession trail. See [Architecture pages](#architecture-pages-ard-sad-adr) below.
 - **Research** — papers, articles, competitor analyses, prior art relevant to product or architecture.
 
 This wiki **does not** capture:
@@ -48,17 +48,25 @@ This wiki **does not** capture:
 | query      | `queries/<slug>.md`      | A filed-back synthesis from a `/wiki-query` worth keeping                |
 | discovery  | `discoveries/<slug>.md`  | Captured discovery / ideation session (`/wiki-discover`): full idea inventory from a facilitated brainstorming session, themes, technique narrative; cites concept/entity pages and may be cited back by them |
 
-### ADRs (Architecture Decision Records)
+### Architecture pages (ARD, SAD, ADR)
 
-ADRs are a **convention layered on concept pages** — not a separate page type. Slug: `adr-<short-decision-name>` (e.g. `adr-session-token-storage`, `adr-event-driven-billing`). Body sections:
+The wiki captures technical-architecture work as three slug conventions **layered on concept pages** — not separate page types. They form a chain: an **ARD** frames what any architecture for a system must satisfy, a **SAD** describes the chosen solution, and **ADRs** capture each load-bearing decision the SAD relies on. `/wiki-architect` is the operation skill that produces and updates them.
 
-1. **Decision** — one paragraph: what was decided.
-2. **Context** — what problem prompted it, what constraints applied.
-3. **Alternatives considered** — what else was on the table, why each was rejected. (This is the most load-bearing section — the trail of why-not-X matters more than the why-Y over time.)
-4. **Consequences** — what this enables, what it costs, what it locks in.
-5. **Status** — one of: `proposed` | `accepted` | `superseded`. If `superseded`, set the `superseded_by:` frontmatter field (see below).
+| Slug                       | Convention                            | Body sections                                                                                     |
+| :------------------------- | :------------------------------------ | :------------------------------------------------------------------------------------------------ |
+| `ard-<system>`             | Architecture Requirements Document    | Stakeholders / Functional requirements / Quality attributes (stimulus → environment → response → measure) / Constraints / Assumptions / Risks |
+| `sad-<system>`             | Solution Architecture Document        | Context / Drivers / Logical view / Process view / Data view / Deployment view / Cross-cutting / Fitness functions / Decision summary (links to ADRs) / Risks and trade-offs |
+| `adr-<short-decision-name>` | Architecture Decision Record         | Decision / Context / Alternatives considered / Consequences / Status                              |
 
-Cite sources in the body the same as any other concept page (the discovery session or research that produced the decision, the SME who flagged the constraint, etc.). When an ADR is reversed, do not delete the old page — set `status: superseded` and `superseded_by:` to the new ADR's path. The trail of "we tried X, reversed it after Y" is precisely the institutional memory the wiki exists to preserve.
+Examples: `ard-billing`, `sad-billing`, `adr-event-driven-billing`, `adr-session-token-storage`.
+
+**Pairing.** An ARD and SAD for the same system share the system stem and link to each other. The SAD's *Decision summary* lists every ADR; each ADR's `sources:` frontmatter cites the SAD so navigation is bidirectional.
+
+**Status (ARD, SAD, and ADR).** One of: `proposed` | `accepted` | `superseded`. If `superseded`, set the `superseded_by:` frontmatter field to the replacement page. Do not delete superseded pages — the trail of "we tried X, reversed it after Y" is precisely the institutional memory the wiki exists to preserve. SADs and ARDs can supersede each other across major redesigns the same way ADRs do.
+
+**Citation.** Cite sources in the body the same as any other concept page: the discovery session or research that produced the decision, the SME who flagged the constraint, the prior ADR being superseded.
+
+**When to write each.** `/wiki-architect` recommends the scope at session start: ARD only (requirements not yet clear), full ARD + SAD + ADRs (most common), SAD + ADRs (design against an existing ARD), or ADRs only (tightly scoped decision inside an existing SAD). Decisions that don't clear the ADR bar — hard to reverse, surprising-without-context, real trade-off — stay inside the SAD body rather than getting their own ADR.
 
 ## Slug rules
 
@@ -88,8 +96,8 @@ tags: [tag1, tag2]
 sources: [sources/foo.md]            # entities/concepts/queries/discoveries cite their sources
 raw: raw/foo.pdf                     # source pages only — points to the raw file if one exists
 url: https://...                     # source pages only — canonical URL if web-based
-status: proposed | accepted | superseded   # ADR concept pages only
-superseded_by: concepts/adr-new.md   # ADR concept pages only — when an ADR has been reversed, points to the replacement
+status: proposed | accepted | superseded   # ARD, SAD, ADR concept pages
+superseded_by: concepts/adr-new.md   # ARD, SAD, ADR pages — when superseded, points to the replacement
 ---
 ```
 
@@ -121,7 +129,7 @@ Append-only chronological record. Entry format:
 - notes: one-line summary
 ```
 
-Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `discovery`.
+Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `discovery`, `architect`.
 
 **Contradiction marker.** When an ingest finds a source that contradicts an existing claim, the log entry's notes line starts with `contradiction —`. Example:
 
@@ -139,7 +147,8 @@ Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `disco
   - **Batch mode**: `/wiki-ingest` can also process every file in `raw/` not yet referenced from any `sources/` page — useful after dropping several files in at once.
 - **query**: read index → read relevant pages → answer with inline citations. If the synthesis is reusable, file it as `queries/<slug>.md` and update index + log.
 - **lint**: scan for contradictions, stale dates, orphan pages (no inbound links), orphan raw files (raw file with no source page citing it), broken links, frontmatter drift, gaps in coverage. Report findings; do not auto-fix without confirmation.
-- **discovery**: facilitated discovery / ideation session (`/wiki-discover`) for business, domain, customer, market, regulatory, or architectural topics. Reads wiki context (relevant entity/concept/query/prior-discovery pages) → runs interactive brainstorming with the user → files the session as `discoveries/<slug>.md` with the full idea inventory → promotes user-selected top ideas to concept or entity pages (including new ADRs) with citations back → updates index and log. Aims for 100+ ideas before organization. **Not** for code-implementation brainstorming — that belongs to your dev methodology's own brainstorming skill.
+- **discovery**: facilitated discovery / ideation session (`/wiki-discover`) for business, domain, customer, market, or regulatory topics. Reads wiki context (relevant entity/concept/query/prior-discovery pages) → runs interactive brainstorming with the user → files the session as `discoveries/<slug>.md` with the full idea inventory → promotes user-selected top ideas to concept or entity pages with citations back → updates index and log. Aims for 100+ ideas before organization. **Not** for technical-architecture work — that belongs to `/wiki-architect`. **Not** for code-implementation brainstorming — that belongs to your dev methodology's own brainstorming skill.
+- **architect**: convergent technical-architecture session (`/wiki-architect`) acting as a panel of senior-architect lenses (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin). Reads wiki context + codebase constraints → grills the user one branch at a time with recommended answers → files outputs as ARD (`concepts/ard-<system>.md`), SAD (`concepts/sad-<system>.md`), and one or more ADRs (`concepts/adr-<name>.md`) as the problem decomposes → updates index and log. Pairs with `/wiki-discover` (which feeds it) and `/wiki-query` (which surfaces "no relevant SAD/ADR" gaps that motivate a session).
 - **migrate**: `/wiki-init` re-run against an existing wiki. Detects missing or stale system files (e.g., absent `_templates/`, outdated SCHEMA), proposes additive changes, applies what the user accepts, and logs the result. Never rewrites content pages.
 
 Empty subdirectories carry a `.gitkeep` file so git tracks the structure; these have no other meaning.

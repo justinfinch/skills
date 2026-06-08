@@ -14,14 +14,14 @@ Extend the repo's `devbox.json` with a new package — either an application dep
    - **App dep** — a CLI, runtime, or build tool the developer invokes (`jq`, `ripgrep`, `just`, `terraform`, `python`). One-shot add; no service wiring.
    - **Infra dep** — a long-running daemon the app talks to (`postgresql`, `redis`, `mysql`, `mongodb`, `rabbitmq`, `elasticsearch`, …). Needs a `devbox services` entry and likely env vars.
    - If ambiguous, ask.
-3. **Resolve the canonical package name.** Run `devbox search <name>` and pick the canonical nixpkgs name (e.g. user says "postgres" → package is `postgresql`; "rabbitmq" → `rabbitmq-server`). For common services, the catalog in [CATALOG.md](CATALOG.md) lists the canonical names plus default ports and plugin status — check it first.
+3. **Resolve the canonical package name.** Run `devbox search <name>` and pick the canonical nixpkgs name (e.g. user says "postgres" → package is `postgresql`; "rabbitmq" → `rabbitmq-server`). For common services, the catalog in [CATALOG.md](references/CATALOG.md) lists the canonical names plus default ports and plugin status — check it first.
 4. **Pick a version pin.** Default to `@latest` unless the user named one or the project already constrains the version. Don't invent pins.
 5. **Add it.** Run `devbox add <pkg>@<version>` from the repo root. This updates both `devbox.json` and `devbox.lock`. Prefer the CLI over hand-editing JSON.
 6. **For infra deps, inspect the plugin.** Run `devbox info <pkg>`. Devbox ships built-in plugins for common databases/caches that auto-configure data dirs, env vars (`PGDATA`, `PGPORT`, `REDIS_PORT`, …), and `devbox services` entries. The `devbox info` output lists what the plugin provides.
    - **Plugin present:** the service is already wired. Move to step 7.
-   - **No plugin:** add a `process-compose.yaml` entry yourself. See [CATALOG.md](CATALOG.md) for examples (`rabbitmq-server`, `elasticsearch`, `nats-server`, …). Set the working dir to `.devbox/virtenv/<name>` so state stays repo-local.
-7. **Handle port collisions.** Most plugins use the upstream default port (postgres 5432, redis 6379, mysql 3306, mongo 27017). These commonly collide with the user's host install. Override in `devbox.json` `env` — see [CATALOG.md](CATALOG.md) for the right env var per service. Bump by +1 (5432→5433, etc.) unless the user has a reason.
-8. **Document the source of truth in the repo's agent context file.** The "devbox.json is the source of truth for deps" policy needs to live somewhere coding agents will read. Pick a target file in this order — append the snippet from [templates/agents-md-snippet.md](templates/agents-md-snippet.md) to **all** that exist, and create `AGENTS.md` if none do:
+   - **No plugin:** add a `process-compose.yaml` entry yourself. See [CATALOG.md](references/CATALOG.md) for examples (`rabbitmq-server`, `elasticsearch`, `nats-server`, …). Set the working dir to `.devbox/virtenv/<name>` so state stays repo-local.
+7. **Handle port collisions.** Most plugins use the upstream default port (postgres 5432, redis 6379, mysql 3306, mongo 27017). These commonly collide with the user's host install. Override in `devbox.json` `env` — see [CATALOG.md](references/CATALOG.md) for the right env var per service. Bump by +1 (5432→5433, etc.) unless the user has a reason.
+8. **Document the source of truth in the repo's agent context file.** The "devbox.json is the source of truth for deps" policy needs to live somewhere coding agents will read. Pick a target file in this order — append the snippet from [assets/agents-md-snippet.md](assets/agents-md-snippet.md) to **all** that exist, and create `AGENTS.md` if none do:
    - `AGENTS.md` (cross-agent convention used by Codex CLI and others)
    - `CLAUDE.md` (Claude Code)
    - `.cursorrules` or `.cursor/rules/*.md` (Cursor)
@@ -43,6 +43,6 @@ Extend the repo's `devbox.json` with a new package — either an application dep
 
 ## Files
 
-- [CATALOG.md](CATALOG.md) — common services: canonical package names, default ports, plugin status, override env vars.
-- [templates/agents-md-snippet.md](templates/agents-md-snippet.md) — the "devbox.json is the source of truth" section to append to a repo's agent context file (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, etc.).
-- [templates/process-compose.yaml](templates/process-compose.yaml) — starter `process-compose.yaml` for services without a built-in plugin.
+- [CATALOG.md](references/CATALOG.md) — common services: canonical package names, default ports, plugin status, override env vars.
+- [assets/agents-md-snippet.md](assets/agents-md-snippet.md) — the "devbox.json is the source of truth" section to append to a repo's agent context file (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, etc.).
+- [assets/process-compose.yaml](assets/process-compose.yaml) — starter `process-compose.yaml` for services without a built-in plugin.

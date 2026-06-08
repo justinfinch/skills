@@ -1,11 +1,16 @@
 ---
 name: wiki-discover
-description: Facilitate a structured discovery / ideation session grounded in the project's LLM wiki at ./.wiki/ — for **business, domain, customer, market, regulatory, or architectural** topics. Loads relevant entity/concept/query pages as agent memory, runs facilitation across 60+ creativity techniques (Yes-And, First Principles, SCAMPER, Six Hats, Reverse Brainstorming, Cross-Pollination, etc.) with anti-bias domain pivots and energy checkpoints, then files the session as discoveries/<slug>.md, promotes user-selected top ideas to concept or entity pages, and appends a `discovery` log entry. Use when the user wants to explore unknown unknowns about the business, domain, or architecture; surface options or risks at the strategy/ADR level; says "help me think through X" / "explore options for Y" for non-code-implementation topics; or wants to use prior wiki context as a launchpad. NOT for implementation-level brainstorming (e.g. how to refactor a module, how to structure tests) — use your dev methodology's own brainstorming skill (e.g. superpowers' `brainstorming`) for that. Adapted from BMAD-METHOD's bmad-brainstorming skill.
+description: Facilitate a structured discovery / ideation session grounded in the project's LLM wiki at ./.wiki/ — for **business, domain, customer, market, or regulatory** topics. Loads relevant entity/concept/query pages as agent memory, runs facilitation across 60+ creativity techniques (Yes-And, First Principles, SCAMPER, Six Hats, Reverse Brainstorming, Cross-Pollination, etc.) with anti-bias domain pivots and energy checkpoints, then files the session as discoveries/<slug>.md, promotes user-selected top ideas to concept or entity pages, and appends a `discovery` log entry. Use when the user wants to explore unknown unknowns about the business, customer, market, or regulatory landscape; surface non-technical strategic options or risks; says "help me think through X" / "explore options for Y" for non-technical topics; or wants to use prior wiki context as a launchpad. NOT for technical architecture (designing systems, choosing patterns, deciding integrations) — use `/wiki-architect` for that; it converges on ARD/SAD/ADR artifacts. NOT for code-implementation brainstorming (refactor / test structure) — use your dev methodology's own brainstorming skill (e.g. superpowers' `brainstorming`). Adapted from BMAD-METHOD's bmad-brainstorming skill.
 ---
 
 # wiki-discover
 
-Run a structured discovery / ideation session that uses the project wiki as agent memory and writes its outputs back into the wiki. Scope: business, domain, customer, market, regulatory, or architectural topics — the kinds of things that belong in the wiki as institutional context (see `.wiki/SCHEMA.md`). For implementation-level brainstorming (how to refactor X, how to test Y), use your dev methodology's own brainstorming skill instead.
+Run a structured discovery / ideation session that uses the project wiki as agent memory and writes its outputs back into the wiki. Scope: business, customer, market, or regulatory topics — the kinds of things that belong in the wiki as institutional context (see `.wiki/SCHEMA.md`).
+
+**Out of scope — delegate explicitly:**
+
+- Technical architecture (designing a system, choosing patterns, deciding integrations, writing ADRs) → use `/wiki-architect`, which is convergent and produces ARD/SAD/ADR concept pages with senior-architect lenses (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin). If a discovery session here surfaces a strong architectural direction, suggest `/wiki-architect` to converge it rather than promoting to an ADR directly.
+- Code-implementation brainstorming (how to refactor X, how to test Y) → use your dev methodology's own brainstorming skill.
 
 ## Preflight
 
@@ -24,16 +29,16 @@ Run a structured discovery / ideation session that uses the project wiki as agen
 
 ## Phase 2: Choose technique mode
 
-Offer four modes (full prompts in [FACILITATION.md](FACILITATION.md)):
+Offer four modes (full prompts in [FACILITATION.md](references/FACILITATION.md)):
 
-- **User-Selected** — user browses [TECHNIQUES.md](TECHNIQUES.md) and picks.
+- **User-Selected** — user browses [TECHNIQUES.md](references/TECHNIQUES.md) and picks.
 - **AI-Recommended** — facilitator picks 2–3 based on topic + wiki context. When substantial wiki context was loaded, prefer the techniques flagged as wiki-leveraged in TECHNIQUES.md.
 - **Random** — pick a wild card from any category. Good for stuck thinking.
 - **Progressive Flow** — sequence across phases: divergent → analogical → convergent.
 
 ## Phase 3: Facilitate
 
-Run the chosen technique(s) per [FACILITATION.md](FACILITATION.md). Non-negotiable disciplines:
+Run the chosen technique(s) per [FACILITATION.md](references/FACILITATION.md). Non-negotiable disciplines:
 
 - **One idea/provocation at a time.** Present, wait for the user, build together. No batch lists.
 - **Anti-bias domain pivot every ~10 ideas.** Consciously shift to an orthogonal domain (UX → business → physics → social → ethics → governance → ...). LLMs drift toward semantic clustering; counter it.
@@ -48,10 +53,10 @@ Only when the user signals readiness to wrap up:
 
 1. **Cluster** ideas into 3–6 themes; identify breakthrough concepts and cross-cutting threads.
 2. **Prioritize** with the user across impact / feasibility / innovation / alignment. See FACILITATION.md.
-3. **Write `.wiki/discoveries/<slug>.md`** using this skill's [discovery.template.md](discovery.template.md) as the layout. Frontmatter: `type: discovery`, today's date, topic, techniques used, total idea count, `context_pages:` (wiki pages loaded in Phase 1), and `sources:` — bidirectional per SCHEMA: the union of (a) wiki pages cited inline during the session and (b) any pages this discovery promoted ideas to (filled in after Phase 4 step 4). Body: themes with full idea inventory, prioritized top ideas with action plans, technique narrative + creative breakthroughs, and a `## See also` section listing every wiki page touched.
+3. **Write `.wiki/discoveries/<slug>.md`** using this skill's [discovery.template.md](assets/discovery.template.md) as the layout. Frontmatter: `type: discovery`, today's date, topic, techniques used, total idea count, `context_pages:` (wiki pages loaded in Phase 1), and `sources:` — bidirectional per SCHEMA: the union of (a) wiki pages cited inline during the session and (b) any pages this discovery promoted ideas to (filled in after Phase 4 step 4). Body: themes with full idea inventory, prioritized top ideas with action plans, technique narrative + creative breakthroughs, and a `## See also` section listing every wiki page touched.
 4. **Promote top ideas.** For each user-selected top idea:
    - Extends an existing concept/entity page → append with inline citation to this discovery; bump `updated:`; add the discovery to that page's `sources:` list; **and** add the page to this discovery's `sources:` list (forward and back).
-   - New concept warranted → create `concepts/<slug>.md` from `/wiki-ingest`'s [concept.template.md](../wiki-ingest/concept.template.md) with `sources: [discoveries/<slug>.md]`; add the new page to this discovery's `sources:` list.
+   - New concept warranted → create `concepts/<slug>.md` from `/wiki-ingest`'s [concept.template.md](../wiki-ingest/assets/concept.template.md) with `sources: [discoveries/<slug>.md]`; add the new page to this discovery's `sources:` list.
    - If unsure whether to extend or create, ask. Slug churn is expensive.
 5. **Update `index.md`.** Add the discovery under a `## Discoveries` section (create the section if missing). Add any new concept/entity pages under their sections.
 6. **Append to `log.md`** with op `discovery`. List every page touched. Notes line: topic + idea count + count of promoted ideas.
@@ -69,8 +74,8 @@ End with one line: `Discovery session on <topic> → <N> ideas across <T> brains
 
 ## See also
 
-- [TECHNIQUES.md](TECHNIQUES.md) — the 61-technique library
-- [FACILITATION.md](FACILITATION.md) — coaching patterns, idea format, energy checkpoints, prioritization framework
-- [discovery.template.md](discovery.template.md) — page skeleton this skill writes
+- [TECHNIQUES.md](references/TECHNIQUES.md) — the 61-technique library
+- [FACILITATION.md](references/FACILITATION.md) — coaching patterns, idea format, energy checkpoints, prioritization framework
+- [discovery.template.md](assets/discovery.template.md) — page skeleton this skill writes
 
 _Adapted from [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)'s `bmad-brainstorming` skill (MIT-licensed)._

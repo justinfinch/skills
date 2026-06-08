@@ -7,7 +7,7 @@ description: Bootstrap an LLM Wiki at ./.wiki/ in the current project using Karp
 
 Bootstrap or migrate an LLM Wiki at `./.wiki/`.
 
-This skill owns only the wiki's **system files** (`SCHEMA.md`, `index.md`, `log.md`) and the directory tree. Each operation skill (`/wiki-ingest`, `/wiki-query`, `/wiki-discover`) ships its own page templates and reads them from its own skill directory at runtime — `wiki-init` does not copy templates into the wiki and does not need updating when a new wiki operation skill is added.
+This skill owns only the wiki's **system files** (`SCHEMA.md`, `index.md`, `log.md`) and the directory tree. Each operation skill (`/wiki-ingest`, `/wiki-query`, `/wiki-discover`, `/wiki-architect`) ships its own page templates and reads them from its own skill directory at runtime — `wiki-init` does not copy templates into the wiki and does not need updating when a new wiki operation skill is added.
 
 The path is **dotted** (`./.wiki/` not `./wiki/`) by convention with other agent-tooling directories (`.claude/`, `.cursor/`, `.vscode/`) and to avoid collision with project content folders. The wiki is curated content but has substantial machine-maintained scaffolding (index, log, frontmatter, lint) — the dot signals that.
 
@@ -34,10 +34,10 @@ The path is **dotted** (`./.wiki/` not `./wiki/`) by convention with other agent
      discoveries/ # captured discovery / ideation sessions (see /wiki-discover)
    ```
    Add `.gitkeep` to each empty subdir so git tracks the structure.
-2. Copy these files from this skill's directory, replacing every `{{DATE}}` token with today's date:
-   - `SCHEMA.template.md` → `.wiki/SCHEMA.md`
-   - `index.template.md` → `.wiki/index.md`
-   - `log.template.md` → `.wiki/log.md`
+2. Copy these files from this skill's `assets/` directory, replacing every `{{DATE}}` token with today's date:
+   - `assets/SCHEMA.template.md` → `.wiki/SCHEMA.md`
+   - `assets/index.template.md` → `.wiki/index.md`
+   - `assets/log.template.md` → `.wiki/log.md`
 3. Tell the user the wiki is ready and point them at `/wiki-ingest <source>` to add the first source.
 
 ### Step 4: Migration mode (wiki already exists)
@@ -46,8 +46,10 @@ The wiki already has content. The job is **additive** — never rewrite a conten
 
 1. **Detect drift.** Compare the existing wiki against the current templates in this skill's directory. The principle: anything present in the current `SCHEMA.template.md` that is missing or stale in the existing `SCHEMA.md` is a candidate patch. Check at minimum for:
    - **Framing block** — the "What belongs here (and what doesn't)" section that scopes the wiki to institutional context (business / SME / ADRs / research) and rules out code documentation
-   - **ADRs subsection** — the "ADRs (Architecture Decision Records)" section under Page types: convention layered on concept pages, slug `adr-<name>`, 5 body sections, status enum
-   - **Frontmatter fields** — `status:` and `superseded_by:` for ADR concept pages
+   - **Architecture pages section** — the "Architecture pages (ARD, SAD, ADR)" section under Page types: three concept-page conventions (`ard-<system>`, `sad-<system>`, `adr-<name>`) with their body-section tables, pairing rules, and shared status/supersession behavior. If only the older "ADRs (Architecture Decision Records)" subsection is present, the SAD and ARD conventions are missing — patch.
+   - **Frontmatter fields** — `status:` and `superseded_by:` apply to ARD, SAD, and ADR concept pages (older wikis may scope these to ADR only)
+   - **`architect` log op** — if SCHEMA's ops list does not include `architect`, the `/wiki-architect` skill cannot file sessions; patch.
+   - **Architect operation summary** — if SCHEMA's operations summary lacks the `architect` entry alongside `discovery`, patch.
    - **Page-type rename** — if SCHEMA still has `brainstorm` instead of `discovery` in the `type:` enum, the page-types table, the frontmatter spec, the sources-bidirectional clause, or the operations summary
    - **Log-op rename** — if SCHEMA's ops list still has `brainstorm` instead of `discovery`
    - **Index sections** — if SCHEMA's index.md description still says "Brainstorms" instead of "Discoveries"
@@ -90,13 +92,13 @@ The wiki already has content. The job is **additive** — never rewrite a conten
 
 ## Notes
 
-- The schema is the source of truth for conventions — `/wiki-ingest`, `/wiki-query`, `/wiki-lint`, and `/wiki-discover` all read `.wiki/SCHEMA.md` before acting. If the user later changes conventions, they edit the schema; the operation skills follow.
+- The schema is the source of truth for conventions — `/wiki-ingest`, `/wiki-query`, `/wiki-lint`, `/wiki-discover`, and `/wiki-architect` all read `.wiki/SCHEMA.md` before acting. If the user later changes conventions, they edit the schema; the operation skills follow.
 - Page templates (for `sources/`, `entities/`, `concepts/`, `queries/`, `discoveries/`) live next to the skills that write those page types. `wiki-init` deliberately does not own them — that keeps init decoupled from the set of operation skills.
 - Do not embed wiki content in the schema. The schema describes *how* pages are written, not what they contain.
 
 ## Templates
 
 System-file templates in this skill's directory:
-- [SCHEMA.template.md](SCHEMA.template.md) — full wiki conventions
-- [index.template.md](index.template.md) — catalog stub
-- [log.template.md](log.template.md) — changelog stub
+- [SCHEMA.template.md](assets/SCHEMA.template.md) — full wiki conventions
+- [index.template.md](assets/index.template.md) — catalog stub
+- [log.template.md](assets/log.template.md) — changelog stub
