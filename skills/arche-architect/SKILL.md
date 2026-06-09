@@ -9,6 +9,32 @@ Run a convergent technical-architecture session that uses the project Arche as a
 
 Where `/arche-discover` is divergent (business / customer / market / regulatory / domain ideation, 100+ ideas), `arche-architect` is decisive: every question has a recommended answer, walks the design tree branch by branch, and produces a small number of durable artifacts.
 
+## Interaction style
+
+Every question follows the same shape: **lens** (if one applies) → **recommended answer** → **1–3 alternative angles worth considering** → ask. The user redirects or accepts; they should rarely have to brainstorm from zero.
+
+If your runtime has a structured-question tool (e.g. Claude Code's `AskUserQuestion`), use it: put the recommendation first labeled `(Recommended)`, then the alternative angles as the other options. The runtime supplies "Other" for free-form input. Otherwise ask in prose — same shape, same recommendation-first ordering.
+
+## Research discipline
+
+Lenses are stable — bounded contexts, consistency models, failure modes don't age. **Concrete instantiations** do: vendor choice, library version, current CVE posture, emerging-domain patterns. Lenses come from training; instantiations need verification before they become a recommendation.
+
+Reach for web research (WebSearch / WebFetch or your runtime's equivalent) when the question hinges on:
+
+- **Vendor or tool selection** — current options, pricing, lifecycle status, recent acquisitions/deprecations.
+- **Version- or CVE-sensitive decisions** — current stable, known vulns, EOL dates.
+- **Fast-moving domains** — LLM orchestration, agentic systems, edge compute, WebGPU, post-quantum crypto, evolving regulatory regimes.
+- **User explicitly asks** — *"what's current"*, *"is there something newer"*, *"has X changed since"*.
+- **Low-confidence recommendations** — if your recommendation rests on something you're not sure is current, verify before recommending, not after.
+
+Rules:
+
+- **Arche first.** Before searching the web, check the Arche for prior ingested research on the topic — `/arche-ingest` may have already cached a recent comparison. Re-fetching when a fresh-enough source already lives in `./.arche/sources/` is wasted context.
+- **Research before the recommendation, not after.** The recommendation lands as a *current* call, not a stale one followed by an apology.
+- **Cap it.** ~1–3 targeted lookups per such question. Don't go indiscriminate — this skill is already context-hungry.
+- **Cite at the point of claim** in conversation, and carry the citation into the ADR's `sources:` (or the SAD's body) so future re-decisions know *what state of the world* this call was made against. *"Picked X because Y was unavailable in 2026-06"* is much more useful in two years than *"picked X."*
+- **Don't research the lenses.** Fowler/Evans/Vernon/etc. are durable principles. Researching *"latest DDD thinking"* is a smell — you're either second-guessing a stable lens or the question is actually about an instantiation in disguise.
+
 ## Preflight
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
@@ -42,8 +68,9 @@ Confirm with the user. Write nothing yet.
 One question at a time. Each question:
 
 1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. See [LENSES.md](references/LENSES.md) for the roster and trigger cues.
-2. Offers a **recommended answer** grounded in the Arche context, codebase reality, and the lens. The user redirects or accepts.
-3. **Explores the Arche or codebase instead of asking** when the answer is already written down. Don't ask a question the repo can answer.
+2. Offers a **recommended answer** grounded in the Arche context, codebase reality, and the lens.
+3. Includes **1–3 alternative angles** worth considering (different lenses, opposing trade-offs, common patterns you'd otherwise have to brainstorm). These become the other options in a structured-question UI, or are listed inline in prose.
+4. **Explores the Arche or codebase instead of asking** when the answer is already written down. Don't ask a question the repo can answer.
 
 Walk the design tree branch by branch. The standard branches (re-order to fit the problem):
 
@@ -56,12 +83,12 @@ Walk the design tree branch by branch. The standard branches (re-order to fit th
 - **Modular structure and testability** (Beck, Martin): seams that make this testable, dependency direction, what's leak-prone.
 - **Evolvability** (Ford): what changes do we expect, what fitness functions guard them, what's a one-way door vs reversible.
 
-When a real trade-off crystallizes — hard to reverse, surprising-without-context, genuine alternatives — flag it as an ADR candidate inline. Don't write it yet; capture the decision, context, alternatives, and consequences in conversation. The bar is the same as `grill-with-docs`'s ADR bar.
+When a real trade-off crystallizes — hard to reverse, surprising-without-context, genuine alternatives — flag it as an ADR candidate inline. Don't write it yet; capture the decision, context, alternatives, and consequences in conversation.
 
 ### Conversation discipline
 
 - One question at a time. Wait for the answer before continuing.
-- Always lead with the recommendation; ask the user to redirect, not to brainstorm from zero.
+- Always lead with the recommendation; the user redirects.
 - Name the lens when one applies. If two lenses disagree (Vernon and Helland on consistency, common case), surface both perspectives and ask the user to pick.
 - Inline-cite Arche pages as you go: *"this aligns with [ADR-N](../concepts/adr-foo.md) — but contradicts [Concept X](../concepts/x.md), which you'd be implicitly overturning."* Surface contradictions; do not silently overwrite.
 - If the user's answer contradicts the codebase, name it: *"the code in `src/billing/` already does X — which is right?"*
@@ -82,7 +109,7 @@ Only when the user signals the design tree is walked:
 ## Discipline
 
 - Arche is read-only during the grill. All writes batch into Phase 4.
-- One question at a time. Always recommend; the user redirects.
+- One question at a time. Always recommend with 1–3 alternative angles; the user redirects.
 - Cite at the point of claim, not just in frontmatter.
 - ADRs only when the bar is met (hard to reverse, surprising-without-context, real trade-off). Decisions that don't clear the bar live inside the SAD body, not as their own ADR.
 - An ADR can supersede an existing ADR. Mark the old one `superseded` with `superseded_by:` pointing at the new path — never delete.
