@@ -35,6 +35,7 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 - **[arche-query](skills/arche-query/SKILL.md)** — answer a question from the Arche with inline citations; also fires as a cold-start orientation step before planning/design in agentic dev workflows.
 - **[arche-discover](skills/arche-discover/SKILL.md)** — facilitated discovery / ideation session grounded in Arche context, for business/domain/architectural topics (not implementation design). Files the session and promotes top ideas back to concept/entity pages (including new ADRs).
 - **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files ARD/SAD/ADR concept pages.
+- **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
 - **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift.
 
 ## Why "Arche"?

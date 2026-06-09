@@ -47,6 +47,7 @@ This Arche **does not** capture:
 | concept    | `concepts/<slug>.md`     | An idea, pattern, or technique — explanation + examples                  |
 | query      | `queries/<slug>.md`      | A filed-back synthesis from a `/arche-query` worth keeping                |
 | discovery  | `discoveries/<slug>.md`  | Captured discovery / ideation session (`/arche-discover`): full idea inventory from a facilitated brainstorming session, themes, technique narrative; cites concept/entity pages and may be cited back by them |
+| story      | `stories/<slug>.md`      | A communication artifact (`/arche-tell`) that packages Arche content for a defined audience and ask: outline, audience block, framework, format, and inline-cited narrative; pairs with a rendered HTML file at `assets/stories/<slug>.html` |
 
 ### Architecture pages (ARD, SAD, ADR)
 
@@ -88,16 +89,21 @@ Every page (except files in `raw/`, which are not Arche pages) starts with YAML 
 
 ```yaml
 ---
-type: source | entity | concept | query | discovery | schema | index | log
+type: source | entity | concept | query | discovery | story | schema | index | log
 title: Human-readable title
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 tags: [tag1, tag2]
-sources: [sources/foo.md]            # entities/concepts/queries/discoveries cite their sources
+sources: [sources/foo.md]            # entities/concepts/queries/discoveries/stories cite their sources
 raw: raw/foo.pdf                     # source pages only — points to the raw file if one exists
 url: https://...                     # source pages only — canonical URL if web-based
 status: proposed | accepted | superseded   # ARD, SAD, ADR concept pages
 superseded_by: concepts/adr-new.md   # ARD, SAD, ADR pages — when superseded, points to the replacement
+audience: ...                        # story pages only — who the artifact is for
+action_ask: ...                      # story pages only — what the audience should do/decide/believe
+framework: pyramid | scqa | ...      # story pages only — narrative framework used
+format: deck | narrative             # story pages only — rendered HTML shape
+html: assets/stories/<slug>.html     # story pages only — path to the rendered artifact
 ---
 ```
 
@@ -107,6 +113,8 @@ For a source page, at least one of `raw:` or `url:` must be set. If both: `raw:`
 
 For `discovery` pages, `sources:` is bidirectional: it lists both (a) the Arche pages cited inline during the session AND (b) the entity/concept pages the discovery promoted ideas to. This keeps navigation symmetric with the forward references those pages add back.
 
+For `story` pages, `sources:` lists every Arche page cited inline in the story (entities, concepts including ARD/SAD/ADR, discoveries, queries, sources). The story is a downstream consumer of those pages — they do not need a back-link unless the story revealed an issue or revision worth tracking, in which case the affected page appends a short `## See also` entry citing the story (and bumps `updated:`).
+
 ## Cross-linking
 
 - Use relative markdown links: `[Title](../entities/foo.md)`. Do not use `[[wikilinks]]`.
@@ -115,7 +123,7 @@ For `discovery` pages, `sources:` is bidirectional: it lists both (a) the Arche 
 
 ## index.md
 
-The catalog. Read first when answering queries. Organized by section: Sources, Entities, Concepts, Queries, Discoveries. Each entry: bullet with title, one-line gloss, link, tags.
+The catalog. Read first when answering queries. Organized by section: Sources, Entities, Concepts, Queries, Discoveries, Stories. Each entry: bullet with title, one-line gloss, link, tags.
 
 Append new entries on ingest. Never remove without leaving a redirect note.
 
@@ -129,7 +137,7 @@ Append-only chronological record. Entry format:
 - notes: one-line summary
 ```
 
-Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `discovery`, `architect`.
+Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `discovery`, `architect`, `story`.
 
 **Contradiction marker.** When an ingest finds a source that contradicts an existing claim, the log entry's notes line starts with `contradiction —`. Example:
 
@@ -149,6 +157,7 @@ Ops: `ingest`, `query`, `lint`, `manual` (human edit), `init`, `migrate`, `disco
 - **lint**: scan for contradictions, stale dates, orphan pages (no inbound links), orphan raw files (raw file with no source page citing it), broken links, frontmatter drift, gaps in coverage. Report findings; do not auto-fix without confirmation.
 - **discovery**: facilitated discovery / ideation session (`/arche-discover`) for business, domain, customer, market, or regulatory topics. Reads Arche context (relevant entity/concept/query/prior-discovery pages) → runs interactive brainstorming with the user → files the session as `discoveries/<slug>.md` with the full idea inventory → promotes user-selected top ideas to concept or entity pages with citations back → updates index and log. Aims for 100+ ideas before organization. **Not** for technical-architecture work — that belongs to `/arche-architect`. **Not** for code-implementation brainstorming — that belongs to your dev methodology's own brainstorming skill.
 - **architect**: convergent technical-architecture session (`/arche-architect`) acting as a panel of senior-architect lenses (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin). Reads Arche context + codebase constraints → grills the user one branch at a time with recommended answers → files outputs as ARD (`concepts/ard-<system>.md`), SAD (`concepts/sad-<system>.md`), and one or more ADRs (`concepts/adr-<name>.md`) as the problem decomposes → updates index and log. Pairs with `/arche-discover` (which feeds it) and `/arche-query` (which surfaces "no relevant SAD/ADR" gaps that motivate a session).
+- **story**: communication-artifact session (`/arche-tell`). Reads Arche context for a topic → interviews the user on audience, action ask, and narrative framework (Pyramid / SCQA / Story Arc / Before-After-Bridge / PAS) → files outputs as `stories/<slug>.md` (source page, frontmatter includes audience, framework, format, html-path) AND a self-contained HTML artifact at `assets/stories/<slug>.html` (designed per story — deck or scrollable narrative; underlying tool palette covers reveal.js / impress.js / plain-CSS slides; diagrams via Mermaid / SVG / CSS / Chart.js / D3 / ASCII / embedded image as appropriate) → updates index and log. The `.md` is the source of truth; the HTML is derived. Stories age as their cited ARDs/SADs/ADRs change — when a citation goes `superseded`, the story is stale and should be re-rendered or retired.
 - **migrate**: `/arche-init` re-run against an existing Arche. Detects missing or stale system files (e.g., absent `_templates/`, outdated SCHEMA), proposes additive changes, applies what the user accepts, and logs the result. Never rewrites content pages.
 
 Empty subdirectories carry a `.gitkeep` file so git tracks the structure; these have no other meaning.

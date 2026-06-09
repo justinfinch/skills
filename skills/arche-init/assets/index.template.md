@@ -27,3 +27,7 @@ _None yet._
 ## Discoveries
 
 _None yet. Run `/arche-discover` to facilitate a discovery / ideation session._
+
+## Stories
+
+_None yet. Run `/arche-tell` to produce a presentation-ready HTML artifact from Arche content._

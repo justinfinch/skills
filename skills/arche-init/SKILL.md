@@ -26,12 +26,14 @@ The path is **dotted** (`./.arche/` not `./arche/`) by convention with other age
      SCHEMA.md
      index.md
      log.md
-     raw/         # drop zone — immutable source files (PDFs, transcripts, snapshots)
-     sources/     # LLM-written summaries that cite raw/ or external URLs
+     raw/             # drop zone — immutable source files (PDFs, transcripts, snapshots)
+     sources/         # LLM-written summaries that cite raw/ or external URLs
      entities/
      concepts/
      queries/
-     discoveries/ # captured discovery / ideation sessions (see /arche-discover)
+     discoveries/     # captured discovery / ideation sessions (see /arche-discover)
+     stories/         # communication artifacts (see /arche-tell) — the .md source pages
+     assets/stories/  # rendered HTML artifacts paired with stories/<slug>.md
    ```
    Add `.gitkeep` to each empty subdir so git tracks the structure.
 2. Copy these files from this skill's `assets/` directory, replacing every `{{DATE}}` token with today's date:
@@ -50,6 +52,13 @@ The Arche already has content. The job is **additive** — never rewrite a conte
    - **Frontmatter fields** — `status:` and `superseded_by:` apply to ARD, SAD, and ADR concept pages (older Arches may scope these to ADR only)
    - **`architect` log op** — if SCHEMA's ops list does not include `architect`, the `/arche-architect` skill cannot file sessions; patch.
    - **Architect operation summary** — if SCHEMA's operations summary lacks the `architect` entry alongside `discovery`, patch.
+   - **Story page type** — if SCHEMA's page-types table does not include a `story` row pointing at `stories/<slug>.md`, the `/arche-tell` skill cannot file artifacts; patch.
+   - **Story frontmatter fields** — if the frontmatter spec does not document `audience`, `action_ask`, `framework`, `format`, and `html` (story-page-only fields), patch.
+   - **`story` log op** — if SCHEMA's ops list does not include `story`, patch.
+   - **Story operation summary** — if SCHEMA's operations summary lacks the `story` entry alongside `architect`, patch.
+   - **Index section** — if `index.md` lacks a `## Stories` section, add it (with the "None yet. Run /arche-tell..." stub).
+   - **`stories/` subdir** — create with a `.gitkeep` if missing.
+   - **`assets/stories/` subdir** — create with a `.gitkeep` if missing (this is where rendered HTML artifacts live).
    - **Page-type rename** — if SCHEMA still has `brainstorm` instead of `discovery` in the `type:` enum, the page-types table, the frontmatter spec, the sources-bidirectional clause, or the operations summary
    - **Log-op rename** — if SCHEMA's ops list still has `brainstorm` instead of `discovery`
    - **Index sections** — if SCHEMA's index.md description still says "Brainstorms" instead of "Discoveries"
