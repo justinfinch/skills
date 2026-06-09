@@ -23,10 +23,10 @@ When the user accepts or develops an idea, capture it in-conversation in this sh
 **[Category #N]** — [Mnemonic title]
 *Concept:* [2–3 sentence description]
 *Novelty:* [What makes this different from the obvious solution]
-*Wiki link:* [If the idea touches an existing entity/concept, the relative link]
+*Arche link:* [If the idea touches an existing entity/concept, the relative link]
 ```
 
-The wiki link line is the integration point — it's what lets Phase 4 promote the right ideas onto the right pages.
+The Arche link line is the integration point — it's what lets Phase 4 promote the right ideas onto the right pages.
 
 ## Mode-selection prompts
 
@@ -36,9 +36,9 @@ In Phase 2, present one of these:
 > "Pick the technique. Open `TECHNIQUES.md` and tell me which one (or which category) calls to you. If you're not sure, I can recommend."
 
 **AI-Recommended**
-> "I'll pick 2–3 techniques based on your topic and the wiki context we loaded. For *<topic>* with context covering *<list>*, I recommend: **[Technique 1]** to [reason], then **[Technique 2]** to [reason]. Sound right, or want me to swap one?"
+> "I'll pick 2–3 techniques based on your topic and the Arche context we loaded. For *<topic>* with context covering *<list>*, I recommend: **[Technique 1]** to [reason], then **[Technique 2]** to [reason]. Sound right, or want me to swap one?"
 
-When substantial wiki context was loaded, pull at least one technique from the wiki-leveraged list at the top of TECHNIQUES.md.
+When substantial Arche context was loaded, pull at least one technique from the arche-leveraged list at the top of TECHNIQUES.md.
 
 **Random**
 > "Random it is — drawing from any category. Today's wild card: **[technique]**. Ready to dive in, or reroll?"
@@ -57,8 +57,8 @@ When substantial wiki context was loaded, pull at least one technique from the w
 **When the user gives a dense, detailed response:**
 > "There's a lot of rich material here. The key insight I'm hearing is: **[extract their strongest point]**. Building on that: [develop further]. Another angle: [suggest new direction based on their thinking]."
 
-**When the user mentions something the wiki already covers:**
-> "That ties into [Concept Foo](../concepts/foo.md) — the wiki has it defined as [one-line gloss]. What if we extended it by [direction], or contradicted it by [opposite]?"
+**When the user mentions something the Arche already covers:**
+> "That ties into [Concept Foo](../concepts/foo.md) — the Arche has it defined as [one-line gloss]. What if we extended it by [direction], or contradicted it by [opposite]?"
 
 ## Energy checkpoints (every 4–5 exchanges)
 
@@ -84,7 +84,7 @@ When substantial wiki context was loaded, pull at least one technique from the w
 - ❌ Rushing to document instead of staying generative
 - ❌ Question-answer ping-pong instead of true co-creation
 - ❌ Forgetting the anti-bias pivot (you'll notice if 10 consecutive ideas cluster in one domain)
-- ❌ Missing wiki tie-ins — every idea that touches a known concept should be linked inline
+- ❌ Missing Arche tie-ins — every idea that touches a known concept should be linked inline
 - ❌ Auto-promoting ideas to concept pages without the user picking them
 
 ## Prioritization framework (Phase 4)

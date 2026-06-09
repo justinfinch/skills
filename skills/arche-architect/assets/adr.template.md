@@ -39,7 +39,7 @@ What this enables, what it costs, what it locks in. Be honest about the downside
 
 `accepted` — the decision is live.
 
-When this ADR is reversed, do not delete this page. Set `status: superseded` in the frontmatter and `superseded_by: concepts/adr-<new>.md`. The trail of "we tried this, reversed it after …" is the institutional memory the wiki exists to preserve.
+When this ADR is reversed, do not delete this page. Set `status: superseded` in the frontmatter and `superseded_by: concepts/adr-<new>.md`. The trail of "we tried this, reversed it after …" is the institutional memory the Arche exists to preserve.
 
 ## See also
 

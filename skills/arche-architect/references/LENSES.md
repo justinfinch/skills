@@ -143,4 +143,4 @@ When two lenses disagree on the same question (common with Vernon and Helland on
 - Lenses are tools, not personalities. A single question may invoke two or three; some questions invoke none.
 - If you find yourself naming the same lens for every question, you're forcing the framing. Re-read this file and pick the one whose territory actually applies.
 - The user can name a lens too: *"what would Nygard say about this?"* — when they do, answer in that lens's territory and skip your own framing.
-- Lenses are a vocabulary the wiki user shares with you for shorthand. They are not a substitute for engaging with the user's actual problem.
+- Lenses are a vocabulary the Arche user shares with you for shorthand. They are not a substitute for engaging with the user's actual problem.

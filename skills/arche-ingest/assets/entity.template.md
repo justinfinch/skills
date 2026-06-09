@@ -9,7 +9,7 @@ sources: []
 
 # {{TITLE}}
 
-One- to two-sentence orientation: who/what this entity is and why it matters in this wiki.
+One- to two-sentence orientation: who/what this entity is and why it matters in this Arche.
 
 ## Facts
 

@@ -9,7 +9,7 @@ sources: []
 
 # {{TITLE}}
 
-One- to two-sentence definition of the concept in this wiki's house style.
+One- to two-sentence definition of the concept in this Arche's house style.
 
 ## Explanation
 

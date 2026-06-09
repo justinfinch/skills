@@ -2,20 +2,20 @@
 
 61 creativity techniques across 10 categories. Adapted from BMAD-METHOD's `brain-methods.csv` (MIT-licensed).
 
-## Wiki-leveraged techniques
+## Arche-leveraged techniques
 
-These techniques shine when prior wiki context has been loaded in Phase 1 — they explicitly draw on existing entity/concept/query pages. When AI-Recommended mode is in use and substantial context was loaded, prefer these:
+These techniques shine when prior Arche context has been loaded in Phase 1 — they explicitly draw on existing entity/concept/query pages. When AI-Recommended mode is in use and substantial context was loaded, prefer these:
 
 - **Analogical Thinking** — parallels with documented patterns
-- **Cross-Pollination** — adapt solutions from other domains the wiki covers
+- **Cross-Pollination** — adapt solutions from other domains the Arche covers
 - **First Principles Thinking** — strip established claims to fundamentals
 - **Reversal / Inversion** — flip an existing concept page
 - **Forced Relationships** — bridge two named concepts
-- **Concept Blending** — merge two existing wiki concepts into a new one
+- **Concept Blending** — merge two existing Arche concepts into a new one
 - **Trait Transfer** — borrow attributes from a documented success
 - **Failure Analysis** — mine recorded failures and strikethrough'd claims
-- **Constraint Mapping** — list constraints the wiki has captured for the topic
-- **Question Storming** — generate questions where the wiki has gaps
+- **Constraint Mapping** — list constraints the Arche has captured for the topic
+- **Question Storming** — generate questions where the Arche has gaps
 - **Reverse Brainstorming** — break existing solutions
 - **Five Whys** — drill into documented causes
 
