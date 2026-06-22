@@ -27,7 +27,7 @@ This Arche **does not** capture:
 
 **Rule of thumb:** if a question is answered by *"read the code,"* it doesn't belong here. If a question is answered by *"ask the senior architect or product owner what we decided and why,"* it does.
 
-**How it plugs into dev workflows:** the Arche is *consumed* by agentic dev methodologies (superpowers, mattpocock skills, your own) during planning, design, and brainstorming phases — it surfaces ADRs, domain constraints, customer context, and prior research that should inform the work. It is **not** written to by coding sessions. Coding artifacts stay with the code.
+**How it plugs into dev workflows:** the Arche is *consumed* by your agentic dev/implementation skills during planning, design, and brainstorming phases — it surfaces ADRs, domain constraints, customer context, and prior research that should inform the work. It is **not** written to by coding sessions. Coding artifacts stay with the code.
 
 ## Three layers
 

@@ -1,11 +1,19 @@
 ---
 name: arche-query
-description: Answer a question using the project's Arche at ./.arche/ — the Arche holds **institutional context** (business domain, SME knowledge, ARB-style architectural decisions, research) that the code doesn't carry. Reads index.md, walks to the relevant pages, synthesizes an answer with inline citations to Arche pages and their sources, and optionally files the synthesis back as queries/<slug>.md when the user wants it kept. Use when the user asks something that should be answered from their Arche, says "query the Arche" / "what does the Arche say about X", asks a question after having ingested sources, **OR** is about to plan / design / scope / brainstorm a feature in a repo with a ./.arche/ and could benefit from surfacing relevant ADRs, domain constraints, customer context, or prior research before the planning step runs. Fires as a cold-start orientation step alongside agentic dev methodologies (e.g. superpowers, mattpocock skills) — does not replace their planning/brainstorming/TDD skills, only feeds context into them.
+description: Answer a question using the project's Arche at ./.arche/ — institutional context (business, SME, ARB decisions, research) the code doesn't carry. Reads index.md, walks to the relevant pages, synthesizes a cited answer, optionally files it back as queries/<slug>.md. Use when the user asks something answerable from their Arche; says "query the Arche" / "what does the Arche say about X" / "take a look at our/the Arche" / "based on / given our Arche"; asks a question after ingesting sources; OR is about to plan, design, scope, brainstorm, set up a dev environment, tooling, or dependencies, or make any setup decision in a repo with a ./.arche/ that should be grounded in domain, architecture, or prior-research context — surfacing relevant ADRs, constraints, or prior research first. This includes being invoked from inside another skill (e.g. devbox-init, or any planning skill) whose instructions say to "look at the Arche": surface the pages via this skill rather than reading ad hoc.
 ---
 
 # arche-query
 
 Answer a question from the project Arche.
+
+## When this fires
+
+Beyond direct "query the Arche" questions, treat this skill as the **cold-start orientation step** for any work in a repo that has a `./.arche/`:
+
+- A user instruction to "take a look at our Arche", "based on the Arche", or "given our Arche" — even when paired with an action ("…and set up X") — is a trigger. Run this skill, then proceed to the action with the surfaced context.
+- A planning / design / scoping / brainstorming step, or a setup decision (dev environment, tooling, dependencies) — surface relevant ADRs, constraints, and prior research *before* that step runs.
+- **Invoked from inside another skill** (e.g. `devbox-init`, or any planning skill) whose own instructions say to "look at the Arche": satisfy that instruction by invoking this skill, not by reading Arche pages ad hoc. This skill does not replace the host skill's planning/brainstorming/TDD work — it only feeds grounded context into it, then control returns to the host.
 
 ## Preflight
 
