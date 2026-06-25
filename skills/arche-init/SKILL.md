@@ -7,7 +7,7 @@ description: Bootstrap an Arche at ./.arche/ in the current project using Karpat
 
 Bootstrap or migrate an Arche at `./.arche/`.
 
-This skill owns only the Arche's **system files** (`SCHEMA.md`, `index.md`, `log.md`) and the directory tree. Each operation skill (`/arche-ingest`, `/arche-query`, `/arche-specify`, `/arche-discover`, `/arche-architect`) ships its own page templates and reads them from its own skill directory at runtime — `arche-init` does not copy templates into the Arche and does not need updating when a new Arche operation skill is added.
+This skill owns only the Arche's **system files** (`SCHEMA.md`, `index.md`, `log.md`) and the directory tree. Each operation skill (`/arche-ingest`, `/arche-query`, `/arche-specify`, `/arche-plan`, `/arche-discover`, `/arche-architect`) ships its own page templates and reads them from its own skill directory at runtime — `arche-init` does not copy templates into the Arche and does not need updating when a new Arche operation skill is added.
 
 The path is **dotted** (`./.arche/` not `./arche/`) by convention with other agent-tooling directories (`.claude/`, `.cursor/`, `.vscode/`) and to avoid collision with project content folders. The Arche is curated content but has substantial machine-maintained scaffolding (index, log, frontmatter, lint) — the dot signals that.
 
@@ -31,6 +31,7 @@ The path is **dotted** (`./.arche/` not `./arche/`) by convention with other age
      entities/
      concepts/
      specs/           # feature specifications — WHAT/WHY (see /arche-specify)
+     plans/           # implementation plans — durable execution blueprints (see /arche-plan)
      queries/
      discoveries/     # captured discovery / ideation sessions (see /arche-discover)
      stories/         # communication artifacts (see /arche-tell) — the .md source pages
@@ -59,6 +60,12 @@ The Arche already has content. The job is **additive** — never rewrite a conte
    - **Specify operation summary** — if SCHEMA's operations summary lacks the `specify` entry alongside `discovery`, patch.
    - **Specs index section** — if `index.md` lacks a `## Specs` section, add it (with the "None yet. Run /arche-specify..." stub).
    - **`specs/` subdir** — create with a `.gitkeep` if missing.
+   - **Plan page type** — if SCHEMA's page-types table does not include a `plan` row pointing at `plans/<slug>.md`, OR the "Implementation plans (plan)" subsection (slug `plan-<feature>`, body-section table, decomposition/traceability/no-placeholder discipline, architect-gate clause, durable-blueprint-vs-transient-state rule) is missing under Page types, the `/arche-plan` skill cannot file plans; patch.
+   - **Plan frontmatter + framing** — if the `type:` enum omits `plan`, if the `spec:` (plan-only) frontmatter field is undocumented, if `status:` / `superseded_by:` / `context_pages:` are not documented as applying to plan pages, or if the "What belongs here" framing lacks the Implementation-plans bullet and the revised "does not capture" carve-out (durable plan-of-record belongs; transient execution state does not), patch.
+   - **`plan` log op** — if SCHEMA's ops list does not include `plan`, patch.
+   - **Plan operation summary** — if SCHEMA's operations summary lacks the `plan` entry alongside `specify`, patch.
+   - **Plans index section** — if `index.md` lacks a `## Plans` section, add it (with the "None yet. Run /arche-plan..." stub).
+   - **`plans/` subdir** — create with a `.gitkeep` if missing.
    - **Story page type** — if SCHEMA's page-types table does not include a `story` row pointing at `stories/<slug>.md`, the `/arche-tell` skill cannot file artifacts; patch.
    - **Story frontmatter fields** — if the frontmatter spec does not document `audience`, `action_ask`, `framework`, `format`, and `html` (story-page-only fields), patch.
    - **`story` log op** — if SCHEMA's ops list does not include `story`, patch.
@@ -108,8 +115,8 @@ The Arche already has content. The job is **additive** — never rewrite a conte
 
 ## Notes
 
-- The schema is the source of truth for conventions — `/arche-ingest`, `/arche-query`, `/arche-specify`, `/arche-lint`, `/arche-discover`, and `/arche-architect` all read `.arche/SCHEMA.md` before acting. If the user later changes conventions, they edit the schema; the operation skills follow.
-- Page templates (for `sources/`, `entities/`, `concepts/`, `specs/`, `queries/`, `discoveries/`) live next to the skills that write those page types. `arche-init` deliberately does not own them — that keeps init decoupled from the set of operation skills.
+- The schema is the source of truth for conventions — `/arche-ingest`, `/arche-query`, `/arche-specify`, `/arche-plan`, `/arche-lint`, `/arche-discover`, and `/arche-architect` all read `.arche/SCHEMA.md` before acting. If the user later changes conventions, they edit the schema; the operation skills follow.
+- Page templates (for `sources/`, `entities/`, `concepts/`, `specs/`, `plans/`, `queries/`, `discoveries/`) live next to the skills that write those page types. `arche-init` deliberately does not own them — that keeps init decoupled from the set of operation skills.
 - Do not embed Arche content in the schema. The schema describes *how* pages are written, not what they contain.
 
 ## Templates
