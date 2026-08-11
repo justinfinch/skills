@@ -1,12 +1,13 @@
 ---
-type: log
-created: {{DATE}}
+type: Log
+title: Arche history
+description: Chronological record of every operation performed on this Arche.
 ---
 
-# Arche Log
+# Arche history
 
-Append-only. Newest entries at the bottom. See [SCHEMA.md](SCHEMA.md) for entry format.
+Newest first. New entries are inserted directly below this line, never appended at the end. See [SCHEMA.md](SCHEMA.md) for the entry format.
 
-## [{{DATE}}] init | Arche bootstrapped
-- pages touched: SCHEMA.md, index.md, log.md
-- notes: created by /arche-init
+## {{DATE}}
+
+- **Init**: Arche bootstrapped by `arche-init/claude-opus-5`. Created `SCHEMA.md`, `index.md`, `log.md`, the content subdirectories, and their per-directory indexes.

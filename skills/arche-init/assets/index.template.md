@@ -1,33 +1,17 @@
 ---
-type: index
-created: {{DATE}}
-updated: {{DATE}}
+okf_version: "0.2"
 ---
 
-# Arche Index
+# Subdirectories
 
-Catalog of every page in this Arche. Read this first when answering queries. See [SCHEMA.md](SCHEMA.md) for conventions.
+* [sources](sources/index.md) - Summaries of ingested material, each citing its raw snapshot.
+* [entities](entities/index.md) - People, organizations, systems, and places.
+* [concepts](concepts/index.md) - Ideas, patterns, and architecture pages (ARD, SAD, ADR).
+* [queries](queries/index.md) - Filed-back answers worth keeping.
+* [discoveries](discoveries/index.md) - Captured discovery and ideation sessions.
+* [stories](stories/index.md) - Communication artifacts and their rendered HTML.
 
-## Sources
+# Bundle
 
-_None yet. Run `/arche-ingest <url-or-path>` to add one._
-
-## Entities
-
-_None yet._
-
-## Concepts
-
-_None yet._
-
-## Queries
-
-_None yet._
-
-## Discoveries
-
-_None yet. Run `/arche-discover` to facilitate a discovery / ideation session._
-
-## Stories
-
-_None yet. Run `/arche-tell` to produce a presentation-ready HTML artifact from Arche content._
+* [SCHEMA](SCHEMA.md) - Conventions and operations for maintaining this Arche.
+* [log](log.md) - Chronological history of updates.
