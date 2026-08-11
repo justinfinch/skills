@@ -20,7 +20,7 @@ Read [references/OKF-CONFORMANCE.md](references/OKF-CONFORMANCE.md) before check
 1. Read the root `index.md` for `okf_version`, and `SCHEMA.md` for its era. Compare both against 0.2. If the bundle is **ahead** of these skills, stop and report — do not repair.
 2. Walk every `.md` file and collect findings against the matrix.
 3. Group findings by class and present them as a plan, separating what you can repair mechanically from what needs the user (F4 descriptions, F5 missing `superseded_by`, T3 directory renames).
-4. Apply only what the user accepts. Insert a `- **Lint**: …` entry at the top of `log.md` recording what changed.
+4. Apply only what the user accepts. Insert a `- **Lint**: …` entry immediately above the topmost `## YYYY-MM-DD` heading in `log.md`, creating today's heading if it is absent, recording what changed.
 
 ## Preflight
 
@@ -31,15 +31,15 @@ Read [references/OKF-CONFORMANCE.md](references/OKF-CONFORMANCE.md) before check
 
 Run these against every page under `./.arche/`:
 
-1. **Contradictions.** Grep `log.md` for entries whose `notes:` line starts with `contradiction —` (per SCHEMA's contradiction marker convention). For each, locate the strikethrough(s) on the pages listed in `pages touched:` — a strikethrough is **resolved** if the same paragraph contains a follow-up claim with an inline `[source link](...)` citation; otherwise flag it. Also scan all pages for stray `~~strikethrough~~` claims that have no corresponding `contradiction —` log entry — flag as untracked.
-2. **Stale dates.** Any page whose `updated:` is older than 90 days AND that links to a source page updated more recently → flag as possibly stale.
+1. **Contradictions.** Grep `log.md` for entry bullets whose prose contains `contradiction —` (per SCHEMA's contradiction marker convention). For each, locate the strikethrough(s) on the pages the bullet names — a strikethrough is **resolved** if the same paragraph contains a follow-up claim with an inline `[source link](...)` citation; otherwise flag it. Also scan all pages for stray `~~strikethrough~~` claims that have no corresponding `contradiction —` log entry — flag as untracked.
+2. **Stale dates.** Any page whose `generated.at` is older than 90 days AND that links to a source page with a more recent `generated.at` → flag as possibly stale.
 3. **Orphan pages.** Any entity/concept/query/discovery page with zero inbound links from other Arche pages (excluding `index.md`) → flag. New pages get a grace pass — only flag if `created:` is older than 14 days. Discoveries are expected to be linked from at least the concept/entity pages that promoted their top ideas; a discovery with no inbound links after the grace period likely means no promotions stuck.
 4. **Orphan raw files.** Any file in `./.arche/raw/` not referenced by any `sources/*.md` page's `resource:` or `sources[].resource` → flag as unprocessed. This is the "inbox not drained" signal; suggest `/arche-ingest` (batch mode) to handle them.
 5. **Broken links.** Resolve every relative markdown link inside `./.arche/`. Flag any whose target file doesn't exist.
 6. **OKF conformance.** Walk every page against the matrix in [references/OKF-CONFORMANCE.md](references/OKF-CONFORMANCE.md) — hard rules (H1–H4), type taxonomy (T1–T3), and field families (F1–F8). Group and report findings by class, separating what's mechanically repairable from what needs the user (F4 descriptions, F5 missing `superseded_by`, T3 directory renames).
 7. **Structure.** Also from the matrix (S1–S4): a content subdirectory with no `index.md`; an `index.md` entry whose gloss doesn't match the target's `description`; a bundle-absolute link (`](/`) in any page; the root `index.md` missing `okf_version`.
 8. **Version skew.** Compare `okf_version` in the root `index.md`, the era `SCHEMA.md` documents, and what these skills implement (currently 0.2). Any mismatch is a finding — report the direction. If the bundle is **ahead** of the skills, stop and report only; do not offer repair.
-9. **Index/log integrity.** Every page in `./.arche/{sources,entities,concepts,queries,discoveries,stories}/` should appear in `index.md`. Every `ingest`/`query`/`discovery` entry in `log.md` should reference pages that exist. Flag mismatches both directions.
+9. **Index/log integrity.** Every page in `./.arche/{sources,entities,concepts,queries,discoveries,stories}/` should appear in `index.md`. Every `**Init**` / `**Ingest**` / `**Query**` / `**Lint**` / `**Discovery**` / `**Architect**` / `**Story**` / `**Manual**` entry in `log.md` should reference pages that exist. Flag mismatches both directions.
 10. **Coverage gaps.** Concepts that are referenced from other pages but have no page of their own → flag as candidates to create. Entities mentioned in ≥3 sources but with thin entity pages (<5 lines of body) → flag for expansion.
 11. **Discovery promotion drift.** For every `discoveries/*.md` page older than 14 days, check that at least one concept or entity page lists it in their `sources:` frontmatter (i.e., a top idea was actually filed back). Discoveries with zero promoted pages → flag with note "promotion never filed — was that intentional, or did the session end before Phase 4 wrote back?". Skip this check if the user explicitly chose "self-contained discovery" in the session.
 12. **Agent-context registration.** Grep the repo's agent context files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules` / `.cursor/rules/*.md`, `.windsurfrules`, `.github/copilot-instructions.md`) for the marker `<!-- arche-context-source -->`. Two failure modes:
@@ -96,7 +96,7 @@ Trust: N human-reviewed, M unverified
 
 Ask: "Want me to fix any of these now?" Wait for the user to pick. Then handle one category at a time, confirming destructive edits (strikethrough resolutions, page deletions, slug renames).
 
-Do not insert a `lint` entry into `log.md` for the audit itself, and do not insert one for a sign-off that nobody accepted — only log when fixes are actually applied or pages are actually signed off (see [Sign-off](#sign-off)). When something did change, insert a `- **Lint**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history`, per SCHEMA's newest-first convention.
+Do not insert a `lint` entry into `log.md` for the audit itself, and do not insert one for a sign-off that nobody accepted — only log when fixes are actually applied or pages are actually signed off (see [Sign-off](#sign-off)). When something did change, insert a `- **Lint**: …` bullet immediately above the topmost `## YYYY-MM-DD` heading in `log.md`, creating today's heading if it is absent, per SCHEMA's newest-first convention.
 
 ## Sign-off
 

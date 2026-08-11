@@ -129,4 +129,4 @@ When everything is filed, give the user a tight closing summary:
 >
 > **Breakthrough moment:** [one-line callout of the most surprising idea or connection]
 >
-> Filed as `discoveries/<slug>.md`. Log entry appended.
+> Filed as `discoveries/<slug>.md`. Log entry inserted.

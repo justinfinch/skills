@@ -52,11 +52,11 @@ This Arche **does not** capture code documentation, feature specs, implementatio
 
 Three first-class types, forming a chain: an **ARD** frames what any architecture must satisfy, a **SAD** describes the chosen solution, and **ADRs** capture each load-bearing decision.
 
-| `type` | Slug convention | Body sections |
-| :--- | :--- | :--- |
-| `Architecture Requirements Document` | `ard-<system>` | Stakeholders / Functional requirements / Quality attributes / Constraints / Assumptions / Risks |
-| `Solution Architecture Document` | `sad-<system>` | Context / Drivers / Logical view / Process view / Data view / Deployment view / Cross-cutting / Fitness functions / Decision summary / Risks and trade-offs |
-| `Architecture Decision Record` | `adr-<name>` | Decision / Context / Alternatives considered / Consequences |
+| `type` | Path | Slug convention | Body sections |
+| :--- | :--- | :--- | :--- |
+| `Architecture Requirements Document` | `concepts/ard-<system>.md` | `ard-<system>` | Stakeholders / Functional requirements / Quality attributes / Constraints / Assumptions / Risks |
+| `Solution Architecture Document` | `concepts/sad-<system>.md` | `sad-<system>` | Context / Drivers / Logical view / Process view / Data view / Deployment view / Cross-cutting / Fitness functions / Decision summary / Risks and trade-offs |
+| `Architecture Decision Record` | `concepts/adr-<name>.md` | `adr-<name>` | Decision / Context / Alternatives considered / Consequences |
 
 The slug is a **naming habit, not a lookup mechanism** — find architecture pages by filtering `type`, never by parsing filenames.
 
@@ -152,7 +152,7 @@ Carries `type: Log`. Body is `## YYYY-MM-DD` date headings, **newest first**, wi
 
 Verbs: `**Init**`, `**Ingest**`, `**Query**`, `**Lint**`, `**Discovery**`, `**Architect**`, `**Story**`, `**Manual**`.
 
-New entries are **inserted after the frontmatter**, not appended at the end.
+New entries are **inserted immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent** — never appended at the end.
 
 **Contradiction marker.** When an ingest finds a source contradicting an existing claim, the entry prose contains `contradiction —`. `/arche-lint` scans for it. A `~~strikethrough~~` claim counts as resolved when the same paragraph carries a follow-up claim with a citation.
 
@@ -176,7 +176,7 @@ Empty subdirectories carry `.gitkeep`; this has no other meaning.
 
 ## Editing rules for the LLM
 
-- Update `generated.at` on every page whose content you meaningfully change.
+- Rewrite the whole `generated` mapping — both `by` and `at` — on every page whose content you meaningfully change. `generated.by` means *who wrote the content that is there now*, so bumping only `at` leaves the page asserting the wrong author the moment a different skill or a human edits it.
 - **Never write `verified`.**
 - Never delete a claim without a `~~strikethrough~~` and a log entry citing the contradicting source.
 - Prefer adding to existing pages over creating near-duplicates.

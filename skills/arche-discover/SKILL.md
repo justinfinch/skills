@@ -9,14 +9,14 @@ Run a structured discovery / ideation session that uses the project Arche as age
 
 **Out of scope — delegate explicitly:**
 
-- Technical architecture (designing a system, choosing patterns, deciding integrations, writing ADRs) → use `/arche-architect`, which is convergent and produces ARD/SAD/ADR concept pages with senior-architect lenses (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin). If a discovery session here surfaces a strong architectural direction, suggest `/arche-architect` to converge it rather than promoting to an ADR directly.
+- Technical architecture (designing a system, choosing patterns, deciding integrations, writing ADRs) → use `/arche-architect`, which is convergent and produces Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages with senior-architect lenses (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin). If a discovery session here surfaces a strong architectural direction, suggest `/arche-architect` to converge it rather than promoting to an ADR directly.
 - Code-implementation brainstorming (how to refactor X, how to test Y) → use your dev methodology's own brainstorming skill.
 
 ## Preflight
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
 2. Read `./.arche/SCHEMA.md` end to end.
-3. Check SCHEMA defines a `discovery` page type and a `discovery` log op. If missing, tell the user to run `/arche-lint`, which owns conformance detection and repair, and stop.
+3. Check SCHEMA defines the `Discovery` page type and has `discovery` in the log ops list. If either is missing, tell the user to run `/arche-lint`, which owns conformance detection and repair, and stop.
 4. Ensure `./.arche/discoveries/` exists. If not, create it with a `.gitkeep`.
 5. Read `./.arche/index.md`.
 
@@ -55,11 +55,11 @@ Only when the user signals readiness to wrap up:
 2. **Prioritize** with the user across impact / feasibility / innovation / alignment. See FACILITATION.md.
 3. **Write `.arche/discoveries/<slug>.md`** using this skill's [discovery.template.md](assets/discovery.template.md) as the layout. Frontmatter: `type: Discovery`, today's date in `created:`, `status: stable`, and `sources:`. Record the pages that grounded the session in `sources` (with stable `id`s) and narrate them in the body's *Context loaded* section — there is no separate `context_pages` key; `sources` is bidirectional for discovery pages, listing both what grounded the session and what the session promoted to (the promoted half fills in after Phase 4 step 4). Write `description:` — one sentence. Write `generated: { by: arche-discover/<model-id>, at: <ISO 8601 UTC> }`. Never write `verified` — that is human sign-off only, via `/arche-lint`. Body: full idea inventory, themes, techniques used, prioritized top ideas, and open questions.
 4. **Promote top ideas.** For each user-selected top idea:
-   - Extends an existing concept/entity page → append with inline citation to this discovery; bump `generated.at`; add the discovery to that page's `sources:` list; **and** add the page to this discovery's `sources:` list (forward and back).
-   - New concept warranted → create `concepts/<slug>.md` from `/arche-ingest`'s [concept.template.md](../arche-ingest/assets/concept.template.md) with `sources: [{ id: <slug>, resource: discoveries/<slug>.md }]`; add the new page to this discovery's `sources:` list.
+   - Extends an existing concept/entity page → append with inline citation to this discovery; rewrite the whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now; add the discovery to that page's `sources:` list; **and** add the page to this discovery's `sources:` list (forward and back).
+   - New concept warranted → create `concepts/<slug>.md` from `/arche-ingest`'s [concept.template.md](../arche-ingest/assets/concept.template.md) with `sources: [{ id: <slug>, resource: ../discoveries/<slug>.md }]` — the `resource` is relative to the page containing it, and the page lives in `concepts/`; add the new page to this discovery's `sources:` list.
    - If unsure whether to extend or create, ask. Slug churn is expensive.
 5. **Update `index.md`.** Update both `discoveries/index.md` and the root `index.md`. Add the discovery under its section (create if missing) with a one-line gloss — the page's `description`. Add any new concept/entity pages under their sections in both the relevant directory index and the root index.
-6. **Insert into `log.md`** with op `discovery`. Insert a `- **Discovery**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history`. List every page touched. Notes line: topic + idea count + count of promoted ideas.
+6. **Insert into `log.md`** with op `discovery`. Insert a `- **Discovery**: …` bullet immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent. The bullet's prose names the topic, the idea count, the count of promoted ideas, and every page touched.
 
 ## Discipline
 

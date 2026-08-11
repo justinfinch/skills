@@ -21,7 +21,7 @@ If your runtime has a structured-question tool (e.g. Claude Code's `AskUserQuest
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
 2. Read `./.arche/SCHEMA.md` end to end.
-3. Check SCHEMA defines the `story` page type AND has `story` in the log ops list. If either is missing, tell the user to run `/arche-lint`, which owns conformance detection and repair, and stop.
+3. Check SCHEMA defines the `Story` page type AND has `story` in the log ops list. If either is missing, tell the user to run `/arche-lint`, which owns conformance detection and repair, and stop.
 4. Ensure `./.arche/stories/` exists; if not, create it with a `.gitkeep`. Ensure `./.arche/assets/stories/` exists; if not, create it with a `.gitkeep`.
 5. Read `./.arche/index.md`.
 6. Read this skill's [FRAMEWORKS.md](references/FRAMEWORKS.md), [AUDIENCE.md](references/AUDIENCE.md), [DESIGN.md](references/DESIGN.md), and the Arche page template [story.template.md](assets/story.template.md).
@@ -30,7 +30,7 @@ If your runtime has a structured-question tool (e.g. Claude Code's `AskUserQuest
 
 1. In one short message, ask the user for the **topic** (what story they want to tell) and any **time pressure** (when the artifact is needed, how long the audience has).
 2. **Load Arche context.**
-   - Scan `index.md` for entities, concepts, queries, and discoveries plausibly relevant to the topic. For architecture topics, look hard for `ard-*`, `sad-*`, `adr-*` concept pages — they are the spine of the story. Aim for high recall.
+   - Scan `index.md` for entities, concepts, queries, and discoveries plausibly relevant to the topic. For architecture topics, look hard for architecture pages — find them by filtering frontmatter `type` for `Architecture Requirements Document`, `Solution Architecture Document`, or `Architecture Decision Record`, never by parsing filenames; the `ard-`/`sad-`/`adr-` prefixes are a naming habit only. They are the spine of the story. Aim for high recall.
    - Read each candidate page fully. Note their `sources:` lists — for non-trivial claims you may need to walk into source summaries too.
    - Check `./.arche/stories/` for prior stories on the same topic. If any exist, read them — reuse the slug stem with a suffix (e.g. `auth-rewrite-for-arb-2.md`), and let the new story build on (not duplicate) the prior one.
 3. Present the context bundle in one message: *"Here's what the Arche has for `<topic>`: N ARDs/SADs/ADRs, M concept/entity pages, K discoveries, J prior stories."* List each with a one-line gloss and link. Ask: *"Use this as the spine, ignore it, or focus on a subset?"*
@@ -100,9 +100,9 @@ Only when the outline is signed off:
    - The hero/opening and the closing/ask follow the patterns in DESIGN.md — audience tag, single-sentence subtitle, framed accent-colored ask.
    - Self-contained discipline (DESIGN.md): one file, no build step, works when double-clicked.
 4. **Sources frontmatter** on the story page lists every Arche page cited (entities, concepts including ARD/SAD/ADRs, discoveries, queries, sources), each with a stable `id` and a `resource`. The body inline-cites at the point of claim.
-5. **Update existing pages.** If the session leaned heavily on a particular SAD or entity page, append a short `## See also` entry on those pages with a citation back to this story. Bump their `generated.at`. Do not rewrite.
-6. **Update `index.md`.** Update both `stories/index.md` and the root `index.md`. Add the story under its section (create if missing) with a one-line gloss — the page's `description` — link, and audience tag.
-7. **Insert into `log.md`** with op `story`. Insert a `- **Story**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history`. List every page touched (story page + HTML file + any back-link updates + index.md). Notes line: `<topic> → <format> for <audience>`.
+5. **Update existing pages.** If the session leaned heavily on a particular SAD or entity page, append a short `## See also` entry on those pages with a citation back to this story. Rewrite their whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now. Do not rewrite the body.
+6. **Update `index.md`.** Update both `stories/index.md` and the root `index.md`. Add the story under its section (create the section if missing) as `* [Title](path) - description.`, where the gloss is exactly the page's `description` and nothing else — `/arche-lint`'s S2 check overwrites any gloss that does not match, so extra tags would be stripped on the next lint and re-added on the next run.
+7. **Insert into `log.md`** with op `story`. Insert a `- **Story**: …` bullet immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent. The bullet's prose reads `<topic> → <format> for <audience>` and names every page touched (story page + HTML file + any back-link updates + index.md).
 
 ## Discipline
 

@@ -86,6 +86,15 @@ class IndexTests(unittest.TestCase):
         root = write_bundle({"concepts/index.md": "---\ntype: Index\n---\n"})
         self.assertEqual(rules(check_bundle(root)), ["§8"])
 
+    def test_root_index_frontmatter_that_is_not_a_mapping_is_a_finding(self):
+        # A YAML list, a bare scalar, and an empty block all parse to a non-mapping.
+        # Without an isinstance guard these pass silently, because the key set falls
+        # back to empty and the "only okf_version" subtraction then finds nothing.
+        for frontmatter in ('- okf_version: "0.2"\n', "just a string\n", ""):
+            with self.subTest(frontmatter=frontmatter):
+                root = write_bundle({"index.md": f"---\n{frontmatter}---\n\n# Sections\n"})
+                self.assertEqual(rules(check_bundle(root)), ["§8"])
+
     def test_bare_index_conforms(self):
         root = write_bundle({"index.md": "# Sections\n", "concepts/index.md": "# Concept\n"})
         self.assertEqual(check_bundle(root), [])

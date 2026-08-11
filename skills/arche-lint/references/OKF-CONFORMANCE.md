@@ -9,10 +9,10 @@ Repairs touch **frontmatter and reserved-file structure only**. Never rewrite bo
 
 | # | Detect | Repair |
 | :--- | :--- | :--- |
-| H1 | A non-reserved `.md` file with no parseable frontmatter block | If under `raw/`, rename to `.txt` (raw files are immutable, so they can never carry frontmatter). Otherwise add a frontmatter block, inferring `type` from the directory. |
-| H2 | Frontmatter with no `type`, or an empty one | Set `type` from the directory: `sources/`→`Source`, `entities/`→`Entity`, `concepts/`→`Concept`, `queries/`→`Query`, `discoveries/`→`Discovery`, `stories/`→`Story`. |
+| H1 | A non-reserved `.md` file with no parseable frontmatter block | If under `raw/`, rename to `.txt` (raw files are immutable, so they can never carry frontmatter) **and** rewrite every `resource:` and `sources[].resource` in the bundle that pointed at the old name. Renaming without repointing manufactures a broken link plus an orphan-raw finding and invites a duplicate re-ingest; the pointers are frontmatter, so rewriting them stays inside the never-rewrite-body-prose boundary. Otherwise add a frontmatter block, inferring `type` per H2. |
+| H2 | Frontmatter with no `type`, or an empty one | Set `type` from the directory: `sources/`→`Source`, `entities/`→`Entity`, `concepts/`→`Concept`, `queries/`→`Query`, `discoveries/`→`Discovery`, `stories/`→`Story`. Bundle-root files are not covered by the directory rule — use the filename: `SCHEMA.md`→`Schema`, `log.md`→`Log`. (`index.md` carries no `type` at all — see H3.) |
 | H3 | A non-root `index.md` carrying frontmatter, or a root `index.md` carrying keys other than `okf_version` | Strip the frontmatter. On the root index, replace it with `okf_version: "0.2"`. |
-| H4 | `log.md` with non-ISO `## ` date headings, or headings not ordered newest first | Rewrite headings to `## YYYY-MM-DD` and reverse the entry order. Preserve every entry's prose verbatim. |
+| H4 | `log.md` with non-ISO `## ` date headings, or headings not ordered newest first | Rewrite headings to `## YYYY-MM-DD` and sort the date groups descending, moving each group's bullets with it. Preserve every entry's prose verbatim. |
 
 ## Type taxonomy
 
@@ -26,9 +26,9 @@ Repairs touch **frontmatter and reserved-file structure only**. Never rewrite bo
 
 | # | Detect | Repair |
 | :--- | :--- | :--- |
-| F1 | `updated:` present, `generated:` absent | `generated: { by: <actor>, at: <updated as ISO 8601, midnight UTC> }`. Use `arche-lint/<model-id>` as the actor only if no better one is recoverable; prefer a `human:` actor when the page has no agent provenance. Remove `updated:`. |
+| F1 | `updated:` present, `generated:` absent | `generated: { by: <actor>, at: <updated as ISO 8601, midnight UTC> }`. Resolve `<actor>` in this order: (1) a `human:` actor built from `git config user.email`, since a page with no agent provenance was hand-authored; (2) failing that, `arche-lint/<model-id>`. Remove `updated:`. |
 | F2 | `created:` present | Keep. It is a permitted extension with no OKF equivalent. |
-| F3 | `sources` is a list of strings | Convert each to `{ id, resource, title }`. The `id` is the target's slug stem; `resource` is the bundle-relative path from this page; `title` is the target's `title` if readable. |
+| F3 | `sources` is a list of strings | Convert each to `{ id, resource, title }`. The `id` is the target's slug stem; `resource` is the path to the target relative to the page containing it (e.g. `../raw/foo.txt` from a page in `sources/`), never a path from the bundle root and never leading with `/`; `title` is the target's `title` if readable. |
 | F4 | `description` absent | Report. Do **not** invent one — a description is a summary of body prose, and generating it is authoring, not repair. Offer to draft one interactively. |
 | F5 | `status: proposed \| accepted \| superseded` | Map to `draft \| stable \| deprecated`. When mapping `superseded`, require `superseded_by:`; if absent, report it as needing manual attention. |
 | F6 | `raw:` or `url:` on a Source page | `url:` becomes `resource:`. `raw:` becomes a `sources` entry with `id: snapshot`. When only `raw:` exists, it becomes `resource:` instead. |

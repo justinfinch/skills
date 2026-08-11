@@ -7,6 +7,10 @@ tags: []
 created: {{DATE}}
 generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
 sources:
+  # The `snapshot` entry belongs here ONLY for a web source that also has a local
+  # snapshot — i.e. when `resource:` above is the canonical URL. For a file-only
+  # source, `resource:` is already the `../raw/…` path, so drop this entry (and the
+  # `[^snapshot]` footnote below) rather than duplicating it.
   - id: snapshot
     resource: ../raw/{{SLUG}}.{{EXT}}
     title: Local snapshot

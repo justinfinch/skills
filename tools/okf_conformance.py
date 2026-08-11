@@ -75,8 +75,9 @@ def check_index(rel: Path, text: str, is_root: bool) -> list[Finding]:
     data, err = _load(fm)
     if err is not None:
         return [Finding(rel, "§8", f"unparseable frontmatter: {err}")]
-    keys = set(data) if isinstance(data, dict) else set()
-    extra = keys - {"okf_version"}
+    if not isinstance(data, dict):
+        return [Finding(rel, "§8", "frontmatter is not a mapping")]
+    extra = set(data) - {"okf_version"}
     if extra:
         return [
             Finding(rel, "§8", f"root index.md may only carry okf_version; found {sorted(extra)}")
