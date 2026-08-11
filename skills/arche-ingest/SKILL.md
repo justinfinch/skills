@@ -1,6 +1,6 @@
 ---
 name: arche-ingest
-description: Ingest a source into the project's Arche at ./.arche/. The Arche captures **institutional context** (business domain, SME knowledge, ARB-style architectural decisions, research) — not code documentation. Accepts a URL, a file path, pasted text, OR — with no argument — processes every file in ./.arche/raw/ not yet referenced by a source page (batch mode). Snapshots the raw input to ./.arche/raw/, writes a source-summary page, updates index.md, revises affected entity and concept pages, and appends a log entry — following the conventions in ./.arche/SCHEMA.md. Use when the user provides a source to add to an Arche, says "ingest", "add to Arche", "remember this article", "process the raw folder", or shares an article/paper/PDF/transcript/SME-interview/ADR they want filed.
+description: Ingest a source into the project's Arche at ./.arche/. The Arche captures **institutional context** (business domain, SME knowledge, ARB-style architectural decisions, research) — not code documentation. Accepts a URL, a file path, pasted text, OR — with no argument — processes every file in ./.arche/raw/ not yet referenced by a source page (batch mode). Snapshots the raw input to ./.arche/raw/, writes a source-summary page, updates index.md, revises affected entity and concept pages, and inserts a log entry — following the conventions in ./.arche/SCHEMA.md. Use when the user provides a source to add to an Arche, says "ingest", "add to Arche", "remember this article", "process the raw folder", or shares an article/paper/PDF/transcript/SME-interview/ADR they want filed.
 ---
 
 # arche-ingest
@@ -34,11 +34,11 @@ Add one or more sources to the project Arche.
 4. **Update or create entity/concept pages.** For each entity/concept the source touches:
    - If the page exists: add new claims with inline citations to the source page, update the `sources:` frontmatter list.
    - If the page is new: create it using this skill's [entity.template.md](assets/entity.template.md) or [concept.template.md](assets/concept.template.md) as the layout, with full frontmatter and at least the claims this source supports. Write `description:` here too — same reason as step 3.
-   - `sources` is a list of mappings, each with a stable `id` and a required `resource`. Derive the `id` from the target's slug stem. Attribute individual claims to external sources with markdown footnotes whose label is the `sources[].id`.
+   - `sources` is a list of mappings, each with a stable `id` and a required `resource`. Derive the `id` from the target's slug stem — ids are the join key for footnote citations and must survive list reordering, since a positional reference misattributes silently the moment an agent reorders the list. Attribute individual claims to external sources with markdown footnotes whose label is the `sources[].id`.
    - Write `generated: { by: arche-ingest/<model-id>, at: <ISO 8601 UTC> }` on every page you create or meaningfully change. Never write `verified` — that is human sign-off only, via `/arche-lint`.
    - Do not duplicate facts already present — extend, don't restate.
 5. **Update `index.md`.** Update both the directory's own `index.md` and the root `index.md`. Entries are `* [Title](path) - description.` using the target page's `description` field. Add the new source under Sources, and any new entities/concepts under their sections.
-6. **Append to `log.md`.** Insert the log entry directly below the `# Arche history` heading, not at the end of the file — `log.md` is newest-first. Format: a `## YYYY-MM-DD` heading (reuse today's if present) and a `- **Ingest**: …` bullet listing every page touched (including the new `raw/` file) and one sentence on what the source contributed.
+6. **Insert into `log.md`.** Insert the log entry directly below the `# Arche history` heading, not at the end of the file — `log.md` is newest-first. Format: a `## YYYY-MM-DD` heading (reuse today's if present) and a `- **Ingest**: …` bullet listing every page touched (including the new `raw/` file) and one sentence on what the source contributed.
 
 ## Discipline
 
