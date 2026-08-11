@@ -40,7 +40,7 @@ Trust tiers only carry information when tiers differ. In an Arche where nobody s
 
 So this is **gated on adoption**:
 
-1. Before answering, check whether **any** page in the Arche carries a `verified` key.
+1. Before answering, check each content page's **parsed frontmatter mapping** — `sources/`, `entities/`, `concepts/`, `queries/`, `discoveries/`, `stories/` — for a top-level `verified` key. This is a frontmatter check, not a text search: body prose and fenced examples don't count. **Do not text-scan `SCHEMA.md`** — its body documents the `verified` field, including a fenced YAML example, on every bootstrapped Arche, so a grep-style scan would false-positive on a fresh Arche where nobody has signed off anything.
 2. **If none do** — say nothing about trust. Do not mention tiers, do not caveat the answer, do not suggest sign-off. The feature is invisible until it is used.
 3. **If at least one does** — note the tier of the pages the answer rests on, briefly, after the answer:
 
