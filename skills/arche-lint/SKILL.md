@@ -51,7 +51,7 @@ Run these against every page under `./.arche/`:
 
 A trust tier only carries information when tiers differ. In an Arche where nobody signs off, every page is `unverified`, and a report listing all of them on every run is wallpaper — it trains the reader to scroll past this skill's other findings. So trust reporting is **gated on adoption**, the same rule `/arche-query` uses for its own trust surfacing:
 
-1. Scan every page under `./.arche/` for a `verified` key.
+1. Scan each content page's **parsed frontmatter mapping** — `sources/`, `entities/`, `concepts/`, `queries/`, `discoveries/` — for a top-level `verified` key. This is a frontmatter check, not a text search: body prose, fenced examples, and mentions of the word `verified` do not count. **Do not text-scan `SCHEMA.md`** — its body documents the `verified` field (including a fenced YAML example) on every bootstrapped Arche, so a grep-style scan would false-positive on a fresh Arche where nobody has signed off anything. Exclude the reserved files entirely: `SCHEMA.md`, `index.md` (no frontmatter at all), and `log.md` (`type: Log`) — none can legitimately carry `verified`.
 2. **Zero found** → emit **no `### Trust` section at all**. Do not list unverified pages, do not mention tiers, do not suggest sign-off. The feature is invisible until it is used. This scan result is the entire gate — no judgment call, no partial reporting.
 3. **At least one found** → include a `### Trust` section: the tier breakdown, then every unverified page, oldest `generated.at` first:
 
