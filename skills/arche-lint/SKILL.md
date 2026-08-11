@@ -20,7 +20,7 @@ Read [references/OKF-CONFORMANCE.md](references/OKF-CONFORMANCE.md) before check
 1. Read the root `index.md` for `okf_version`, and `SCHEMA.md` for its era. Compare both against 0.2. If the bundle is **ahead** of these skills, stop and report — do not repair.
 2. Walk every `.md` file and collect findings against the matrix.
 3. Group findings by class and present them as a plan, separating what you can repair mechanically from what needs the user (F4 descriptions, F5 missing `superseded_by`, T3 directory renames).
-4. Apply only what the user accepts. Insert a `- **Lint**: …` entry immediately above the topmost `## YYYY-MM-DD` heading in `log.md`, creating today's heading if it is absent, recording what changed.
+4. Apply only what the user accepts. Insert a `- **Lint**: …` entry as the first bullet under today's `## YYYY-MM-DD` heading in `log.md`, creating that heading immediately above the topmost existing date heading only if today's is absent, recording what changed.
 
 ## Preflight
 
@@ -96,7 +96,7 @@ Trust: N human-reviewed, M unverified
 
 Ask: "Want me to fix any of these now?" Wait for the user to pick. Then handle one category at a time, confirming destructive edits (strikethrough resolutions, page deletions, slug renames).
 
-Do not insert a `lint` entry into `log.md` for the audit itself, and do not insert one for a sign-off that nobody accepted — only log when fixes are actually applied or pages are actually signed off (see [Sign-off](#sign-off)). When something did change, insert a `- **Lint**: …` bullet immediately above the topmost `## YYYY-MM-DD` heading in `log.md`, creating today's heading if it is absent, per SCHEMA's newest-first convention.
+Do not insert a `lint` entry into `log.md` for the audit itself, and do not insert one for a sign-off that nobody accepted — only log when fixes are actually applied or pages are actually signed off (see [Sign-off](#sign-off)). When something did change, insert a `- **Lint**: …` bullet as the first bullet under today's `## YYYY-MM-DD` heading in `log.md`; if today's heading is absent, create it immediately above the topmost existing date heading. Never append at the end of the file, per SCHEMA's newest-first convention.
 
 ## Sign-off
 

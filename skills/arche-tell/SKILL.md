@@ -102,7 +102,7 @@ Only when the outline is signed off:
 4. **Sources frontmatter** on the story page lists every Arche page cited (entities, concepts including ARD/SAD/ADRs, discoveries, queries, sources), each with a stable `id` and a `resource`. The body inline-cites at the point of claim.
 5. **Update existing pages.** If the session leaned heavily on a particular SAD or entity page, append a short `## See also` entry on those pages with a citation back to this story. Rewrite their whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now. Do not rewrite the body.
 6. **Update `index.md`.** Update both `stories/index.md` and the root `index.md`. Add the story under its section (create the section if missing) as `* [Title](path) - description.`, where the gloss is exactly the page's `description` and nothing else — `/arche-lint`'s S2 check overwrites any gloss that does not match, so extra tags would be stripped on the next lint and re-added on the next run.
-7. **Insert into `log.md`** with op `story`. Insert a `- **Story**: …` bullet immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent. The bullet's prose reads `<topic> → <format> for <audience>` and names every page touched (story page + HTML file + any back-link updates + index.md).
+7. **Insert into `log.md`** with op `story`. Insert a `- **Story**: …` bullet as the first bullet under today's `## YYYY-MM-DD` heading; if today's heading is absent, create it immediately above the topmost existing date heading. Never append at the end of the file. The bullet's prose reads `<topic> → <format> for <audience>` and names every page touched (story page + HTML file + any back-link updates + index.md).
 
 ## Discipline
 

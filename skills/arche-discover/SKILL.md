@@ -59,7 +59,7 @@ Only when the user signals readiness to wrap up:
    - New concept warranted → create `concepts/<slug>.md` from `/arche-ingest`'s [concept.template.md](../arche-ingest/assets/concept.template.md) with `sources: [{ id: <slug>, resource: ../discoveries/<slug>.md }]` — the `resource` is relative to the page containing it, and the page lives in `concepts/`; add the new page to this discovery's `sources:` list.
    - If unsure whether to extend or create, ask. Slug churn is expensive.
 5. **Update `index.md`.** Update both `discoveries/index.md` and the root `index.md`. Add the discovery under its section (create if missing) with a one-line gloss — the page's `description`. Add any new concept/entity pages under their sections in both the relevant directory index and the root index.
-6. **Insert into `log.md`** with op `discovery`. Insert a `- **Discovery**: …` bullet immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent. The bullet's prose names the topic, the idea count, the count of promoted ideas, and every page touched.
+6. **Insert into `log.md`** with op `discovery`. Insert a `- **Discovery**: …` bullet as the first bullet under today's `## YYYY-MM-DD` heading; if today's heading is absent, create it immediately above the topmost existing date heading. Never append at the end of the file. The bullet's prose names the topic, the idea count, the count of promoted ideas, and every page touched.
 
 ## Discipline
 

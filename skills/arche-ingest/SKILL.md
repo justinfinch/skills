@@ -28,7 +28,7 @@ Add one or more sources to the project Arche.
    - On slug collision: if the incoming file is byte-identical to the existing one, skip ingest and tell the user it's already captured. Otherwise append `-2`/`-3` to the slug (do not silently overwrite).
 2. **Discuss with the user first** (one short message): name the 3–5 key points you saw and the entities/concepts you plan to touch. Stop and let them redirect before writing anything. This is the "discuss key points with you" step from Karpathy's pattern. Skip the discussion step in batch mode unless the user asked for it explicitly.
 3. **Write the source summary** at `.arche/sources/<slug>.md` using this skill's [source.template.md](assets/source.template.md) as the layout.
-   - Set `resource:` to the canonical URL for a web source, or to `../raw/<slug>.<ext>` — a path relative to the page containing it — for a file-only source. When both exist, `resource:` is the URL and the snapshot becomes a `sources` entry with `id: snapshot`.
+   - Set `resource:` to the canonical URL for a web source, or to `../raw/<slug>.<ext>` — a path relative to the page containing it, where `<ext>` is the extension actually written to `raw/` in step 2, not the incoming one: it is `.txt` whenever the incoming file was `.md`, or the source was a URL or pasted text — for a file-only source. When both exist, `resource:` is the URL and the snapshot becomes a `sources` entry with `id: snapshot`.
    - Write `description:` — one sentence. This is what the directory `index.md` and root `index.md` use as the entry gloss, so it is not optional.
    - Keep the summary within SCHEMA.md's length cap, fill in `## Key claims`, and list every entity/concept page touched under `## See also`.
 4. **Update or create entity/concept pages.** For each entity/concept the source touches:
@@ -38,7 +38,7 @@ Add one or more sources to the project Arche.
    - Write `generated: { by: arche-ingest/<model-id>, at: <ISO 8601 UTC> }` on every page you create or meaningfully change. Never write `verified` — that is human sign-off only, via `/arche-lint`.
    - Do not duplicate facts already present — extend, don't restate.
 5. **Update `index.md`.** Update both the directory's own `index.md` and the root `index.md`. Entries are `* [Title](path) - description.` using the target page's `description` field. Add the new source under Sources, and any new entities/concepts under their sections (create the section if missing).
-6. **Insert into `log.md`.** Insert the log entry immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent — never append at the end of the file, since `log.md` is newest-first. Format: a `- **Ingest**: …` bullet listing every page touched (including the new `raw/` file) and one sentence on what the source contributed.
+6. **Insert into `log.md`.** Insert the log entry as the first bullet under today's `## YYYY-MM-DD` heading; if today's heading is absent, create it immediately above the topmost existing date heading. Never append at the end of the file and never place the bullet outside a date heading, since `log.md` is newest-first. Format: a `- **Ingest**: …` bullet listing every page touched (including the new `raw/` file) and one sentence on what the source contributed.
 
 ## Discipline
 

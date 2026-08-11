@@ -11,6 +11,9 @@ sources:
   # snapshot — i.e. when `resource:` above is the canonical URL. For a file-only
   # source, `resource:` is already the `../raw/…` path, so drop this entry (and the
   # `[^snapshot]` footnote below) rather than duplicating it.
+  # `{{EXT}}` is the extension ACTUALLY written to `raw/`, not the incoming one —
+  # it is `.txt` whenever the incoming file was `.md`, or the source was a URL or
+  # pasted text.
   - id: snapshot
     resource: ../raw/{{SLUG}}.{{EXT}}
     title: Local snapshot

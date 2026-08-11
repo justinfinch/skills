@@ -6,7 +6,7 @@ description: Chronological record of every operation performed on this Arche.
 
 # Arche history
 
-Newest first. New entries are inserted immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent — never appended at the end. See [SCHEMA.md](SCHEMA.md) for the entry format.
+Newest first. A new entry goes at the top of today's `## YYYY-MM-DD` section — the first bullet under that heading. If there is no heading for today yet, add one immediately above the topmost date heading below it. Nothing is ever appended at the end of the file, and no bullet ever sits outside a date heading. See [SCHEMA.md](SCHEMA.md) for the entry format.
 
 ## {{DATE}}
 

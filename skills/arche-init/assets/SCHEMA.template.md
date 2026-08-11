@@ -152,7 +152,7 @@ Carries `type: Log`. Body is `## YYYY-MM-DD` date headings, **newest first**, wi
 
 Verbs: `**Init**`, `**Ingest**`, `**Query**`, `**Lint**`, `**Discovery**`, `**Architect**`, `**Story**`, `**Manual**`.
 
-New entries are **inserted immediately above the topmost `## YYYY-MM-DD` heading, creating today's heading if it is absent** — never appended at the end.
+New entries are **inserted as the first bullet under today's `## YYYY-MM-DD` heading**. If today's heading is absent, create it immediately above the topmost existing date heading. Never append at the end of the file, and never place a bullet outside a date heading.
 
 **Contradiction marker.** When an ingest finds a source contradicting an existing claim, the entry prose contains `contradiction —`. `/arche-lint` scans for it. A `~~strikethrough~~` claim counts as resolved when the same paragraph carries a follow-up claim with a citation.
 
