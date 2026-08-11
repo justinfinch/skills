@@ -5,7 +5,7 @@ description: Convergent technical-architecture skill for the Arche at ./.arche/.
 
 # arche-architect
 
-Run a convergent technical-architecture session that uses the project Arche as agent memory and writes its outputs back into the Arche as ARD / SAD / ADR concept pages. Acts as a panel of senior architects — each named as a **lens** when their territory comes up, not as a theatrical persona.
+Run a convergent technical-architecture session that uses the project Arche as agent memory and writes its outputs back into the Arche as Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages. Acts as a panel of senior architects — each named as a **lens** when their territory comes up, not as a theatrical persona.
 
 Where `/arche-discover` is divergent (business / customer / market / regulatory / domain ideation, 100+ ideas), `arche-architect` is decisive: every question has a recommended answer, walks the design tree branch by branch, and produces a small number of durable artifacts.
 
