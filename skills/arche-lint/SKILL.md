@@ -45,6 +45,24 @@ Run these against every page under `./.arche/`:
 12. **Agent-context registration.** Grep the repo's agent context files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules` / `.cursor/rules/*.md`, `.windsurfrules`, `.github/copilot-instructions.md`) for the marker `<!-- arche-context-source -->`. Two failure modes:
     - **Not registered** — no context file carries the marker. Flag: "Arche isn't wired in as a first-class context source — coding agents won't reliably consult it." Register it directly using [arche-init's snippet](../arche-init/assets/agents-md-snippet.md): append it to `AGENTS.md` (creating the file if needed), marked with `<!-- arche-context-source -->`. Common for Arches created before agent-context registration existed.
     - **Claude Code can't see it** — a file (typically `AGENTS.md`) carries the marker, but `CLAUDE.md` neither carries the marker nor imports the marked file via `@AGENTS.md`. Claude Code reads only `CLAUDE.md`, so flag: "Registered for other agents but not bridged to Claude Code." Repair it directly: add an `@AGENTS.md` import near the top of `CLAUDE.md` (creating the file with just that import if it doesn't exist). Easy to miss because non-Claude agents pick it up fine.
+13. **Trust tiers.** Scan for whether any page carries a `verified` key at all — this is the sole gate for whether the report carries a `### Trust` section. See [Trust reporting](#trust-reporting) below for the exact rule and format. This is distinct from F8 in check 6: F8 flags a machine-written `verified` as a conformance anomaly; this check aggregates tier counts across the whole bundle and only fires the section when the gate is open.
+
+## Trust reporting
+
+A trust tier only carries information when tiers differ. In an Arche where nobody signs off, every page is `unverified`, and a report listing all of them on every run is wallpaper — it trains the reader to scroll past this skill's other findings. So trust reporting is **gated on adoption**, the same rule `/arche-query` uses for its own trust surfacing:
+
+1. Scan every page under `./.arche/` for a `verified` key.
+2. **Zero found** → emit **no `### Trust` section at all**. Do not list unverified pages, do not mention tiers, do not suggest sign-off. The feature is invisible until it is used. This scan result is the entire gate — no judgment call, no partial reporting.
+3. **At least one found** → include a `### Trust` section: the tier breakdown, then every unverified page, oldest `generated.at` first:
+
+   ```
+   Trust: 6 human-reviewed, 36 unverified
+
+     concepts/adr-billing.md    generated 2026-03-02
+     entities/acme.md           generated 2026-01-14
+   ```
+
+Derive tiers per SCHEMA.md §5.3: no `verified` key → unverified; `verified` by non-`human:` actors only → machine-confirmed; `verified` by a `human:` actor → human-reviewed. The Arche never machine-verifies, so machine-confirmed appears only if something outside these skills wrote it — when that happens, check 6 (F8) already flags it as a conformance anomaly; this section only adds the aggregate tier count and does not re-report it.
 
 ## Report format
 
@@ -64,6 +82,12 @@ Single response, sectioned by check:
 
 (etc, omit sections with zero findings)
 
+### Trust (only if the gate in Trust reporting is open — omit entirely otherwise)
+Trust: N human-reviewed, M unverified
+
+  path   generated date
+  ...
+
 ### Suggested next ingests
 - topic — why
 ```
@@ -72,7 +96,34 @@ Single response, sectioned by check:
 
 Ask: "Want me to fix any of these now?" Wait for the user to pick. Then handle one category at a time, confirming destructive edits (strikethrough resolutions, page deletions, slug renames).
 
-Do not insert a `lint` entry into `log.md` for the audit itself — only log when fixes are actually applied. When they are, insert a `- **Lint**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history`, per SCHEMA's newest-first convention.
+Do not insert a `lint` entry into `log.md` for the audit itself, and do not insert one for a sign-off that nobody accepted — only log when fixes are actually applied or pages are actually signed off (see [Sign-off](#sign-off)). When something did change, insert a `- **Lint**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history`, per SCHEMA's newest-first convention.
+
+## Sign-off
+
+**This is the only place in any `arche-*` skill that writes `verified`.** Every other skill — `arche-ingest`, `arche-architect`, `arche-discover`, `arche-tell`, `arche-query` — is instructed never to write it; `arche-query` only *reads* it, to derive the tiers reported above.
+
+Hand-editing YAML frontmatter is enough friction that sign-off would never happen otherwise, which would leave the whole trust family dead weight. So `/arche-lint` offers it inline, attached to a report the user is already reading, rather than building any dedicated path to it.
+
+After the fix phase above, if the user reviewed any pages during this run — confirmed a flagged page's content as still correct, resolved a contradiction on it, or otherwise read and endorsed it — ask once:
+
+```
+Mark the N pages you just reviewed as verified by human:<id>? [y/N]
+```
+
+On yes, for each page append to its frontmatter:
+
+```yaml
+verified:
+  - { by: human:<id>, at: <ISO 8601 UTC now> }
+```
+
+If the page already carries a `verified` entry, append to that list. Per §11 a bare `verified: { ... }` mapping is a one-element list — normalize it to list form before appending a second entry.
+
+**Resolve `<id>`:** try `git config user.email`, then `git config user.name`, then ask the user directly. Reuse the same `<id>` for every page accepted in this one prompt.
+
+**This is deliberately not a workflow.** No review queue, no partial-review state, no scheduling, no dedicated command, no re-prompting later for pages the user declined this time. One prompt on an existing report is the entire sign-off surface — resist growing it.
+
+A sign-off is a change to the bundle like any repair: log it per [After reporting](#after-reporting) above, e.g. `- **Lint**: signed off 6 pages as verified by human:jf`. Declining (`N` or no reviewed pages) logs nothing, same as a no-op audit.
 
 ## Discipline
 
