@@ -1,6 +1,6 @@
 ---
 name: arche-tell
-description: Tell a story from the project's Arche at ./.arche/ — produce a shareable HTML artifact (reveal.js deck OR scrollable narrative) for communicating architecture, product strategy, or decision rationale to a defined audience. Interviews the user to lock topic, audience, action ask, and narrative framework (Pyramid, SCQA, Story Arc, Before/After/Bridge, PAS), grounding every claim in cited Arche pages (ARDs, SADs, ADRs, concept/entity pages, discoveries). Files outputs as `stories/<slug>.md` + `assets/stories/<slug>.html`, updates index.md, and appends a `story` log entry. Use when the user says "tell the story of X", "communicate our architecture to Y", "present this to Z", "turn this into a deck", or wants shareable HTML built from Arche content. NOT for ideation (use `/arche-discover`); NOT for designing a system (use `/arche-architect`) — this skill assumes the context exists and packages it for an audience.
+description: Tell a story from the project's Arche at ./.arche/ — produce a shareable HTML artifact (reveal.js deck OR scrollable narrative) for communicating architecture, product strategy, or decision rationale to a defined audience. Interviews the user to lock topic, audience, action ask, and narrative framework (Pyramid, SCQA, Story Arc, Before/After/Bridge, PAS), grounding every claim in cited Arche pages (ARDs, SADs, ADRs, concept/entity pages, discoveries). Files outputs as `stories/<slug>.md` + `assets/stories/<slug>.html`, updates index.md, and inserts a `story` log entry. Use when the user says "tell the story of X", "communicate our architecture to Y", "present this to Z", "turn this into a deck", or wants shareable HTML built from Arche content. NOT for ideation (use `/arche-discover`); NOT for designing a system (use `/arche-architect`) — this skill assumes the context exists and packages it for an audience.
 ---
 
 # arche-tell
@@ -21,7 +21,7 @@ If your runtime has a structured-question tool (e.g. Claude Code's `AskUserQuest
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
 2. Read `./.arche/SCHEMA.md` end to end.
-3. Check SCHEMA defines the `story` page type AND has `story` in the log ops list. If either is missing, tell the user to run `/arche-init` in migration mode (it will detect the stale schema and propose patches) and stop.
+3. Check SCHEMA defines the `story` page type AND has `story` in the log ops list. If either is missing, tell the user to run `/arche-lint`, which owns conformance detection and repair, and stop.
 4. Ensure `./.arche/stories/` exists; if not, create it with a `.gitkeep`. Ensure `./.arche/assets/stories/` exists; if not, create it with a `.gitkeep`.
 5. Read `./.arche/index.md`.
 6. Read this skill's [FRAMEWORKS.md](references/FRAMEWORKS.md), [AUDIENCE.md](references/AUDIENCE.md), [DESIGN.md](references/DESIGN.md), and the Arche page template [story.template.md](assets/story.template.md).
@@ -90,18 +90,19 @@ Only when the frame and audience are locked:
 
 Only when the outline is signed off:
 
-1. **Write the story page** at `.arche/stories/<slug>.md` using [story.template.md](assets/story.template.md). Frontmatter: `type: story`, today's date, tags, the audience block, the action ask, the framework, the format, and `html: assets/stories/<slug>.html` pointing at the rendered file. Body: the outline expanded — each section/slide has its narrative text + speaker notes (decks) + cited Arche pages + any diagram source (Mermaid block, inline SVG, ASCII art, CSS-diagram markup, embed instruction). The `## Style` section names the chosen deck framework / narrative shape and any tool choices that aren't obvious from the body. **The .md is the source of truth.** The HTML is generated from it; re-renders should be possible from the .md alone.
-2. **Design the HTML** at `.arche/assets/stories/<slug>.html`, following [DESIGN.md](references/DESIGN.md). The HTML is **authored** — not produced by copying a fixed template:
+1. **Check for staleness.** Before writing, check every page you intend to cite. A page with `status: deprecated`, or with a `stale_after` date on or before today, is stale — flag it to the user and either cite its replacement via `superseded_by` or drop the claim. A story built on deprecated architecture decisions misinforms its audience, which is the one failure this skill cannot recover from.
+2. **Write the story page** at `.arche/stories/<slug>.md` using [story.template.md](assets/story.template.md). Frontmatter: `type: Story`, today's date in `created:`, `status: stable`, the audience block, the action ask, the framework, the format, and `html: ../assets/stories/<slug>.html` pointing at the rendered file. Write `description:` — one sentence. Write `generated: { by: arche-tell/<model-id>, at: <ISO 8601 UTC> }`. Never write `verified` — that is human sign-off only, via `/arche-lint`. Body: the outline expanded — each section/slide has its narrative text + speaker notes (decks) + cited Arche pages + any diagram source (Mermaid block, inline SVG, ASCII art, CSS-diagram markup, embed instruction). The `## Style` section names the chosen deck framework / narrative shape and any tool choices that aren't obvious from the body. **The .md is the source of truth.** The HTML is generated from it; re-renders should be possible from the .md alone.
+3. **Design the HTML** at `.arche/assets/stories/<slug>.html`, following [DESIGN.md](references/DESIGN.md). The HTML is **authored** — not produced by copying a fixed template:
    - Pick typography, color, spacing per DESIGN.md's principles, tuned to the audience and the topic's emotional valence.
    - For **deck format**, structure the HTML around the chosen deck framework (reveal.js / impress.js / plain CSS slides). Pull the framework's CSS/JS from a pinned CDN major version. Include speaker notes when the framework supports them; otherwise as collapsed `<details>` per slide.
    - For **narrative format**, plain semantic HTML + CSS. Match the chosen narrative shape (memo / long-form / landing / report).
    - Diagrams: implement each in the tool chosen in Phase 4. Multiple tools in the same artifact is fine.
    - The hero/opening and the closing/ask follow the patterns in DESIGN.md — audience tag, single-sentence subtitle, framed accent-colored ask.
    - Self-contained discipline (DESIGN.md): one file, no build step, works when double-clicked.
-3. **Sources frontmatter** on the story page lists every Arche page cited (entities, concepts including ARD/SAD/ADRs, discoveries, queries, sources). The body inline-cites at the point of claim.
-4. **Update existing pages.** If the session leaned heavily on a particular SAD or entity page, append a short `## See also` entry on those pages with a citation back to this story. Bump their `updated:`. Do not rewrite.
-5. **Update `index.md`.** Add the story under a `## Stories` section (create the section if missing). One-line gloss, link, audience tag.
-6. **Append to `log.md`** with op `story`. List every page touched (story page + HTML file + any back-link updates + index.md). Notes line: `<topic> → <format> for <audience>`.
+4. **Sources frontmatter** on the story page lists every Arche page cited (entities, concepts including ARD/SAD/ADRs, discoveries, queries, sources), each with a stable `id` and a `resource`. The body inline-cites at the point of claim.
+5. **Update existing pages.** If the session leaned heavily on a particular SAD or entity page, append a short `## See also` entry on those pages with a citation back to this story. Bump their `generated.at`. Do not rewrite.
+6. **Update `index.md`.** Update both `stories/index.md` and the root `index.md`. Add the story under its section (create if missing) with a one-line gloss — the page's `description` — link, and audience tag.
+7. **Insert into `log.md`** with op `story`. Insert a `- **Story**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history`. List every page touched (story page + HTML file + any back-link updates + index.md). Notes line: `<topic> → <format> for <audience>`.
 
 ## Discipline
 

@@ -1,43 +1,49 @@
 ---
-type: discovery
+type: Discovery
 title: {{TITLE}}
-created: {{DATE}}
-updated: {{DATE}}
+description: {{DESCRIPTION}}
 tags: []
+created: {{DATE}}
+generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
+status: stable
 sources: []
-topic: {{TOPIC}}
-techniques: []
-idea_count: 0
-context_pages: []
 ---
 
 # {{TITLE}}
 
-One-paragraph orientation: topic, goals, constraints from Phase 1.
+One paragraph: the question explored, who was in the room, and what came out of it.
+
+## Context loaded
+
+The Arche pages that grounded this session. These also appear in `sources`.
+
+- [Page](../concepts/example.md) — why it was relevant.
+
+## Idea inventory
+
+The full unfiltered list. Volume before judgement.
+
+1. Idea.
+2. Idea.
 
 ## Themes
 
-### Theme 1
+Clusters that emerged across the inventory.
 
-- Idea ([related concept](../concepts/example.md))
-- Idea
-- Idea
+### Theme name
 
-### Theme 2
+- Ideas belonging to this theme, and what unites them.
 
-- Idea
-- Idea
+## Techniques used
 
-## Top ideas (promoted)
+- **Technique** — what it surfaced that other angles missed.
 
-- **Idea name** — short rationale. Promoted to [target page](../concepts/example.md).
-- **Idea name** — short rationale. New concept page created: [target](../concepts/new-thing.md).
+## Top ideas promoted
 
-## Technique narrative
+Ideas filed back as their own pages. Each target also cites this session.
 
-Brief notes on which techniques produced which breakthroughs, and any anti-bias domain pivots that unstuck the session.
+- [New concept](../concepts/example.md) — why it earned a page.
 
-## See also
+## Open questions
 
-- [Pages cited inline during the session](../concepts/example.md)
-- [Pages this discovery promoted ideas to](../concepts/example.md)
+- Question left unresolved, and what would settle it.
