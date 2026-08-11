@@ -1,15 +1,17 @@
 ---
-type: entity
+type: Entity
 title: {{TITLE}}
-created: {{DATE}}
-updated: {{DATE}}
+description: {{DESCRIPTION}}
 tags: []
+created: {{DATE}}
+generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
+status: stable
 sources: []
 ---
 
 # {{TITLE}}
 
-One- to two-sentence orientation: who/what this entity is and why it matters in this Arche.
+One- to two-sentence orientation: who or what this entity is and why it matters here.
 
 ## Facts
 
@@ -18,9 +20,9 @@ One- to two-sentence orientation: who/what this entity is and why it matters in 
 
 ## Relationships
 
-- Connects to [related entity](../entities/example.md) — how/why.
-- Discussed in [related concept](../concepts/example.md).
+- Connects to [related entity](../entities/foo.md) — how and why.
+- Discussed in [related concept](../concepts/bar.md).
 
 ## See also
 
-- [Other relevant pages](../concepts/example.md)
+- [Other relevant pages](../concepts/baz.md)
