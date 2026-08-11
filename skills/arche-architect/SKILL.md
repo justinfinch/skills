@@ -1,6 +1,6 @@
 ---
 name: arche-architect
-description: Convergent technical-architecture skill for the Arche at ./.arche/. Acts as a panel of senior architects (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin) invoked as lenses by topic. Interviews the user one branch at a time with recommended answers, then files outputs as concept pages — ARD (`ard-<system>`), SAD (`sad-<system>`), and ADRs (`adr-<name>`) as the problem decomposes — cites Arche context, updates index.md, inserts an `architect` log entry. Use when the user is deciding a technical architecture; says "design X", "architect this", "ADR for X", "SAD for Z"; OR is downstream of `/arche-discover` and wants to converge architectural ideas; OR `/arche-query` flagged no relevant SAD/ADR before planning. NOT for business / customer / market / regulatory ideation — that belongs to `/arche-discover`. NOT for code-implementation brainstorming — use your dev methodology's own skill.
+description: Convergent technical-architecture skill for the Arche at ./.arche/. Acts as a panel of senior architects (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin) invoked as lenses by topic. Interviews the user one branch at a time with recommended answers, then files outputs as an Architecture Requirements Document, a Solution Architecture Document, and Architecture Decision Records (the `ard-`/`sad-`/`adr-` filename prefixes are just the naming habit) as the problem decomposes — cites Arche context, updates index.md, inserts an `architect` log entry. Use when the user is deciding a technical architecture; says "design X", "architect this", "ADR for X", "SAD for Z"; OR is downstream of `/arche-discover` and wants to converge architectural ideas; OR `/arche-query` flagged no relevant SAD/ADR before planning. NOT for business / customer / market / regulatory ideation — that belongs to `/arche-discover`. NOT for code-implementation brainstorming — use your dev methodology's own skill.
 ---
 
 # arche-architect
@@ -39,7 +39,7 @@ Rules:
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
 2. Read `./.arche/SCHEMA.md` end to end.
-3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-init` in migration mode (it will detect the stale schema and propose patches) and stop.
+3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-lint`, which owns conformance detection and repair — including bringing an older Arche's SCHEMA up to the current OKF era — and stop.
 4. Read `./.arche/index.md`.
 5. Read this skill's [LENSES.md](references/LENSES.md) and the three templates so you write pages in the canonical layout: [ard.template.md](assets/ard.template.md), [sad.template.md](assets/sad.template.md), [adr.template.md](assets/adr.template.md).
 
