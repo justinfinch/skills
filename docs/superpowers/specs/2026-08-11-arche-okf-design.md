@@ -27,7 +27,7 @@ What it lacks is the v0.2 signal layer — `generated`, `verified`, `status`, `s
 | 2 | Link form | **Relative.** §6.1 supports both; absolute is only *recommended*. The Arche is a repo subdirectory, so `/concepts/foo.md` would 404 in GitHub and VS Code, which resolve `/` against the repo root. Google's own bundle uses relative links in `index.md`. |
 | 3 | Type taxonomy | **Title-case singular, ARD/SAD/ADR promoted to first-class types** rather than filename slug conventions. |
 | 4 | Conformance ownership | **`arche-lint` detects and repairs everything.** `arche-init`'s migrate mode is retired. |
-| 5 | Trust model | **`verified` is human-only.** Skills write `generated` and never `verified`. Lint surfaces the gap. |
+| 5 | Trust model | **`verified` is human-only, and its reporting is adaptive.** Skills write `generated` and never `verified`. Trust reporting stays silent until the bundle contains at least one `verified` entry. |
 
 Decision 4 is the load-bearing one architecturally. OKF will keep moving; conformance drift is a standing condition, not a one-time migration. Lint already owns "frontmatter drift" and already has the correct posture — report findings, repair only on confirmation. Putting conformance anywhere else means rebuilding this machinery at every spec bump.
 
@@ -159,9 +159,24 @@ Skills write `generated` on every page they touch. **Skills never write `verifie
 - `verified` by non-`human:` actors only → **machine-confirmed** (the Arche does not produce this tier)
 - `verified` by a `human:<id>` actor → **human-reviewed**
 
-`/arche-lint` gains an unverified-pages report so the gap is visible and actionable, listing pages by `generated.at` age. Sign-off appends `verified: { by: human:<id>, at: <now> }`.
-
 Per §11, a bare `verified` mapping is a one-element list; consumers must treat it as such. The Arche writes the list form once there are two or more entries.
+
+### Adaptive reporting
+
+A trust tier only carries information when tiers differ. In a bundle where no one ever signs off, every page sits at `unverified`, and a report listing all of them every run is noise that trains the reader to scroll past lint's other findings.
+
+So trust reporting is **gated on adoption**:
+
+- **Zero `verified` entries in the bundle** → lint emits no trust section at all, and `/arche-query` surfaces no tiers. The field is still supported and still written correctly if a human adds one by hand; nothing is reported.
+- **At least one `verified` entry** → lint reports the tier breakdown and lists unverified pages by `generated.at` age, and query surfaces the tier of pages an answer rests on.
+
+The feature turns itself on the first time it is used, and is invisible until then.
+
+### Sign-off affordance
+
+Hand-editing YAML is enough friction to guarantee sign-off never happens, which would make the whole family dead weight. So lint gains a minimal path: after a lint run, it offers to mark reviewed pages as verified, appending `verified: { by: human:<id>, at: <now> }` with `<id>` resolved per the actor convention.
+
+This is deliberately **not** a workflow — no review queue, no partial-review state, no scheduling. It is one prompt attached to a report the human is already reading. That is the entire scope.
 
 ## Conformance ownership
 
@@ -186,17 +201,17 @@ Skew between any two is a finding. This is the mechanism that makes a future OKF
 | Skill | Change |
 |---|---|
 | **arche-init** | Bootstrap-only; migrate mode and its drift checklist removed. `index.template.md` loses frontmatter, gains `okf_version: "0.2"`, adopts §8 bullet form. `log.template.md` inverts to newest-first with `type: Log`. `SCHEMA.template.md` rewritten around the OKF field families. Creates per-directory `index.md` stubs. |
-| **arche-lint** | Largest change. Gains the full conformance engine — detection and confirmed repair, content pages and system files. Absorbs init's drift checklist. Gains the unverified-pages report and version-skew detection. Gets a `references/` file for the conformance matrix to keep `SKILL.md` readable. |
+| **arche-lint** | Largest change. Gains the full conformance engine — detection and confirmed repair, content pages and system files. Absorbs init's drift checklist. Gains version-skew detection, the adaptive trust report, and the sign-off prompt. Gets a `references/` file for the conformance matrix to keep `SKILL.md` readable. |
 | **arche-ingest** | Writes `generated`, `description`, reshaped `sources` with `id`s, `resource` in place of `url`/`raw`. Pasted text captured as `.txt`. Footnote attribution for external claims. Updates `source`, `concept`, `entity` templates. |
 | **arche-architect** | ARD/SAD/ADR become `type:` values, not slug conventions. `status` moves to `draft`/`stable`/`deprecated`; `superseded_by` retained. Updates `ard`, `sad`, `adr` templates. |
-| **arche-query** | Reads the new shape; filters by `type` instead of parsing `adr-*` filenames. Surfaces the trust tier of pages an answer rests on. Updates `query` template. |
+| **arche-query** | Reads the new shape; filters by `type` instead of parsing `adr-*` filenames. Surfaces the trust tier of cited pages **only when the bundle has at least one `verified` entry**. Updates `query` template. |
 | **arche-discover** | `context_pages` folds into `sources`. Updates `discovery` template. |
 | **arche-tell** | Story extension keys unchanged. Flags `deprecated` or past-`stale_after` citations as stale. Updates `story` template. |
 | **`SCHEMA.md`** | Rewritten: OKF field families, type taxonomy, reserved-file rules, actor convention, `okf_version`, footnote attribution. The "Conventions the human controls" section is preserved verbatim. |
 
 ### Scope note on `arche-query`
 
-Trust-tier surfacing in `/arche-query` is a feature, not a format migration. It is kept in scope because it is small — reading `verified` and reporting a tier alongside citations — but it is the first thing to cut if the branch grows. No sign-off *workflow* is built here; that is lint's report plus a manual edit.
+Trust-tier surfacing in `/arche-query` is a feature, not a format migration. It is kept in scope because it is small — reading `verified` and reporting a tier alongside citations — and because adaptive gating means it produces no output at all in a bundle that never uses sign-off. It remains the first thing to cut if the branch grows.
 
 ## Out of scope
 
@@ -204,7 +219,7 @@ Trust-tier surfacing in `/arche-query` is a feature, not a format migration. It 
 - **Bundle-absolute links.** Rejected under decision 2.
 - **Renaming `raw/` to `references/`.** The `.txt` fix resolves the only conformance issue.
 - **Rewriting existing Arche body prose.** Lint repairs frontmatter and reserved-file structure only; bodies are never rewritten.
-- **A `verified` sign-off workflow or command.** Lint reports the gap; sign-off is a manual edit for now.
+- **A `verified` sign-off *workflow*.** No review queue, partial-review state, scheduling, or dedicated command. Lint's one inline prompt is the entire sign-off surface.
 
 ## Rollout for existing Arches
 
@@ -222,4 +237,5 @@ The work is done when:
 4. Root `index.md` declares `okf_version: "0.2"`; no other `index.md` carries frontmatter.
 5. `log.md` is newest-first and carries `type: Log`.
 6. No `.md` file anywhere in the tree lacks frontmatter, including under `raw/`.
-7. Every `arche-*` skill's templates emit the v0.2 shape, and no skill writes `verified`.
+7. Every `arche-*` skill's templates emit the v0.2 shape, and no skill writes `verified` except via lint's explicit sign-off prompt.
+8. On a bundle with zero `verified` entries, `/arche-lint` emits no trust section and `/arche-query` surfaces no tiers. After one sign-off, both begin reporting.
