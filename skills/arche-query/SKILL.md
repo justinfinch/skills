@@ -56,10 +56,10 @@ Separately and **always** — never gated on the check above: if a cited page ha
 
 If the user says yes:
 
-1. **Create the page.** Write `.arche/queries/<slug>.md` using this skill's [query.template.md](assets/query.template.md) as the layout: `type: Query`, `title`, `description` (one sentence — feeds index.md glosses), today's date, `generated: { by: arche-query/<model-id>, at: <ISO 8601> }`, `status: stable`, and `sources:` as a list of mappings (stable `id` + required `resource`, never a bare path string) for every Arche page and source you cited. Never write `verified` — that's human sign-off only, via `/arche-lint`.
+1. **Create the page.** Write `.arche/queries/<slug>.md` using this skill's [query.template.md](assets/query.template.md) as the layout: `type: Query`, `title`, `description` (one sentence — feeds index.md glosses), today's date, `generated: { by: arche-query/<model-id>, at: <ISO 8601 UTC> }`, `status: stable`, and `sources:` as a list of mappings (stable `id` + required `resource`, never a bare path string) for every Arche page and source you cited. Never write `verified` — that's human sign-off only, via `/arche-lint`.
 2. **Write the body.** Per template: the question as asked, the answer with citations preserved, the pages consulted and what each contributed, and any gaps left open.
 3. **Update the indexes.** Add an entry under Queries in both `queries/index.md` and the root `index.md`, using the page's `description` as the gloss.
-4. **Insert into `log.md`.** Insert a `- **Query**: …` bullet directly below the `# Arche history` heading, not at the end of the file — `log.md` is newest-first.
+4. **Insert into `log.md`.** Insert a `- **Query**: …` bullet under today's `## YYYY-MM-DD` heading at the top of `log.md`, below `# Arche history` — reuse today's heading if one is already present, otherwise create it. Not at the end of the file — `log.md` is newest-first.
 
 ## Discipline
 
