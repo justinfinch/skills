@@ -30,13 +30,19 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 - **[write-a-skill](skills/write-a-skill/SKILL.md)** — meta-skill that walks the agent through authoring new skills.
 - **[devbox-init](skills/devbox-init/SKILL.md)** — scaffold an isolated, declarative dev env (Devbox + direnv) for the current repo; agent-agnostic, with an optional Claude-Code-only env-snapshot hook.
 - **[devbox-add](skills/devbox-add/SKILL.md)** — add an infra dep (db/queue/cache/search) or app dep to the repo's `devbox.json` instead of installing on the host; wires `devbox services` and records the policy in the repo's agent context file.
-- **[arche-init](skills/arche-init/SKILL.md)** — bootstrap an Arche at `./.arche/` (Karpathy's LLM-wiki pattern): schema, index, log. Also registers the Arche in the repo's agent context file(s) (`AGENTS.md` / `CLAUDE.md` / `.cursorrules`, …) so coding agents pick it up automatically rather than waiting to be told. Arche captures institutional context — business/domain/SME/ARB — not code documentation.
+- **[arche-init](skills/arche-init/SKILL.md)** — bootstrap-only: creates an Arche at `./.arche/` (Karpathy's LLM-wiki pattern) — schema, index, log — as a conformant OKF v0.2 bundle. Also registers the Arche in the repo's agent context file(s) (`AGENTS.md` / `CLAUDE.md` / `.cursorrules`, …) so coding agents pick it up automatically rather than waiting to be told. Arche captures institutional context — business/domain/SME/ARB — not code documentation. `/arche-lint` owns migration and ongoing conformance from here on.
 - **[arche-ingest](skills/arche-ingest/SKILL.md)** — ingest a source (URL/file/text/SME-interview/ADR) into the Arche and update affected pages.
 - **[arche-query](skills/arche-query/SKILL.md)** — answer a question from the Arche with inline citations; also fires as a cold-start orientation step before planning/design in agentic dev workflows.
 - **[arche-discover](skills/arche-discover/SKILL.md)** — facilitated discovery / ideation session grounded in Arche context, for business/domain/architectural topics (not implementation design). Files the session and promotes top ideas back to concept/entity pages (including new ADRs).
 - **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files ARD/SAD/ADR concept pages.
 - **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
-- **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift.
+- **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift; owns OKF v0.2 conformance detection and repair, including migrating an older Arche to the current era.
+
+### Open Knowledge Format
+
+The Arche is a conformant [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle — a directory of markdown files with YAML frontmatter, carrying OKF's provenance (`sources`), trust (`generated`, `verified`), and lifecycle (`status`, `stale_after`) families. That means any OKF-aware tool can read your Arche, and the format is portable off these skills entirely.
+
+`/arche-init` creates the bundle; `/arche-lint` maintains it, including upgrading an older Arche to the current OKF era. `tools/okf_conformance.py` is a standalone checker used to verify lint against something independent of itself.
 
 ## Why "Arche"?
 
