@@ -1,85 +1,56 @@
 ---
-type: concept
-title: SAD — {{SYSTEM}}
+type: Solution Architecture Document
+title: {{TITLE}}
+description: {{DESCRIPTION}}
+tags: []
 created: {{DATE}}
-updated: {{DATE}}
-tags: [architecture, sad]
+generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
+status: draft
 sources: []
 ---
 
-# SAD — {{SYSTEM}}
+# {{TITLE}}
 
-Solution Architecture Document for the {{SYSTEM}} system. Holistic description of the chosen architecture. Frames against [ARD — {{SYSTEM}}](ard-{{SYSTEM}}.md) and links to every ADR that carries a load-bearing decision.
+The chosen solution for {{SYSTEM}}. Satisfies [the requirements](./ard-{{SYSTEM}}.md).
 
 ## Context
 
-What this system does, who uses it, what it depends on, what depends on it. One paragraph.
+Where this system sits and what it talks to.
 
 ## Drivers
 
-The top three to five forces that shaped the architecture. Pulled from the ARD's quality attributes and constraints; cite the ARD.
-
-- {{Driver}} — why it matters here ([ARD](ard-{{SYSTEM}}.md)).
-- {{Driver}} — …
+The forces that shaped this design, tracing to the ARD's quality attributes.
 
 ## Logical view
 
-The components and their responsibilities. What the system is, not what it runs on. Diagrams welcome; one-line responsibility per component is mandatory.
-
-- **{{Component}}** — {{responsibility}}.
-- **{{Component}}** — …
+Components and responsibilities.
 
 ## Process view
 
-How the components interact at runtime. Request flow, async flow, key sequences. Name the integration style (Hohpe).
-
-- **{{Flow}}** — {{actors, ordering, sync/async, contract style}}.
-- **{{Flow}}** — …
+Runtime behaviour, concurrency, and sequencing.
 
 ## Data view
 
-What data exists, who owns it, what crosses trust boundaries, what's transactional vs. eventual (Helland, Vernon).
-
-- **{{Aggregate / dataset}}** — owner, identity, consistency boundary.
-- **{{Aggregate / dataset}}** — …
+What is stored, where, and who owns it.
 
 ## Deployment view
 
-Where the components run. Cells, regions, redundancy story, on-call surface (Vogels, Nygard).
-
-- **{{Component}}** — {{deployment shape, blast radius, dependency on platform services}}.
-- **{{Component}}** — …
+Topology, environments, and scaling units.
 
 ## Cross-cutting
 
-Concerns that span every component: observability, security posture, auth model, secrets, config, build/release.
-
-- **Observability** — {{what gets emitted, where it lands, what the fitness function checks}}.
-- **Security** — {{trust boundaries, identity, secrets handling}}.
-- **{{Concern}}** — …
+Security, observability, error handling, configuration.
 
 ## Fitness functions
 
-The executable checks that say this architecture is still right (Ford). Each fitness function: what it measures, where it runs, what tripping it means.
-
-- {{Fitness function}} — {{measure, location, action on failure}}.
-- {{Fitness function}} — …
+Automated checks that this architecture still holds.
 
 ## Decision summary
 
-Every load-bearing decision in this SAD has its own ADR. Link them here.
+Every load-bearing decision, each with its own ADR.
 
-- [ADR — {{decision}}](adr-{{decision}}.md) — {{one-line summary}}.
-- [ADR — {{decision}}](adr-{{decision}}.md) — …
+- [ADR title](./adr-example.md) — one-line statement of the decision.
 
 ## Risks and trade-offs
 
-What this architecture is bad at, and why we accepted that trade-off.
-
-- {{Risk / trade-off}} — {{accepted because …}}.
-- {{Risk / trade-off}} — …
-
-## See also
-
-- [ARD — {{SYSTEM}}](ard-{{SYSTEM}}.md) — requirements this solution satisfies.
-- [Related concept or entity](../concepts/example.md)
+What this design gives up, and what could go wrong.
