@@ -3,7 +3,7 @@ type: Schema
 title: Arche Schema
 description: Conventions and operations for maintaining this Arche as an OKF v0.2 bundle.
 created: {{DATE}}
-generated: { by: arche-init/claude-opus-5, at: {{TIMESTAMP}} }
+generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
 ---
 
 # Arche Schema

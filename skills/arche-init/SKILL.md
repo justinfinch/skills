@@ -14,7 +14,7 @@ The path is **dotted** (`./.arche/` not `./arche/`) by convention with other age
 ## Workflow
 
 1. Resolve today's date once (YYYY-MM-DD) and the current UTC timestamp (ISO 8601) — reuse both everywhere below.
-2. Resolve the actor string: `arche-init/<model-id>`.
+2. Resolve the actor string: `arche-init/<model-id>`, where `<model-id>` is the model actually running this skill (e.g. `arche-init/claude-sonnet-5`) — never a fixed value.
 3. Check whether `./.arche/` already exists.
    - **Exists** → stop. Tell the user an Arche is already present and that `/arche-lint` owns conformance and repair — including bringing an older Arche up to the current OKF era. Do not modify anything.
    - **Does not exist** → bootstrap (step 4).
@@ -37,7 +37,7 @@ The path is **dotted** (`./.arche/` not `./arche/`) by convention with other age
      assets/stories/
    ```
    Add `.gitkeep` to each empty subdir.
-2. Copy from this skill's `assets/`, replacing `{{DATE}}` with today's date and `{{TIMESTAMP}}` with the UTC timestamp:
+2. Copy from this skill's `assets/`, replacing `{{DATE}}` with today's date, `{{TIMESTAMP}}` with the UTC timestamp, and `{{ACTOR}}` with the actor string resolved in workflow step 2:
    - `assets/SCHEMA.template.md` → `.arche/SCHEMA.md`
    - `assets/index.template.md` → `.arche/index.md`
    - `assets/log.template.md` → `.arche/log.md`

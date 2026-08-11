@@ -10,4 +10,4 @@ Newest first. New entries are inserted directly below this line, never appended 
 
 ## {{DATE}}
 
-- **Init**: Arche bootstrapped by `arche-init/claude-opus-5`. Created `SCHEMA.md`, `index.md`, `log.md`, the content subdirectories, and their per-directory indexes.
+- **Init**: Arche bootstrapped by `{{ACTOR}}`. Created `SCHEMA.md`, `index.md`, `log.md`, the content subdirectories, and their per-directory indexes.
