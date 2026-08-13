@@ -2,7 +2,7 @@
 
 import tempfile
 import unittest
-from pathlib import Path
+from pathlib import Path  # noqa: F401  (used by PreOkfFixtureTests)
 
 from okf_conformance import Finding, check_bundle, split_frontmatter
 
@@ -141,6 +141,49 @@ class LogTests(unittest.TestCase):
             {"log.md": "---\ntype: Log\n---\n\n## 2026-08-11\n\n- b\n\n## 2026-01-01\n\n- a\n"}
         )
         self.assertEqual(check_bundle(root), [])
+
+
+class PreOkfFixtureTests(unittest.TestCase):
+    """`tools/fixtures/pre_okf/` is the one realistic bundle in the repo.
+
+    It is a hand-built pre-v0.2 Arche exercising every drift class, and its
+    primary job is manual: it is the scratch bed for running `/arche-lint`
+    against, since a skill is a prompt and cannot be unit tested. That leaves
+    its checker-visible behavior unpinned, so this test pins it — otherwise the
+    checker could regress against the only non-synthetic bundle we have and
+    nothing would notice.
+    """
+
+    FIXTURE = Path(__file__).resolve().parent / "fixtures" / "pre_okf"
+
+    def test_fixture_is_deliberately_non_conformant(self):
+        found = {(str(f.path), f.rule) for f in check_bundle(self.FIXTURE)}
+        self.assertEqual(
+            found,
+            {
+                ("index.md", "§8"),  # carries created/type/updated
+                ("log.md", "§9"),  # two `## [date] op | text` headings
+                ("raw/pasted-notes.md", "§11.1"),  # .md snapshot, no frontmatter
+            },
+        )
+
+    def test_log_ordering_is_not_reported_when_headings_are_unparseable(self):
+        # The fixture's headings are oldest-first, but they are also non-ISO, so
+        # no date parses and there is no ordering claim to make. Reporting an
+        # ordering finding here would be inventing one from headings we could
+        # not read.
+        messages = [f.message for f in check_bundle(self.FIXTURE) if f.rule == "§9"]
+        self.assertEqual(len(messages), 2)
+        self.assertTrue(all(m.startswith("date heading not ISO") for m in messages))
+
+    def test_fixture_has_no_findings_outside_okf_hard_conformance(self):
+        # §11 forbids consumers from rejecting a bundle over unknown `type`
+        # values, missing index.md, or broken links. The fixture has all three
+        # (lowercase types, no subdirectory indexes, string `sources`), and the
+        # checker must stay silent on every one of them.
+        self.assertEqual(
+            {f.rule for f in check_bundle(self.FIXTURE)}, {"§8", "§9", "§11.1"}
+        )
 
 
 if __name__ == "__main__":

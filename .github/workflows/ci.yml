@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A second push to the same PR makes the first run's answer irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: tools suites
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Installs the environment declared in devbox.json, so CI resolves the
+      # same Python 3.12 + PyYAML from the same pinned nixpkgs as a developer
+      # gets from direnv. devbox.json stays the single place dependencies are
+      # declared — the reason to pay for a Nix install here rather than reach
+      # for setup-python and re-list them.
+      - uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: 'true'
+          devbox-version: '0.17.2'
+
+      # 36 tests: the checker's own unit coverage, the pre_okf fixture pin, the
+      # vendored-spec digests, and — the load-bearing one — every arche-* skill
+      # template rendered into a synthetic bundle and run through the
+      # conformance checker. Skills are prompts and cannot be tested; the pages
+      # they emit can.
+      - name: Run every suite in tools/
+        run: devbox run test
+
+      # `devbox install` above is a no-op when the lockfile matches devbox.json.
+      # If it rewrote anything, the two have drifted and the commit is stale.
+      - name: devbox.json and devbox.lock are in sync
+        run: git diff --exit-code -- devbox.json devbox.lock
