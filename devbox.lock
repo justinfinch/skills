@@ -1,0 +1,18 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "github:NixOS/nixpkgs/ac62194c3917d5f474c1a844b6fd6da2db95077d": {
+      "last_modified": "1970-01-01T00:00:00Z",
+      "resolved": "github:NixOS/nixpkgs/ac62194c3917d5f474c1a844b6fd6da2db95077d"
+    },
+    "python312": {
+      "plugin_version": "0.0.4",
+      "resolved": "github:NixOS/nixpkgs/ac62194c3917d5f474c1a844b6fd6da2db95077d#python312",
+      "source": "nixpkg"
+    },
+    "python312Packages.pyyaml": {
+      "resolved": "github:NixOS/nixpkgs/ac62194c3917d5f474c1a844b6fd6da2db95077d#python312Packages.pyyaml",
+      "source": "nixpkg"
+    }
+  }
+}

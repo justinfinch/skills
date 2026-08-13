@@ -6,15 +6,18 @@ against something independent.
 
 ## Requirements
 
-Python 3.12+ and PyYAML. Both are present on the development machine; install
-PyYAML with `python3 -m pip install --user pyyaml` if missing.
+Python 3.12+ and PyYAML, both declared in the repo's `devbox.json`. Run
+`devbox shell` (or let direnv load it on `cd`) and they are on `PATH`. Without
+devbox, install PyYAML with `python3 -m pip install --user pyyaml`.
 
 ## Check a bundle
 
+    devbox run check path/to/.arche          # or, inside a devbox shell:
     python3 tools/okf_conformance.py path/to/.arche
 
 Exit code 0 when conformant, 1 when findings exist, 2 on usage error.
 
 ## Run the suites
 
+    devbox run test                          # or, inside a devbox shell:
     cd tools && python3 -m unittest discover -p 'test_*.py' -v

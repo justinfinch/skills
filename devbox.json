@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/main/.schema/devbox.schema.json",
+  "//": "nixpkgs is pinned because devbox's default channel (nixpkgs 26.11) dropped x86_64-darwin support. nixos-25.05 still builds on both Intel and Apple Silicon macOS.",
+  "nixpkgs": { "commit": "ac62194c3917d5f474c1a844b6fd6da2db95077d" },
+  "packages": [
+    "python312",
+    "python312Packages.pyyaml"
+  ],
+  "env": {},
+  "shell": {
+    "scripts": {
+      "test": [
+        "cd tools && python3 -m unittest discover -p 'test_*.py' -v"
+      ],
+      "check": [
+        "python3 tools/okf_conformance.py \"${1:-.arche}\""
+      ]
+    }
+  }
+}

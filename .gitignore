@@ -10,3 +10,9 @@ node_modules/
 # Python bytecode (tools/)
 __pycache__/
 *.pyc
+.pytest_cache/
+
+# devbox / direnv working dirs (devbox.json + devbox.lock are committed)
+.devbox/
+.venv/
+.direnv/
