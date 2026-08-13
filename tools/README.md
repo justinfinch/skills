@@ -15,7 +15,9 @@ devbox, install PyYAML with `python3 -m pip install --user pyyaml`.
     devbox run check path/to/.arche          # or, inside a devbox shell:
     python3 tools/okf_conformance.py path/to/.arche
 
-Exit code 0 when conformant, 1 when findings exist, 2 on usage error.
+Exit code 0 when conformant, 1 when findings exist, 2 on usage or environment
+error (bad arguments, missing PyYAML). A broken environment must never look
+like a non-conformant bundle, so 1 is reserved for findings alone.
 
 ## Run the suites
 

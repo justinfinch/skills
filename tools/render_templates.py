@@ -22,7 +22,9 @@ SAMPLE_TOKENS = {
     "{{RESOURCE}}": "https://example.com/sample",
     "{{SYSTEM}}": "billing",
     "{{AUDIENCE}}": "Engineering leadership",
+    "{{AUDIENCE_DEPTH}}": "Senior engineers; assumes DDD and event-driven literacy",
     "{{ACTION_ASK}}": "Approve the migration",
+    "{{TIME_BUDGET}}": "20 minutes",
 }
 
 # Where each template's rendered output must live inside the bundle. The

@@ -87,7 +87,7 @@ sources:
 ---
 ```
 
-Story pages additionally carry `audience`, `action_ask`, `framework`, `format`, and `html`.
+Story pages additionally carry `audience`, `audience_depth`, `action_ask`, `framework`, `format`, `time_budget`, and `html`. `audience_depth` and `time_budget` exist because they shape the artifact rather than its content — the depth the narrative is pitched at, and the minutes (deck) or scroll-depth (narrative) that set the section count — so neither can be recovered from the finished body when the HTML is re-rendered from the page.
 
 ### Actors (§7)
 

@@ -18,7 +18,15 @@ from pathlib import Path
 try:
     import yaml
 except ImportError:  # pragma: no cover
-    sys.exit("PyYAML required: python3 -m pip install --user pyyaml")
+    # Exit 2, not 1: 1 means "the bundle has findings". A missing dependency is
+    # an environment problem, and conflating the two lets a broken CI runner
+    # read as a non-conformant bundle.
+    print(
+        "PyYAML required: run inside `devbox shell`, or "
+        "`python3 -m pip install --user pyyaml`",
+        file=sys.stderr,
+    )
+    raise SystemExit(2)
 
 DATE_HEADING = re.compile(r"^## (\d{4}-\d{2}-\d{2})\s*$")
 
@@ -39,6 +47,13 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
         return None, text
     end = text.find("\n---\n", 3)
     if end == -1:
+        # A closing `---` as the final line with no trailing newline still
+        # terminates the block. Frontmatter-only pages (entity stubs, pages
+        # whose body was trimmed) hit this whenever the editor omits the
+        # final newline; treating them as unterminated would report a page
+        # that has frontmatter as having none.
+        if text.endswith("\n---"):
+            return text[4 : len(text) - 3], ""
         return None, text
     return text[4 : end + 1], text[end + 5 :]
 

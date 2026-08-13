@@ -7,9 +7,11 @@ created: {{DATE}}
 generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
 status: stable
 audience: {{AUDIENCE}}
+audience_depth: {{AUDIENCE_DEPTH}}
 action_ask: {{ACTION_ASK}}
 framework: pyramid
 format: deck
+time_budget: {{TIME_BUDGET}}
 html: ../assets/stories/{{SLUG}}.html
 sources: []
 ---
@@ -18,7 +20,10 @@ sources: []
 
 ## Audience
 
-Who they are, what they already believe, and what they can decide.
+Who they are, what they already believe, and what they can decide. `audience_depth`
+and `time_budget` above carry the two answers a re-render cannot recover from prose:
+the technical depth the narrative is pitched at, and the minutes (deck) or
+scroll-depth (narrative) that set the section count.
 
 ## Action ask
 

@@ -40,6 +40,23 @@ class SplitFrontmatterTests(unittest.TestCase):
         fm, _ = split_frontmatter("---\na: 1\nno closing delimiter\n")
         self.assertIsNone(fm)
 
+    def test_closing_delimiter_at_eof_without_trailing_newline(self):
+        # Editors that omit the final newline produce this on any page with no
+        # body. It is a terminated block, not a missing one.
+        fm, body = split_frontmatter("---\ntype: Concept\n---")
+        self.assertEqual(fm, "type: Concept\n")
+        self.assertEqual(body, "")
+
+    def test_empty_frontmatter_at_eof_without_trailing_newline(self):
+        fm, body = split_frontmatter("---\n---")
+        self.assertEqual(fm, "")
+        self.assertEqual(body, "")
+
+    def test_bare_delimiter_is_not_frontmatter(self):
+        # "---\n" alone has an opening delimiter and nothing else.
+        fm, _ = split_frontmatter("---\n")
+        self.assertIsNone(fm)
+
 
 class Rule1Tests(unittest.TestCase):
     def test_concept_without_frontmatter_is_a_finding(self):
@@ -70,6 +87,10 @@ class Rule2Tests(unittest.TestCase):
 
     def test_non_empty_type_alone_conforms(self):
         root = write_bundle({"concepts/foo.md": "---\ntype: Concept\n---\nbody\n"})
+        self.assertEqual(check_bundle(root), [])
+
+    def test_bodyless_page_without_trailing_newline_conforms(self):
+        root = write_bundle({"entities/acme.md": "---\ntype: Entity\n---"})
         self.assertEqual(check_bundle(root), [])
 
 
