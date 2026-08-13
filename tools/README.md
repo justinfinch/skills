@@ -4,6 +4,15 @@ Verification for the Arche's OKF v0.2 conformance. Not shipped in any skill —
 `arche-lint` implements its own checks; these exist so lint can be verified
 against something independent.
 
+The spec is vendored at [`spec/okf/v0.2/`](../spec/okf/v0.2/) — see its
+`PROVENANCE.md`. OKF publishes no validator and the spec recommends none, so
+`okf_conformance.py` is the oracle here. Its scope is deliberately just §11's
+three hard rules plus the §8 / §9 reserved-file structure they point at; §11
+forbids consumers from rejecting a bundle over unknown `type` values, missing
+`index.md`, broken links, or missing optional fields, so this checker must
+never exit non-zero on any of those. `test_spec_pin.py` asserts the vendored
+spec still matches the digests `PROVENANCE.md` records.
+
 ## Requirements
 
 Python 3.12+ and PyYAML, both declared in the repo's `devbox.json`. Run

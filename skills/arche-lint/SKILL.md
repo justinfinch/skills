@@ -9,9 +9,11 @@ Audit the project Arche and report issues. Do not fix without asking.
 
 ## OKF conformance
 
-This Arche is an [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle, and this skill is what keeps it one. `/arche-init` writes the system files once at bootstrap; everything afterward — conformance, schema-era drift, repair — belongs here. OKF will keep evolving, so drift is a standing condition rather than a one-time migration, which is why it lives with the audit skill rather than a bootstrap migrate mode.
+This Arche is an [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/3fcbb9f/okf/SPEC.md) bundle, and this skill is what keeps it one. `/arche-init` writes the system files once at bootstrap; everything afterward — conformance, schema-era drift, repair — belongs here. OKF will keep evolving, so drift is a standing condition rather than a one-time migration, which is why it lives with the audit skill rather than a bootstrap migrate mode.
 
 Read [references/OKF-CONFORMANCE.md](references/OKF-CONFORMANCE.md) before checking. It is the full matrix: every drift class, its detection rule, and its repair.
+
+**Conformance is narrower than this skill's remit.** Per §11, a bundle is conformant if every non-reserved `.md` has parseable frontmatter, every frontmatter block has a non-empty `type`, and `index.md` / `log.md` follow §8 / §9 when present. That is the whole list — the matrix calls it Tier 1. Everything else this skill checks is drift from *this Arche's* `SCHEMA.md`, not from OKF. The spec explicitly forbids consumers from **rejecting** a bundle over unknown `type` values, missing `index.md` files, broken cross-links, missing optional fields, or unknown extra keys — all of which appear below as findings. Reporting them and offering repair is correct; refusing to read an Arche over any of them is not. Audit and ask; never reject.
 
 **Scope of repair.** Frontmatter and reserved-file structure only. **Never rewrite body prose.** Two carve-outs: renaming a `raw/*.md` file to `.txt` is permitted because its content is unchanged, and `SCHEMA.md` may be overlaid section by section from `arche-init`'s template (matrix rule SC1) because it is rendered scaffolding, not authored content. No other file's body is touched.
 

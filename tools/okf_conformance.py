@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 """Check a directory against Open Knowledge Format v0.2 conformance (SPEC §11).
 
-Spec pinned at GoogleCloudPlatform/knowledge-catalog commit 3fcbb9f.
+Spec vendored at spec/okf/v0.2/SPEC.md (upstream GoogleCloudPlatform/
+knowledge-catalog commit 3fcbb9f); see that directory's PROVENANCE.md.
 
 This is deliberately independent of `arche-lint`: checking lint's output with
 lint would be circular. It implements only the three hard rules in §11, plus
 the reserved-file structure those rules point at (§8, §9).
+
+OKF ships no validator and the spec recommends none -- §11 is prose, and
+upstream's own reference_agent only parses bundles, checking that a `type` key
+is present without checking it is non-empty. So this file is the oracle, and
+its scope is deliberately narrow.
+
+What it must NEVER flag, because §11 names these as things consumers MUST NOT
+reject a bundle over: missing optional frontmatter fields, unknown `type`
+values, unknown extra frontmatter keys, broken cross-links, missing index.md.
+`arche-lint` reports several of those as house-convention drift, which is fine
+-- it audits and asks. A non-zero exit here means non-conformant, so anything
+on that list would make this checker itself out of spec.
 """
 
 from __future__ import annotations

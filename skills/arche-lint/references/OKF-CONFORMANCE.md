@@ -1,14 +1,52 @@
 # OKF v0.2 conformance matrix
 
 Every drift class `/arche-lint` detects, how to detect it, and how to repair it.
-Spec pinned at `GoogleCloudPlatform/knowledge-catalog` commit `3fcbb9f`.
+Every `§` below cites [OKF v0.2 pinned at commit `3fcbb9f`](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/3fcbb9f/okf/SPEC.md)
+— a permalink, not `main`, because section numbers renumber across spec revisions.
+(In the skills repo the same text is vendored at `spec/okf/v0.2/SPEC.md`.)
+
+## Two tiers, and the difference matters
+
+**Tier 1 — OKF conformance (§11).** [Hard conformance](#tier-1--hard-conformance-11)
+only. Per §11 a bundle is conformant if every non-reserved `.md` has parseable
+frontmatter, every frontmatter block has a non-empty `type`, and `index.md` /
+`log.md` follow §8 / §9 when present. That is the entire list. `tools/okf_conformance.py`
+checks exactly these and nothing else.
+
+**Tier 2 — Arche house conventions.** Everything else here — type taxonomy, field
+families, structure, schema era — is drift from *this Arche's* `SCHEMA.md`, not
+from OKF. Worth reporting, worth repairing on request, but a bundle that fails
+every one of them is still a perfectly conformant OKF bundle.
+
+**What §11 forbids.** The spec is explicit that consumers **MUST NOT reject a
+bundle** because of:
+
+> - Missing optional frontmatter fields.
+> - Unknown `type` values.
+> - Unknown additional frontmatter keys.
+> - Broken cross-links.
+> - Missing `index.md` files.
+
+Three Tier-2 rules land squarely on that list — **T4** (unknown `type`), **S1**
+(missing `index.md`), and the broken-link check in `SKILL.md` — and so does the
+`description`-absent rule **F4**. Reporting them and offering a repair is fine;
+`/arche-lint` audits and asks, it does not reject. Hardening any of them into a
+refusal-to-read, or letting `tools/okf_conformance.py` exit non-zero on them,
+would put these skills out of spec. Keep them advisory.
+
+The same rule governs versions: §12 says consumers that do not understand a
+declared `okf_version` "SHOULD attempt best-effort consumption rather than
+refusing the bundle." Decline to *repair* what you don't understand; never
+decline to *read* it.
 
 Repairs touch **frontmatter and reserved-file structure only**. Never rewrite body prose.
-The one exception is `SCHEMA.md`, which is not authored prose — see [Schema era](#schema-era).
+The one exception is `SCHEMA.md`, which is not authored prose — see [Schema era](#tier-2--schema-era-house-convention).
 
-**Order matters twice over.**
+## Order of application
 
-**Schema era first.** If [SC1](#schema-era) fires, apply it before anything else
+Order matters twice over.
+
+**Schema era first.** If [SC1](#tier-2--schema-era-house-convention) fires, apply it before anything else
 and re-read `SCHEMA.md` afterward. `SCHEMA.md` is what defines "valid" for the
 rest of this matrix: T4 checks `type` values against the page types it declares,
 F9 checks key shapes against its frontmatter spec, and F5 maps `status` into the
@@ -23,7 +61,10 @@ consume what an earlier rule produces (T2 matches the value T1 normalizes; F5's
 single page through the whole matrix before moving to the next one silently
 skips the dependent half.
 
-## Hard conformance (§11)
+## Tier 1 — Hard conformance (§11)
+
+The only rules whose failure makes a bundle non-conformant. `tools/okf_conformance.py`
+is the independent oracle for these — checking lint's output with lint would be circular.
 
 | # | Detect | Repair |
 | :--- | :--- | :--- |
@@ -32,16 +73,23 @@ skips the dependent half.
 | H3 | A non-root `index.md` carrying frontmatter, or a root `index.md` carrying keys other than `okf_version` | Strip the frontmatter. On the root index, replace it with `okf_version: "0.2"`. |
 | H4 | `log.md` with non-ISO `## ` date headings, or headings not ordered newest first | Rewrite headings to `## YYYY-MM-DD` and sort the date groups descending, moving each group's bullets with it. Preserve every entry's prose verbatim. |
 
-## Type taxonomy
+## Tier 2 — Type taxonomy (house convention)
+
+Drift from the page types `SCHEMA.md` declares. OKF itself has no type registry —
+§11 requires only that `type` be present and non-empty.
 
 | # | Detect | Repair |
 | :--- | :--- | :--- |
 | T1 | A lowercase `type` value (`source`, `entity`, `concept`, `query`, `discovery`, `story`, `schema`, `log`) | Title-case it. `index` is removed entirely (see H3). |
 | T2 | A `Concept` type **in any casing** on a page whose filename starts `ard-`, `sad-`, or `adr-` | Promote to `Architecture Requirements Document`, `Solution Architecture Document`, or `Architecture Decision Record`. This is the **only** case where a filename prefix is authoritative, and only during this one-time promotion. Match case-insensitively: a pre-OKF Arche carries `type: concept`, so a T2 that only saw title-case would leave every migrated ADR untyped as an architecture page — and since `/arche-query` and `/arche-architect` find these pages by filtering `type` and never by filename, an unpromoted ADR is invisible to both. |
 | T3 | `type: brainstorm` (a pre-`discovery` era value) | Set `type: Discovery`. Flag the containing `brainstorms/` directory for the user; do not rename directories. |
-| T4 | After T1–T3, a `type` value that is not one of the page types `SCHEMA.md` defines (`Source`, `Entity`, `Concept`, `Query`, `Discovery`, `Story`, `Schema`, `Log`, `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record`) | Report the page, its directory, and the value found — a casing slip (`Architecture Decision record`), a retired era value (`Spec`, `Plan`), or a type the user added on purpose. Do **not** guess: name the directory-implied type from H2 as the likely intent and ask. This row is the catch-all that keeps T1–T3 from being a closed list — an unrecognized `type` passes §11.2 (it is a non-empty string) but is invisible to every skill that filters on `type`. |
+| T4 | After T1–T3, a `type` value that is not one of the page types `SCHEMA.md` defines (`Source`, `Entity`, `Concept`, `Query`, `Discovery`, `Story`, `Schema`, `Log`, `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record`) | **Report only — never reject, never rewrite unasked.** §11 names unknown `type` values as something consumers MUST NOT reject a bundle over, so this row is advisory by construction. Name the page, its directory, and the value found — a casing slip (`Architecture Decision record`), a retired era value (`Spec`, `Plan`), or a type the user added on purpose — offer the directory-implied type from H2 as the likely intent, and ask. This row is the catch-all that keeps T1–T3 from being a closed list: an unrecognized `type` is perfectly conformant, and simultaneously invisible to every skill that filters on `type`. That gap is worth surfacing precisely because the spec will never surface it for you. |
 
-## Field families (§5)
+## Tier 2 — Field families (§5, house convention)
+
+§5 defines the provenance / trust / lifecycle families; §11 makes every one of
+them **optional**. These rows normalize an Arche onto them — they do not gate
+conformance.
 
 | # | Detect | Repair |
 | :--- | :--- | :--- |
@@ -55,7 +103,10 @@ skips the dependent half.
 | F8 | `verified` written by a non-`human:` actor | Report only. The Arche never machine-verifies, so this indicates hand-editing or an external producer. Never strip it — §11 forbids rejecting a concept over an optional family. |
 | F9 | Any key whose **shape** contradicts `SCHEMA.md`'s frontmatter spec: `generated:` as a scalar rather than a `{ by, at }` mapping, `sources:` as anything but a list, `tags:` as a bare string, a `created:` / `stale_after:` that is not an ISO date, a `verified:` that is neither a mapping nor a list of them | Repair where the intent is unambiguous — `generated: 2026-01-01` → `generated: { by: <actor per F1>, at: 2026-01-01T00:00:00Z }`, `tags: billing` → `tags: [billing]`. Report the rest. This is the catch-all: F1–F8 name the drift classes seen in the wild, and this row exists so a class nobody enumerated is still caught rather than passing clean. A malformed `generated:` in particular is invisible to the stale-date check, which reads `generated.at` and silently skips a page where that lookup fails. |
 
-## Structure
+## Tier 2 — Structure (house convention)
+
+§8 governs `index.md` *when present*; a missing one is explicitly not a
+conformance failure. These rows keep the Arche navigable, nothing more.
 
 | # | Detect | Repair |
 | :--- | :--- | :--- |
@@ -74,12 +125,12 @@ Three inputs, compared pairwise:
 
 Any mismatch is a finding. Report the direction: a bundle behind the skills needs repair; a bundle ahead of the skills means the skills need upgrading, and repair must **not** run.
 
-## Schema era
+## Tier 2 — Schema era (house convention)
 
 **This runs first.** Everything above reads `SCHEMA.md` as the definition of
-valid, so the overlay has to land before the page rules do — see [Order matters
-twice over](#okf-v02-conformance-matrix) at the top. It is documented last only
-because it is the rule most Arches never need.
+valid, so the overlay has to land before the page rules do — see
+[Order of application](#order-of-application) at the top. It is documented last
+only because it is the rule most Arches never need.
 
 `SCHEMA.md` is the one file where repair reaches past frontmatter. It is not
 authored prose — it is `arche-init`'s template rendered once at bootstrap, and it

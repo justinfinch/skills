@@ -11,8 +11,13 @@ Add one or more sources to the project Arche.
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
 2. Read `./.arche/SCHEMA.md` end to end. The schema is authoritative — follow its slug rules (including the "Slug derivation" subsection), page-type definitions, frontmatter shape, cross-linking rules, contradiction marker convention, and log format.
-3. Read `./.arche/index.md` so you know what entities and concepts already exist (you'll be linking into them and possibly extending them).
-4. Read this skill's own page templates so new pages follow the canonical layout: [source.template.md](assets/source.template.md), [entity.template.md](assets/entity.template.md), [concept.template.md](assets/concept.template.md).
+3. **Note the schema era — then keep going.** If `SCHEMA.md` documents an older era (no architecture page types, `status: proposed | accepted | superseded`, no `generated` / `stale_after`), say so once, in one line, and continue the ingest normally against the schema as written:
+
+   > This Arche's SCHEMA is an older era — `/arche-lint` can bring it up to OKF v0.2. Ingesting against the current schema for now.
+
+   **Warn, never refuse.** OKF §12 tells consumers that don't understand a bundle's declared version to "attempt best-effort consumption rather than refusing the bundle," and adding a source is exactly that — it works on any era. This one line exists because ingesting is the most frequent operation and the one least likely to surface drift: `/arche-architect`, `/arche-discover`, and `/arche-tell` all stop and name `/arche-lint`, but a user who only ingests and queries would otherwise never learn their Arche is behind while every new page deepens the old-era content. Say it once per session, not once per source in batch mode.
+4. Read `./.arche/index.md` so you know what entities and concepts already exist (you'll be linking into them and possibly extending them).
+5. Read this skill's own page templates so new pages follow the canonical layout: [source.template.md](assets/source.template.md), [entity.template.md](assets/entity.template.md), [concept.template.md](assets/concept.template.md).
 
 ## Dispatch
 

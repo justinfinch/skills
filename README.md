@@ -40,9 +40,11 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 
 ### Open Knowledge Format
 
-The Arche is a conformant [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle — a directory of markdown files with YAML frontmatter, carrying OKF's provenance (`sources`), trust (`generated`, `verified`), and lifecycle (`status`, `stale_after`) families. That means any OKF-aware tool can read your Arche, and the format is portable off these skills entirely.
+The Arche is a conformant [Open Knowledge Format v0.2](spec/okf/v0.2/SPEC.md) bundle — a directory of markdown files with YAML frontmatter, carrying OKF's provenance (`sources`), trust (`generated`, `verified`), and lifecycle (`status`, `stale_after`) families. That means any OKF-aware tool can read your Arche, and the format is portable off these skills entirely.
 
 `/arche-init` creates the bundle; `/arche-lint` maintains it, including upgrading an older Arche to the current OKF era. `tools/okf_conformance.py` is a standalone checker used to verify lint against something independent of itself.
+
+The spec is vendored, unmodified and pinned, at [`spec/okf/v0.2/`](spec/okf/v0.2/) (Apache-2.0, quarantined from this repo's MIT license) so every `§` citation in the skills resolves locally and survives upstream renumbering — see its [PROVENANCE.md](spec/okf/v0.2/PROVENANCE.md). Worth knowing what conformance actually costs: §11 requires only parseable frontmatter, a non-empty `type`, and well-formed `index.md` / `log.md`. Everything else the Arche does — the type taxonomy, the field families, the index glosses — is house convention layered on top, and §11 explicitly forbids consumers from rejecting a bundle over unknown types, missing indexes, or broken links. Your Arche stays readable by any OKF tool even when `/arche-lint` has plenty to say about it.
 
 ## Why "Arche"?
 

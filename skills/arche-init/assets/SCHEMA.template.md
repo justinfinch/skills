@@ -10,7 +10,7 @@ generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
 
 This file tells the LLM how to maintain `./.arche/`. The operation skills read it before acting. When conventions change, edit this file rather than the skills.
 
-Based on Andrej Karpathy's LLM Wiki pattern: humans curate, the LLM maintains. The on-disk format is [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) — this Arche is a conformant OKF bundle, and `/arche-lint` keeps it that way.
+Based on Andrej Karpathy's LLM Wiki pattern: humans curate, the LLM maintains. The on-disk format is [Open Knowledge Format v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/3fcbb9f/okf/SPEC.md) — this Arche is a conformant OKF bundle, and `/arche-lint` keeps it that way.
 
 ## What belongs here (and what doesn't)
 
