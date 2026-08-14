@@ -30,13 +30,21 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 - **[write-a-skill](skills/write-a-skill/SKILL.md)** — meta-skill that walks the agent through authoring new skills.
 - **[devbox-init](skills/devbox-init/SKILL.md)** — scaffold an isolated, declarative dev env (Devbox + direnv) for the current repo; agent-agnostic, with an optional Claude-Code-only env-snapshot hook.
 - **[devbox-add](skills/devbox-add/SKILL.md)** — add an infra dep (db/queue/cache/search) or app dep to the repo's `devbox.json` instead of installing on the host; wires `devbox services` and records the policy in the repo's agent context file.
-- **[arche-init](skills/arche-init/SKILL.md)** — bootstrap an Arche at `./.arche/` (Karpathy's LLM-wiki pattern): schema, index, log. Also registers the Arche in the repo's agent context file(s) (`AGENTS.md` / `CLAUDE.md` / `.cursorrules`, …) so coding agents pick it up automatically rather than waiting to be told. Arche captures institutional context — business/domain/SME/ARB — not code documentation.
+- **[arche-init](skills/arche-init/SKILL.md)** — bootstrap-only: creates an Arche at `./.arche/` (Karpathy's LLM-wiki pattern) — schema, index, log — as a conformant OKF v0.2 bundle. Also registers the Arche in the repo's agent context file(s) (`AGENTS.md` / `CLAUDE.md` / `.cursorrules`, …) so coding agents pick it up automatically rather than waiting to be told. Arche captures institutional context — business/domain/SME/ARB — not code documentation. `/arche-lint` owns migration and ongoing conformance from here on.
 - **[arche-ingest](skills/arche-ingest/SKILL.md)** — ingest a source (URL/file/text/SME-interview/ADR) into the Arche and update affected pages.
 - **[arche-query](skills/arche-query/SKILL.md)** — answer a question from the Arche with inline citations; also fires as a cold-start orientation step before planning/design in agentic dev workflows.
 - **[arche-discover](skills/arche-discover/SKILL.md)** — facilitated discovery / ideation session grounded in Arche context, for business/domain/architectural topics (not implementation design). Files the session and promotes top ideas back to concept/entity pages (including new ADRs).
-- **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files ARD/SAD/ADR concept pages.
+- **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages.
 - **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
-- **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift.
+- **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift; owns OKF v0.2 conformance detection and repair, including migrating an older Arche to the current era.
+
+### Open Knowledge Format
+
+The Arche is a conformant [Open Knowledge Format v0.2](spec/okf/v0.2/SPEC.md) bundle — a directory of markdown files with YAML frontmatter, carrying OKF's provenance (`sources`), trust (`generated`, `verified`), and lifecycle (`status`, `stale_after`) families. That means any OKF-aware tool can read your Arche, and the format is portable off these skills entirely.
+
+`/arche-init` creates the bundle; `/arche-lint` maintains it, including upgrading an older Arche to the current OKF era. `tools/okf_conformance.py` is a standalone checker used to verify lint against something independent of itself.
+
+The spec is vendored, unmodified and pinned, at [`spec/okf/v0.2/`](spec/okf/v0.2/) (Apache-2.0, quarantined from this repo's MIT license) so every `§` citation in the skills resolves locally and survives upstream renumbering — see its [PROVENANCE.md](spec/okf/v0.2/PROVENANCE.md). Worth knowing what conformance actually costs: §11 requires only parseable frontmatter, a non-empty `type`, and well-formed `index.md` / `log.md`. Everything else the Arche does — the type taxonomy, the field families, the index glosses — is house convention layered on top, and §11 explicitly forbids consumers from rejecting a bundle over unknown types, missing indexes, or broken links. Your Arche stays readable by any OKF tool even when `/arche-lint` has plenty to say about it.
 
 ## Why "Arche"?
 
@@ -75,7 +83,7 @@ Raw layer           (.arche/raw/)
 - **Bring sources in** — `arche-ingest` files a competitor analysis, an SME interview transcript, or an external ADR. The Arche grows by deliberate curation, not by accretion from coding sessions.
 - **Orient before any work** — `arche-query` is the canonical cold-start step. Before planning, design, scoping, or a setup decision, it surfaces relevant ADRs, domain constraints, customer context, and prior research so the work is informed by what the institution already knows. So this happens *without the user having to ask*, `arche-init` registers the Arche in the repo's agent context files: it writes a `<!-- arche-context-source -->` snippet to `AGENTS.md` (the cross-agent source of truth) and, since [Claude Code reads `CLAUDE.md` not `AGENTS.md`](https://code.claude.com/docs/en/memory), bridges it with a one-line `@AGENTS.md` import in `CLAUDE.md` (no agent detection, no duplicated content). That always-loaded instruction tells any coding agent to consult `./.arche/` before such work, making the Arche a first-class context source rather than a skill someone has to remember to invoke.
 - **Diverge on the business** — `arche-discover` facilitates ideation for product strategy, new direction, or regulatory option-mapping, then files the session and promotes top ideas back to the Arche.
-- **Converge the HOW** — `arche-architect` runs a panel-of-architects interview and files ARD/SAD/ADR concept pages, grounded in the discovery and research already in the Arche.
+- **Converge the HOW** — `arche-architect` runs a panel-of-architects interview and files ARD, SAD, and ADR pages, grounded in the discovery and research already in the Arche.
 - **Communicate it** — `arche-tell` packages Arche content into a shareable deck or narrative for a defined audience and ask.
 - **Keep it healthy** — `arche-lint` audits for contradictions, stale dates, orphans, broken links, and gaps.
 

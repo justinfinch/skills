@@ -1,11 +1,11 @@
 ---
 name: arche-architect
-description: Convergent technical-architecture skill for the Arche at ./.arche/. Acts as a panel of senior architects (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin) invoked as lenses by topic. Interviews the user one branch at a time with recommended answers, then files outputs as concept pages — ARD (`ard-<system>`), SAD (`sad-<system>`), and ADRs (`adr-<name>`) as the problem decomposes — cites Arche context, updates index.md, appends an `architect` log entry. Use when the user is deciding a technical architecture; says "design X", "architect this", "ADR for X", "SAD for Z"; OR is downstream of `/arche-discover` and wants to converge architectural ideas; OR `/arche-query` flagged no relevant SAD/ADR before planning. NOT for business / customer / market / regulatory ideation — that belongs to `/arche-discover`. NOT for code-implementation brainstorming — use your dev methodology's own skill.
+description: Convergent technical-architecture skill for the Arche at ./.arche/. Acts as a panel of senior architects (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin) invoked as lenses by topic. Interviews the user one branch at a time with recommended answers, then files outputs as an Architecture Requirements Document, a Solution Architecture Document, and Architecture Decision Records (the `ard-`/`sad-`/`adr-` filename prefixes are just the naming habit) as the problem decomposes — cites Arche context, updates index.md, inserts an `architect` log entry. Use when the user is deciding a technical architecture; says "design X", "architect this", "ADR for X", "SAD for Z"; OR is downstream of `/arche-discover` and wants to converge architectural ideas; OR `/arche-query` flagged no relevant SAD/ADR before planning. NOT for business / customer / market / regulatory ideation — that belongs to `/arche-discover`. NOT for code-implementation brainstorming — use your dev methodology's own skill.
 ---
 
 # arche-architect
 
-Run a convergent technical-architecture session that uses the project Arche as agent memory and writes its outputs back into the Arche as ARD / SAD / ADR concept pages. Acts as a panel of senior architects — each named as a **lens** when their territory comes up, not as a theatrical persona.
+Run a convergent technical-architecture session that uses the project Arche as agent memory and writes its outputs back into the Arche as Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages. Acts as a panel of senior architects — each named as a **lens** when their territory comes up, not as a theatrical persona.
 
 Where `/arche-discover` is divergent (business / customer / market / regulatory / domain ideation, 100+ ideas), `arche-architect` is decisive: every question has a recommended answer, walks the design tree branch by branch, and produces a small number of durable artifacts.
 
@@ -39,7 +39,7 @@ Rules:
 
 1. Verify `./.arche/SCHEMA.md` exists. If not, tell the user to run `/arche-init` first and stop.
 2. Read `./.arche/SCHEMA.md` end to end.
-3. Check SCHEMA defines the **architecture page conventions** for `ard-`, `sad-`, and `adr-` slugs AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-init` in migration mode (it will detect the stale schema and propose patches) and stop.
+3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-lint`, which owns conformance detection and repair — including bringing an older Arche's SCHEMA up to the current OKF era — and stop.
 4. Read `./.arche/index.md`.
 5. Read this skill's [LENSES.md](references/LENSES.md) and the three templates so you write pages in the canonical layout: [ard.template.md](assets/ard.template.md), [sad.template.md](assets/sad.template.md), [adr.template.md](assets/adr.template.md).
 
@@ -47,7 +47,7 @@ Rules:
 
 1. In one short message, ask the user for the **technical problem**, **success criteria**, and any **non-negotiable constraints** (regulatory, infra, deadline, team-skill).
 2. **Load Arche context.**
-   - Scan `index.md` for prior `ard-*`, `sad-*`, `adr-*` concept pages, related entities (systems, teams, vendors), prior discoveries on adjacent topics, and prior queries. Aim for high recall — read each candidate page fully.
+   - Scan `concepts/index.md` for prior architecture pages, related entities (systems, teams, vendors), prior discoveries on adjacent topics, and prior queries. ARD, SAD, and ADR are first-class `type` values — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record`. The `ard-`/`sad-`/`adr-` filename prefixes remain a naming habit, but find architecture pages by filtering `type`, never by parsing filenames. Aim for high recall — read each candidate page fully.
    - Sweep the codebase for stated constraints the Arche may not have captured: language/runtime choice, infrastructure manifests (devbox.json, Dockerfile, terraform), top-level READMEs, existing service boundaries.
 3. Present the context bundle in one message: prior decisions (with statuses), related entities, related discoveries, and codebase constraints. List them with one-line glosses. Ask: "Use this as context, ignore it, or focus on a subset?"
 4. **Pick the system slug.** Default: kebab-case of the system or problem (e.g. `billing`, `order-fulfillment`). This is the stem reused by `ard-<system>` and `sad-<system>`. ADR slugs are decision-specific (`adr-<decision-name>`).
@@ -101,10 +101,11 @@ Only when the user signals the design tree is walked:
 1. **Restate the decisions.** One message: ARD scope, SAD shape, list of ADR candidates with one-line summaries. Get the user's confirmation.
 2. **Write the ARD** at `.arche/concepts/ard-<system>.md` using [ard.template.md](assets/ard.template.md). Cite the session's source pages, related entities, prior discoveries, the SAD it pairs with (forward link).
 3. **Write the SAD** at `.arche/concepts/sad-<system>.md` using [sad.template.md](assets/sad.template.md). The Decision Summary section links forward to every ADR this SAD relies on.
-4. **Write each ADR** at `.arche/concepts/adr-<name>.md` using [adr.template.md](assets/adr.template.md). Each ADR's frontmatter cites the SAD in `sources:` so the back-pointer exists. Status defaults to `accepted` (this skill converges on decisions, not proposals); use `proposed` only if the user explicitly wants it that way.
-5. **Update existing pages.** If the session touched entities or prior concept pages, append (don't overwrite) with citations to the new ARD/SAD/ADRs. If a new ADR supersedes a prior one, set the prior ADR's `status: superseded` and `superseded_by:` to the new path. Do not delete the old page — the trail of "we reversed X after Y" is the institutional memory.
-6. **Update `index.md`.** Add the new ARD/SAD/ADRs under Concepts (the schema's concept section). One-line gloss + tags each.
-7. **Append to `log.md`** with op `architect`. List every page touched. Notes line: system + one-line summary of what was decided + ADR count.
+4. **Write each ADR** at `.arche/concepts/adr-<name>.md` using [adr.template.md](assets/adr.template.md). Each ADR's frontmatter cites the SAD in `sources:` so the back-pointer exists. This skill converges on decisions, not proposals — a freshly filed ADR the user has confirmed typically lands as `stable`; use `draft` only if the user explicitly wants the decision left open for further debate.
+   - On every page written this phase (ARD, SAD, and each ADR): write `description:` — one sentence, used as the index gloss. Write `generated: { by: arche-architect/<model-id>, at: <ISO 8601 UTC> }`. Never write `verified` — that is human sign-off only, via `/arche-lint`.
+5. **Update existing pages.** If the session touched entities or prior concept pages, append (don't overwrite) with citations to the new ARD/SAD/ADRs, and rewrite each edited page's whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now. If a new ADR supersedes a prior one, set the prior ADR's `status: deprecated` and `superseded_by:` to the new path. Do not delete the old page — the trail of "we reversed X after Y" is the institutional memory.
+6. **Update `index.md`.** Update both `concepts/index.md` and the root `index.md`. Add the new ARD/SAD/ADRs under Concepts (create the section if missing) as `* [Title](path) - description.`, where the gloss is exactly the page's `description` and nothing else — `/arche-lint`'s S2 check overwrites any gloss that does not match, so extra tags would be stripped on the next lint and re-added on the next run.
+7. **Insert into `log.md`** with op `architect`. Insert a `- **Architect**: …` bullet as the first bullet under today's `## YYYY-MM-DD` heading; if today's heading is absent, create it immediately above the topmost existing date heading. Never append at the end of the file. The bullet's prose names the system, a one-line summary of what was decided, the ADR count, and every page touched.
 
 ## Discipline
 
@@ -112,8 +113,8 @@ Only when the user signals the design tree is walked:
 - One question at a time. Always recommend with 1–3 alternative angles; the user redirects.
 - Cite at the point of claim, not just in frontmatter.
 - ADRs only when the bar is met (hard to reverse, surprising-without-context, real trade-off). Decisions that don't clear the bar live inside the SAD body, not as their own ADR.
-- An ADR can supersede an existing ADR. Mark the old one `superseded` with `superseded_by:` pointing at the new path — never delete.
-- If a session-level decision contradicts an existing claim on an entity or concept page, surface it in conversation and use the SCHEMA's contradiction convention (`~~strikethrough~~`, new claim with inline citation, log entry's notes prefixed `contradiction —`).
+- `status` is `draft | stable | deprecated`. A decision under debate is `draft`; a decision that stands is `stable`; a reversed or replaced decision is `deprecated` with `superseded_by:` pointing at its replacement. Never delete a deprecated page. An ADR can supersede an existing ADR this way: mark the old one `status: deprecated` with `superseded_by:` pointing at the new path — never delete.
+- If a session-level decision contradicts an existing claim on an entity or concept page, surface it in conversation and use the SCHEMA's contradiction convention (`~~strikethrough~~`, new claim with inline citation, and a log entry whose prose contains `contradiction —`).
 - A SAD without ADRs is a sketch. A grilled session should produce at least one ADR; if it produced none, the grill stopped too early or the problem belongs in `/arche-discover` instead.
 
 ## Output

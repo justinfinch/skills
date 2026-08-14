@@ -28,19 +28,38 @@ Beyond direct "query the Arche" questions, treat this skill as the **cold-start 
 3. **Synthesize an answer.** Inline-cite every non-trivial claim with **both** the Arche page that synthesizes it and the underlying source page: `... per [Concept Name](../concepts/foo.md) citing [Source Title](../sources/bar.md).` Provenance traces to the original source, not just the synthesis layer. If a claim is supported by multiple sources, cite the strongest one; the others can be implied by the Arche page's own `sources:` list.
 4. **Flag gaps.** If the Arche doesn't fully answer the question, say what's missing and suggest a source to ingest. Do not guess past the Arche's coverage.
 5. **Architecture gap signal.** When the question is framed for building a feature and the design isn't settled in the Arche, surface that gap before any spec/plan/implementation work proceeds:
-   - If it's about **how to build / design** ("how should we build X", "what's the right approach for Y", "design a Z") AND no relevant ARD/SAD/ADR concept page exists, surface that gap: *"The Arche has no decision filed for this. Want to run `/arche-architect` to grill the design and file ARD/SAD/ADRs before building starts?"*
+   - Find architecture pages by filtering frontmatter `type` for `Architecture Requirements Document`, `Solution Architecture Document`, or `Architecture Decision Record`. Do not rely on the `adr-`/`sad-`/`ard-` prefix as a lookup key — the prefix is a naming habit only, not authoritative.
+   - If it's about **how to build / design** ("how should we build X", "what's the right approach for Y", "design a Z") AND no page of those types is relevant, surface that gap: *"The Arche has no decision filed for this. Want to run `/arche-architect` to grill the design and file ARD/SAD/ADRs before building starts?"*
    - Spec-writing, planning, and implementation themselves belong to your dev methodology's own skills (spec-kit, superpowers, your own) — this skill only **grounds** them. So when those skills run, feed them the surfaced decisions/constraints/research; don't reach for an Arche spec or plan artifact (there is none).
    - Suggest; do not auto-invoke. Recommend the architecture gap first — a feature built on an undecided design is the costliest gap to leave open.
 6. **Offer to file the synthesis.** If the answer is non-trivial and reusable, ask: "Want me to file this as `queries/<slug>.md`?" Default: do not file unless asked or unless the question itself was framed as an Arche investigation.
+
+## Trust surfacing
+
+Trust tiers only carry information when tiers differ. In an Arche where nobody signs off, every page is `unverified`, and reporting that on every answer is noise that trains the user to ignore it.
+
+So this is **gated on adoption**:
+
+1. Before answering, check each content page's **parsed frontmatter mapping** — `sources/`, `entities/`, `concepts/`, `queries/`, `discoveries/`, `stories/` — for a top-level `verified` key. This is a frontmatter check, not a text search: body prose and fenced examples don't count. **Do not text-scan `SCHEMA.md`** — its body documents the `verified` field, including a fenced YAML example, on every bootstrapped Arche, so a grep-style scan would false-positive on a fresh Arche where nobody has signed off anything.
+2. **If none do** — say nothing about trust. Do not mention tiers, do not caveat the answer, do not suggest sign-off. The feature is invisible until it is used.
+3. **If at least one does** — note the tier of the pages the answer rests on, briefly, after the answer:
+
+   ```
+   Trust: 2 of the 5 pages cited are human-reviewed; concepts/adr-billing.md is unverified.
+   ```
+
+Derive tiers per SCHEMA.md §5.3: no `verified` → unverified; `verified` by non-`human:` actors only → machine-confirmed; `verified` by a `human:` actor → human-reviewed.
+
+Separately and **always** — never gated on the check above: if a cited page has `status: deprecated` or a `stale_after` date on or before today, say so. That is a staleness fact, not a trust tier.
 
 ## Filing a query back
 
 If the user says yes:
 
-1. Create `.arche/queries/<slug>.md` using this skill's [query.template.md](assets/query.template.md) as the layout (frontmatter: `type: query`, today's date, tags, `sources:` listing every Arche page and source you cited).
-2. Body per template: the question (verbatim) as a blockquote, then the answer with citations preserved.
-3. Add an entry under Queries in `index.md`.
-4. Append a `query` entry to `log.md`.
+1. **Create the page.** Write `.arche/queries/<slug>.md` using this skill's [query.template.md](assets/query.template.md) as the layout: `type: Query`, `title`, `description` (one sentence — feeds index.md glosses), today's date, `generated: { by: arche-query/<model-id>, at: <ISO 8601 UTC> }`, `status: stable`, and `sources:` as a list of mappings (stable `id` + required `resource`, never a bare path string) for every Arche page and source you cited. Never write `verified` — that's human sign-off only, via `/arche-lint`.
+2. **Write the body.** Per template: the question as asked, the answer with citations preserved, the pages consulted and what each contributed, and any gaps left open.
+3. **Update the indexes.** Add an entry under Queries (create the section if missing) in both `queries/index.md` and the root `index.md`, using the page's `description` as the gloss.
+4. **Insert into `log.md`.** Insert a `- **Query**: …` bullet as the first bullet under today's `## YYYY-MM-DD` heading; if today's heading is absent, create it immediately above the topmost existing date heading. Not at the end of the file, and never outside a date heading — `log.md` is newest-first.
 
 ## Discipline
 

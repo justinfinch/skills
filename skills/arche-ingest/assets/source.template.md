@@ -1,25 +1,37 @@
 ---
-type: source
+type: Source
 title: {{TITLE}}
-created: {{DATE}}
-updated: {{DATE}}
+description: {{DESCRIPTION}}
+resource: {{RESOURCE}}
 tags: []
-sources: []
-raw: raw/{{SLUG}}.{{EXT}}
-url: {{URL}}
+created: {{DATE}}
+generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
+sources:
+  # The `snapshot` entry belongs here ONLY for a web source that also has a local
+  # snapshot — i.e. when `resource:` above is the canonical URL. For a file-only
+  # source, `resource:` is already the `../raw/…` path, so drop this entry (and the
+  # `[^snapshot]` footnote below) rather than duplicating it.
+  # `{{EXT}}` is the extension ACTUALLY written to `raw/`, not the incoming one —
+  # it is `.txt` whenever the incoming file was `.md`, or the source was a URL or
+  # pasted text.
+  - id: snapshot
+    resource: ../raw/{{SLUG}}.{{EXT}}
+    title: Local snapshot
 ---
 
 # {{TITLE}}
 
-One-paragraph summary of the source (stay within SCHEMA's length cap — ≤ 400 words by default).
+One-paragraph summary of the source (≤ 400 words by default — see SCHEMA).
 
 ## Key claims
 
-- Claim, paraphrased. Cite a page/section of the raw file when useful.
+- Claim, paraphrased.[^snapshot]
 - Claim.
 - Claim.
 
 ## See also
 
-- [Entity or concept this source touches](../entities/example.md)
-- [Entity or concept this source touches](../concepts/example.md)
+- [Entity this source touches](../entities/example.md)
+- [Concept this source touches](../concepts/example.md)
+
+[^snapshot]: Local snapshot

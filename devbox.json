@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/main/.schema/devbox.schema.json",
+  "//": "nixpkgs is pinned because devbox's default channel (nixpkgs 26.11) dropped x86_64-darwin support. nixos-25.05 still builds on both Intel and Apple Silicon macOS, and on x86_64-linux for CI.",
+  "//scripts": "`test` runs every suite in tools/. `check` takes an explicit bundle path — this repo has no .arche/ of its own to default to, so try `devbox run check tools/fixtures/pre_okf`. Note: keys under `shell.scripts` are not comments to devbox, so notes live up here.",
+  "nixpkgs": { "commit": "ac62194c3917d5f474c1a844b6fd6da2db95077d" },
+  "packages": [
+    "python312",
+    "python312Packages.pyyaml"
+  ],
+  "env": {},
+  "shell": {
+    "scripts": {
+      "test": [
+        "cd tools && python3 -m unittest discover -p 'test_*.py' -v"
+      ],
+      "check": [
+        "if [ $# -eq 0 ]; then echo 'usage: devbox run check <bundle-dir>' >&2; exit 2; fi",
+        "python3 tools/okf_conformance.py \"$1\""
+      ]
+    }
+  }
+}

@@ -1,25 +1,28 @@
 ---
-type: query
+type: Query
 title: {{TITLE}}
-created: {{DATE}}
-updated: {{DATE}}
+description: {{DESCRIPTION}}
 tags: []
+created: {{DATE}}
+generated: { by: {{ACTOR}}, at: {{TIMESTAMP}} }
+status: stable
 sources: []
 ---
 
 # {{TITLE}}
 
-> The question, verbatim as the user asked it.
+## Question
+
+The question as asked.
 
 ## Answer
 
-The synthesized answer. Every non-obvious claim cites both the Arche page and the underlying source:
+The synthesis, every claim cited inline to the page it came from — `... per [the billing ADR](../concepts/adr-billing.md).`
 
-> ... per [Concept](../concepts/example.md) citing [Source](../sources/example.md).
+## Pages consulted
 
-If the Arche only partially answered the question, the gaps are stated explicitly here — not glossed over.
+- [Page](../concepts/example.md) — what it contributed.
 
-## See also
+## Gaps
 
-- [Arche pages this answer draws from](../concepts/example.md)
-- [Sources cited transitively](../sources/example.md)
+What the Arche could not answer, and what would need ingesting to close the gap.
