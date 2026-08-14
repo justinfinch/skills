@@ -1,19 +1,40 @@
 #!/usr/bin/env python3
 """Check a directory against Open Knowledge Format v0.2 conformance (SPEC §11).
 
-Spec vendored at spec/okf/v0.2/SPEC.md (upstream GoogleCloudPlatform/
-knowledge-catalog commit 3fcbb9f); see that directory's PROVENANCE.md.
+A development tool for this repository. It does not ship -- `npx skills add`
+installs from skills/, and this lives at the repo root -- and it never runs
+against this repo's own files. It checks *bundles*, and this repo has no
+.arche/ of its own; it holds the skills that build one.
 
-This is deliberately independent of `arche-lint`: checking lint's output with
-lint would be circular. It implements only the three hard rules in §11, plus
-the reserved-file structure those rules point at (§8, §9).
+Its automated job is narrow and specific. Six skills ship 13 static page
+templates between them (SCHEMA/index/subindex/log, source/entity/concept,
+ard/sad/adr, query, discovery, story). Those templates are what a user's Arche
+gets built from, and the OKF v0.2 migration was a rewrite of their frontmatter.
+A skill is a prompt and cannot be unit tested, but a template is a static file:
+test_templates.py renders all 13 into a throwaway directory laid out as a real
+bundle and runs this checker over it. That is how we know the pages these
+skills emit are conformant, and it is the whole reason this file exists.
 
-OKF ships no validator and the spec recommends none -- §11 is prose, and
-upstream's own reference_agent only parses bundles, checking that a `type` key
-is present without checking it is non-empty. So this file is the oracle, and
-its scope is deliberately narrow.
+The CLI takes a bundle path because the other way you use it is by hand, while
+developing -- run /arche-init into a scratch directory and check what it
+actually produced, or point it at tools/fixtures/pre_okf.
 
-What it must NEVER flag, because §11 names these as things consumers MUST NOT
+Scope is deliberately just the three hard rules in §11 plus the reserved-file
+structure they point at (§8, §9). Spec vendored at spec/okf/v0.2/SPEC.md
+(upstream GoogleCloudPlatform/knowledge-catalog commit 3fcbb9f); see that
+directory's PROVENANCE.md. OKF ships no validator and the spec recommends
+none -- upstream's own reference_agent merely parses bundles, checking that a
+`type` key is present without checking it is non-empty -- so this file is the
+oracle.
+
+It is deliberately not built on `arche-lint`: lint is the skill that claims to
+enforce conformance, so testing that claim with the claimant would be circular.
+But note the limit of that -- this checker verifies the six *writer* skills'
+output, and nothing automated verifies arche-lint itself. Lint's remit is
+mostly house conventions this checker ignores on purpose; its verification is
+the manual fixture procedure in README.md.
+
+What this must NEVER flag, because §11 names them as things consumers MUST NOT
 reject a bundle over: missing optional frontmatter fields, unknown `type`
 values, unknown extra frontmatter keys, broken cross-links, missing index.md.
 `arche-lint` reports several of those as house-convention drift, which is fine

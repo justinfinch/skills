@@ -1,52 +1,71 @@
 # tools
 
-Verification for the Arche's OKF v0.2 conformance. Not shipped in any skill —
-`arche-lint` implements its own checks; these exist so lint can be verified
-against something independent.
+Development tooling for this repository. **Nothing here ships.**
+`npx skills add justinfinch/skills` installs from `skills/`; this directory
+sits at the repo root and never goes with it. Users of the skills never
+receive these files, and these files never run against this repo's own
+contents either.
 
-The spec is vendored at [`spec/okf/v0.2/`](../spec/okf/v0.2/) — see its
-`PROVENANCE.md`. OKF publishes no validator and the spec recommends none, so
-`okf_conformance.py` is the oracle here. Its scope is deliberately just §11's
-three hard rules plus the §8 / §9 reserved-file structure they point at; §11
-forbids consumers from rejecting a bundle over unknown `type` values, missing
-`index.md`, broken links, or missing optional fields, so this checker must
-never exit non-zero on any of those. `test_spec_pin.py` asserts the vendored
-spec still matches the digests `PROVENANCE.md` records.
+## What `okf_conformance.py` is actually for
 
-## Requirements
+Six skills ship 13 static page templates between them:
 
-Python 3.12+ and PyYAML, both declared in the repo's `devbox.json`. Run
-`devbox shell` (or let direnv load it on `cd`) and they are on `PATH`. Without
-devbox, install PyYAML with `python3 -m pip install --user pyyaml`.
+| Skill | Templates |
+| :--- | :--- |
+| `arche-init` | `SCHEMA`, `index`, `subindex`, `log` |
+| `arche-ingest` | `source`, `entity`, `concept` |
+| `arche-architect` | `ard`, `sad`, `adr` |
+| `arche-query` | `query` |
+| `arche-discover` | `discovery` |
+| `arche-tell` | `story` |
 
-## Check a bundle
+Those templates are the pages a user's Arche will actually be built from, and
+the whole OKF v0.2 migration was a rewrite of their frontmatter. A skill is a
+prompt and cannot be unit tested — but a template is a static file, and a
+static file can be rendered and checked.
 
-    devbox run check path/to/.arche          # or, inside a devbox shell:
-    python3 tools/okf_conformance.py path/to/.arche
+So: `render_templates.py` substitutes sample tokens into all 13 and writes each
+to the path it would occupy in a real bundle (`story.template.md` →
+`stories/sample-story.md`, and so on), producing a throwaway directory with
+reserved files plus one page per type. `test_templates.py` runs
+`okf_conformance.py` over that directory.
+
+**That is the entire automated job of this checker**: proving the pages these
+skills emit satisfy OKF §11. It is not a linter for the repo, and it is not
+something users run.
+
+### Why it takes a bundle path
+
+Because the other way you use it is by hand, while developing. Bootstrap a
+throwaway Arche with `/arche-init` into a scratch directory and check what the
+skill *really* produced, rather than what its templates suggest it should:
+
+    devbox run check /tmp/scratch/.arche
+    devbox run check tools/fixtures/pre_okf     # the fixture, for a quick look
 
 The path is required — there is no default, because this repo has no `.arche/`
-to fall back on. To try it: `devbox run check tools/fixtures/pre_okf`.
+of its own and shouldn't. It holds the skills that build one.
 
 Exit code 0 when conformant, 1 when findings exist, 2 on usage or environment
 error (bad arguments, missing PyYAML). A broken environment must never look
 like a non-conformant bundle, so 1 is reserved for findings alone.
 
-## What these run against
+### Scope, and why it is independent of `arche-lint`
 
-**This repo has no `.arche/` of its own, and shouldn't** — it holds the skills
-that build one, not an Arche. So nothing here checks a real bundle in place.
-The bridge is synthesis, and it works because skills are prompts (untestable)
-while their *templates* are static files (very testable):
+The checker implements only §11's three hard rules plus the reserved-file
+structure they point at (§8, §9). The spec is vendored at
+[`spec/okf/v0.2/`](../spec/okf/v0.2/) — see its `PROVENANCE.md`. OKF publishes
+no validator and recommends none, so this file is the oracle.
 
-| Suite | Runs against |
-| :--- | :--- |
-| `test_templates.py` | A bundle **synthesized on the fly**. `render_templates.py` substitutes sample tokens into all 13 `skills/arche-*/assets/*.template.md` files and writes each to the path it would occupy in a real Arche (`TEMPLATE_TARGETS` maps `story.template.md` → `stories/sample-story.md`, and so on), producing reserved files plus one page per type. That temp bundle then goes through `check_bundle`. This is the load-bearing suite: it tests the exact text the skills will emit. |
-| `test_okf_conformance.py` | Small hand-built bundles written to temp dirs by the `write_bundle` helper — unit coverage for the checker itself — plus `fixtures/pre_okf/` (below). |
-| `test_spec_pin.py` | No bundle at all. Checksums the vendored spec against `PROVENANCE.md`. |
-
-`okf_conformance.py` itself is the deliverable for *users* of these skills:
-point it at your project's `.arche/`. Inside this repo it only ever sees
-synthesized bundles and the fixture.
+It is deliberately not built on `arche-lint`, because lint is the skill that
+*claims* to enforce conformance and testing that claim with the claimant is
+circular. Note what that does and does not buy: this checker verifies the six
+writer skills' output, and **nothing automated verifies `arche-lint` itself.**
+Lint's remit is mostly Tier-2 house conventions this checker ignores on
+purpose, and §11 forbids consumers from rejecting a bundle over unknown `type`
+values, missing `index.md`, broken links, or missing optional fields — all of
+which lint reports and this checker must stay silent on. Lint's own
+verification is the manual procedure below.
 
 ## `fixtures/pre_okf/`
 
@@ -56,17 +75,27 @@ lowercase types, `updated:` without `generated:`, string-list `sources`,
 `concept`, no subdirectory indexes, no `okf_version`, a `.md` file under `raw/`,
 and `## [date] op | text` log headings.
 
-Its **primary job is manual**: it is the scratch bed for running `/arche-lint`
-against, since a skill cannot be unit tested. Copy it somewhere, run the skill,
-and confirm the repair plan names H1, H3, H4, T1, T2, F1, F3, F5, F6, S1, and S4.
+**This is where `arche-lint` gets verified, and it is manual.** Copy the fixture
+somewhere, run `/arche-lint` against the copy, and confirm the repair plan names
+H1, H3, H4, T1, T2, F1, F3, F5, F6, S1, and S4.
 
-`PreOkfFixtureTests` in `test_okf_conformance.py` pins the *checker's* view of
-it — exactly three rules across four findings — so the one realistic bundle in
-the repo can't silently regress. Those tests also assert the inverse: the
-checker stays **silent** on the fixture's unknown types, missing indexes, and
-string `sources`, because §11 forbids rejecting a bundle over any of them.
+`PreOkfFixtureTests` in `test_okf_conformance.py` pins only the *checker's* view
+of it — three rules across four findings — so the one realistic bundle in the
+repo can't silently regress. Those tests also assert the inverse: the checker
+stays silent on the fixture's unknown types, missing indexes, and string
+`sources`, because §11 forbids rejecting a bundle over any of them.
 
-## Run the suites
+## The suites
+
+| Suite | Runs against |
+| :--- | :--- |
+| `test_templates.py` | A bundle synthesized from the 13 skill templates. The load-bearing one — it tests the exact text the skills emit. |
+| `test_okf_conformance.py` | Small hand-built bundles in temp dirs (unit coverage for the checker), plus the `pre_okf` fixture. |
+| `test_spec_pin.py` | No bundle. Checksums the vendored spec against `PROVENANCE.md`. |
+
+Requirements: Python 3.12+ and PyYAML, both declared in the repo's
+`devbox.json`. Run `devbox shell` (or let direnv load it on `cd`) and they are
+on `PATH`. Without devbox, `python3 -m pip install --user pyyaml`.
 
     devbox run test                          # or, inside a devbox shell:
     cd tools && python3 -m unittest discover -p 'test_*.py' -v
