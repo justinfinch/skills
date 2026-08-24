@@ -1,3 +1,7 @@
+---
+okf_version: "0.2"
+---
+
 # Concepts
 
 * [Interrogating a design through expert lenses](concepts/expert-lens-interrogation.md) - Drive architectural questioning from a fixed roster of named expert viewpoints so coverage is deliberate rather than incidental.

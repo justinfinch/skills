@@ -4,9 +4,21 @@ title: The architect lens roster
 description: Thirteen named architects, what each pushes on, and the trigger cues that should surface them in a design conversation.
 tags: [architecture, lenses]
 created: 2026-08-24
-generated: { by: claude-sonnet-5, at: 2026-08-24T22:24:43Z }
+generated: { by: claude-opus-5, at: 2026-08-24T23:12:00Z }
 status: stable
-sources: []
+sources:
+  - id: fowler-poeaa
+    resource: https://martinfowler.com/books/eaa.html
+    title: Martin Fowler — Patterns of Enterprise Application Architecture (2002)
+  - id: evans-ddd
+    resource: https://www.domainlanguage.com/ddd/
+    title: Eric Evans — Domain-Driven Design (2003)
+  - id: nygard-release-it
+    resource: https://pragprog.com/titles/mnee2/release-it-second-edition/
+    title: Michael Nygard — Release It! 2nd edition (2018)
+  - id: richards-ford-fundamentals
+    resource: https://fundamentalsofsoftwarearchitecture.com/
+    title: Mark Richards and Neal Ford — Fundamentals of Software Architecture
 ---
 
 # The architect lens roster
@@ -28,7 +40,9 @@ for when this technique is the right call and when it isn't.
 
 ## Martin Fowler — patterns and trade-offs
 
-**Pushes on:** named patterns, trade-off articulation, refactoring debt, the "why-not-X" trail for rejected alternatives, integration patterns at the enterprise scale.
+**Pushes on:** named patterns, trade-off articulation, refactoring debt, the "why-not-X" trail for rejected alternatives, integration patterns at the enterprise scale.[^fowler-poeaa]
+
+[^fowler-poeaa]: *Patterns of Enterprise Application Architecture* — the pattern catalogue and the habit of stating each pattern's trade-off rather than its endorsement.
 
 **Trigger cues:**
 - User proposes a design without naming the pattern → ask which pattern it is, which it isn't, and what the trade-off is.
@@ -39,7 +53,9 @@ for when this technique is the right call and when it isn't.
 
 ## Eric Evans — strategic DDD and ubiquitous language
 
-**Pushes on:** ubiquitous language, bounded contexts, context maps, the seam between domains, the gap between "the term the team uses" and "the term the code uses."
+**Pushes on:** ubiquitous language, bounded contexts, context maps, the seam between domains, the gap between "the term the team uses" and "the term the code uses."[^evans-ddd]
+
+[^evans-ddd]: *Domain-Driven Design* — strategic design: ubiquitous language, bounded contexts, and the context map.
 
 **Trigger cues:**
 - A term is being overloaded across contexts → ask whose language this is and where the boundary is.
@@ -61,7 +77,9 @@ for when this technique is the right call and when it isn't.
 
 ## Michael Nygard — failure modes and operational reality
 
-**Pushes on:** failure modes, stability patterns (circuit breaker, bulkhead, timeout, backpressure), blast radius, recovery story, runbook surface.
+**Pushes on:** failure modes, stability patterns (circuit breaker, bulkhead, timeout, backpressure), blast radius, recovery story, runbook surface.[^nygard-release-it]
+
+[^nygard-release-it]: *Release It!* — the stability antipatterns and the patterns that answer them.
 
 **Trigger cues:**
 - A new dependency is being introduced → ask what happens when it's down, slow, or returns garbage.
@@ -105,7 +123,9 @@ for when this technique is the right call and when it isn't.
 
 ## Mark Richards — architecture styles, granularity, and explicit trade-offs
 
-**Pushes on:** deliberate style selection (layered, pipeline, microkernel, service-based, event-driven, space-based, microservices) and what each buys; granularity as distinct from boundaries — disintegrators vs. integrators; ranking driving characteristics down to a handful; refusing any recommendation that doesn't state its cost. Where Newman asks *where the seam belongs*, Richards asks *how small is too small*; they disagree often, which makes them productive to surface together.
+**Pushes on:** deliberate style selection (layered, pipeline, microkernel, service-based, event-driven, space-based, microservices) and what each buys; granularity as distinct from boundaries — disintegrators vs. integrators; ranking driving characteristics down to a handful; refusing any recommendation that doesn't state its cost. Where Newman asks *where the seam belongs*, Richards asks *how small is too small*; they disagree often, which makes them productive to surface together.[^richards-ford-fundamentals]
+
+[^richards-ford-fundamentals]: *Fundamentals of Software Architecture* (with Neal Ford) — the style catalogue, architecture characteristics, and "there are no best practices"; granularity and the disintegrator/integrator framing are developed further in *Software Architecture: The Hard Parts*.
 
 **Trigger cues:**
 - A style is in play implicitly ("we'll do microservices") → ask which style this is and which characteristics drove the choice, rather than letting the style pick the characteristics.

@@ -64,13 +64,14 @@ The spec is vendored, unmodified and pinned, at [`spec/okf/v0.2/`](spec/okf/v0.2
 
 A `guidance-*` skill is a **pack**: durable architectural knowledge that travels
 between projects, packaged as an installable skill whose `bundle/` is an OKF v0.2
-bundle of `Guidance` pages.
+bundle of `Guidance` pages, plus whatever supporting `Concept` pages the topic
+needs — a roster, a taxonomy, a comparison table.
 
 ```
 skills/guidance-<topic>/
   SKILL.md       # relevance trigger; thin by design
   bundle/
-    index.md
+    index.md     # frontmatter carries okf_version and nothing else
     concepts/<slug>.md
 ```
 
@@ -92,9 +93,11 @@ right call and — the load-bearing half — when it isn't:
 - You can tolerate lost events.
 ```
 
-`/arche-architect` consults installed packs during a grill and cites the ones
-that informed a decision in the ADR's `sources:`. So a new project doesn't
-inherit old answers — it inherits the trade-off space already framed, and the
+`/arche-architect` consults installed packs during a **grill** — its interview
+phase, where every branch of the design gets pushed on one question at a time —
+and cites the pages that informed a decision in the ADR's `sources:`, by their
+host-independent `<pack-name>/<path-within-bundle>` identity. So a new project
+doesn't inherit old answers — it inherits the trade-off space already framed, and the
 ADR that comes out is genuinely its own. When a decision area has no pack
 covering it, the grill says so; that gap signal is what `/write-guidance`
 consumes, and the loop is why the next project doesn't start from scratch.
