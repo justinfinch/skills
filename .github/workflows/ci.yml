@@ -32,11 +32,12 @@ jobs:
           enable-cache: 'true'
           devbox-version: '0.17.2'
 
-      # 36 tests: the checker's own unit coverage, the pre_okf fixture pin, the
-      # vendored-spec digests, and — the load-bearing one — every arche-* skill
-      # template rendered into a synthetic bundle and run through the
-      # conformance checker. Skills are prompts and cannot be tested; the pages
-      # they emit can.
+      # The checker's own unit coverage, the pre_okf fixture pin, the
+      # vendored-spec digests, every skills/*/SKILL.md's frontmatter, and — the
+      # load-bearing one — every skill-owned OKF template rendered into a
+      # synthetic bundle and run through the conformance checker. Skills are
+      # prompts and cannot be tested; the pages they emit can. (No test count
+      # here on purpose: it went stale twice.)
       - name: Run every suite in tools/
         run: devbox run test
 

@@ -27,8 +27,11 @@ page at all: it's a `SKILL.md` skeleton carrying `name`/`description`, not
 maps it to `None`, and a `None` target marks a skill-owned template that must
 never be rendered into a bundle — `render_all` skips anything mapped to `None`
 rather than failing §11 rule 2 by rendering it. That skip is live today:
-`find_templates`'s widened glob discovers the file, `render_all` matches it to
-its `None` sentinel, and it never reaches the conformance checker.
+`find_templates` discovers the file — its glob is `*/assets/*.template.md`,
+deliberately unscoped by family so a future `guidance-*` or `devbox-*` template
+can't go unnoticed — `render_all` matches it to its `None` sentinel, and it
+never reaches the conformance checker. Skipped here does not mean untested:
+`test_skill_frontmatter.py` renders it directly and parses the result.
 
 Those 14 rendered OKF pages are what a user's Arche will actually be built
 from, and the whole OKF v0.2 migration was a rewrite of their frontmatter. A
@@ -106,7 +109,7 @@ stays silent on the fixture's unknown types, missing indexes, and string
 | `test_templates.py` | A bundle synthesized from the 14 OKF-page templates, out of 15 skill-owned templates total (see the `None`-sentinel mechanism above for how the 15th, non-OKF template is excluded). The load-bearing one — it tests the exact text the skills emit. |
 | `test_okf_conformance.py` | Small hand-built bundles in temp dirs (unit coverage for the checker), plus the `pre_okf` fixture. |
 | `test_spec_pin.py` | No bundle. Checksums the vendored spec against `PROVENANCE.md`. |
-| `test_skill_frontmatter.py` | Every `skills/*/SKILL.md` in this repo. Parses its frontmatter with `yaml.safe_load` and checks `name` (present, matches the parent directory, matches `[a-z0-9]+(-[a-z0-9]+)*`) and `description` (present, 1–1024 chars). This is the shipped `SKILL.md` files themselves, not the OKF bundles the skills emit — nothing else in `tools/` looks at them, which is how an unparseable `description` shipped once. |
+| `test_skill_frontmatter.py` | Every `skills/*/SKILL.md` in this repo, plus `write-guidance/assets/pack-skill.template.md` rendered directly. Parses frontmatter with `yaml.safe_load` and checks `name` (present, matches the parent directory, matches `[a-z0-9]+(-[a-z0-9]+)*`) and `description` (present, 1–1024 chars). This is the shipped `SKILL.md` files themselves, not the OKF bundles the skills emit — nothing else in `tools/` looks at them, which is how an unparseable `description` shipped once. The pack-skill template is covered here because `test_templates.py` structurally cannot see it (`None` target), and it is rendered with a colon-space in both interpolated tokens, since that is the defect. |
 
 Requirements: Python 3.12+ and PyYAML, both declared in the repo's
 `devbox.json`. Run `devbox shell` (or let direnv load it on `cd`) and they are

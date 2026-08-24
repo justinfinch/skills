@@ -17,6 +17,7 @@ SAMPLE_TOKENS = {
     "{{ACTOR}}": "arche-ingest/claude-opus-5",
     "{{TITLE}}": "Sample Title",
     "{{DESCRIPTION}}": "One-sentence summary of the sample page.",
+    "{{TRIGGER}}": "a sample decision is on the table",
     "{{SLUG}}": "sample-slug",
     "{{EXT}}": "pdf",
     "{{URL}}": "https://example.com/sample",
@@ -55,8 +56,14 @@ TEMPLATE_TARGETS = {
 }
 
 
-def render(text: str) -> str:
-    for token, value in SAMPLE_TOKENS.items():
+def render(text: str, tokens: dict[str, str] | None = None) -> str:
+    """Substitute template tokens. Defaults to SAMPLE_TOKENS.
+
+    `tokens` exists so a test can render a template with deliberately hostile
+    values — a description containing a colon-space, say — without perturbing
+    the shared sample set every other template is rendered with.
+    """
+    for token, value in (SAMPLE_TOKENS if tokens is None else tokens).items():
         text = text.replace(token, value)
     return text
 
@@ -64,13 +71,14 @@ def render(text: str) -> str:
 def find_templates(skills_dir: Path) -> list[Path]:
     """Every skill-owned template, whichever family owns it.
 
-    `write-*` skills own templates too (write-guidance emits Guidance pages),
-    so discovery can't stay scoped to `arche-*`.
+    Deliberately not scoped to a prefix. `write-*` skills own templates
+    (write-guidance emits Guidance pages) and a future `guidance-*` or
+    `devbox-*` skill may too; a glob that named families would make such a
+    template invisible to this harness *and* to the test that checks every
+    template has a TEMPLATE_TARGETS entry. TEMPLATE_TARGETS still gates what
+    actually renders, so widening discovery only widens what gets noticed.
     """
-    return sorted(
-        [*skills_dir.glob("arche-*/assets/*.template.md"),
-         *skills_dir.glob("write-*/assets/*.template.md")]
-    )
+    return sorted(skills_dir.glob("*/assets/*.template.md"))
 
 
 def render_all(skills_dir: Path, dest: Path) -> list[Path]:
