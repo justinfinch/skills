@@ -8,7 +8,7 @@ contents either.
 
 ## What `okf_conformance.py` is actually for
 
-Seven skills ship 14 static page templates between them:
+Seven skills ship 15 static templates between them:
 
 | Skill | Templates |
 | :--- | :--- |
@@ -18,27 +18,30 @@ Seven skills ship 14 static page templates between them:
 | `arche-query` | `query` |
 | `arche-discover` | `discovery` |
 | `arche-tell` | `story` |
-| `write-guidance` | `guidance` |
+| `write-guidance` | `guidance`, `pack-skill` |
 
-All 14 render into the sample bundle today. `TEMPLATE_TARGETS` also carries a
-pre-placed `None` entry for `pack-skill.template.md`, a future `write-guidance`
-template (a `SKILL.md` skeleton carrying `name`/`description`, not `type`) that
-a later task adds. A `None` target marks a skill-owned template that is not an
-OKF page and must never be rendered into a bundle — `render_all` skips
-anything mapped to `None` rather than failing §11 rule 2 by rendering it. That
-template doesn't exist yet, so nothing is skipped yet; the sentinel is just
-sitting ready for when it lands.
+14 of those 15 render into the sample bundle. The fifteenth,
+`pack-skill.template.md`, is a `write-guidance` template that is not an OKF
+page at all: it's a `SKILL.md` skeleton carrying `name`/`description`, not
+`type`, for the `guidance-*` packs `write-guidance` authors. `TEMPLATE_TARGETS`
+maps it to `None`, and a `None` target marks a skill-owned template that must
+never be rendered into a bundle — `render_all` skips anything mapped to `None`
+rather than failing §11 rule 2 by rendering it. That skip is live today:
+`find_templates`'s widened glob discovers the file, `render_all` matches it to
+its `None` sentinel, and it never reaches the conformance checker.
 
-Those 14 rendered templates are the pages a user's Arche will actually be
-built from, and the whole OKF v0.2 migration was a rewrite of their
-frontmatter. A skill is a prompt and cannot be unit tested — but a template
-is a static file, and a static file can be rendered and checked.
+Those 14 rendered OKF pages are what a user's Arche will actually be built
+from, and the whole OKF v0.2 migration was a rewrite of their frontmatter. A
+skill is a prompt and cannot be unit tested — but a template is a static file,
+and a static file can be rendered and checked.
 
-So: `render_templates.py` substitutes sample tokens into all 14 and writes
-each to the path it would occupy in a real bundle (`story.template.md` →
-`stories/sample-story.md`, and so on), producing a throwaway directory with
-reserved files plus one page per type. `test_templates.py` runs
-`okf_conformance.py` over that directory.
+So: `render_templates.py` substitutes sample tokens into the 14 OKF templates
+and writes each to the path it would occupy in a real bundle
+(`story.template.md` → `stories/sample-story.md`, and so on), producing a
+throwaway directory with reserved files plus one page per type. The 15th
+template is discovered along with the rest but skipped at write time, per the
+`None` sentinel above. `test_templates.py` runs `okf_conformance.py` over that
+directory.
 
 **That is the entire automated job of this checker**: proving the pages these
 skills emit satisfy OKF §11. It is not a linter for the repo, and it is not
@@ -100,7 +103,7 @@ stays silent on the fixture's unknown types, missing indexes, and string
 
 | Suite | Runs against |
 | :--- | :--- |
-| `test_templates.py` | A bundle synthesized from all 14 skill templates (see the `None`-sentinel mechanism above for how a future non-OKF template would be excluded). The load-bearing one — it tests the exact text the skills emit. |
+| `test_templates.py` | A bundle synthesized from the 14 OKF-page templates, out of 15 skill-owned templates total (see the `None`-sentinel mechanism above for how the 15th, non-OKF template is excluded). The load-bearing one — it tests the exact text the skills emit. |
 | `test_okf_conformance.py` | Small hand-built bundles in temp dirs (unit coverage for the checker), plus the `pre_okf` fixture. |
 | `test_spec_pin.py` | No bundle. Checksums the vendored spec against `PROVENANCE.md`. |
 
