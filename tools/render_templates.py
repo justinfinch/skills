@@ -13,6 +13,7 @@ from pathlib import Path
 SAMPLE_TOKENS = {
     "{{DATE}}": "2026-08-11",
     "{{TIMESTAMP}}": "2026-08-11T10:00:00Z",
+    "{{STALE_AFTER}}": "2028-01-01",
     "{{ACTOR}}": "arche-ingest/claude-opus-5",
     "{{TITLE}}": "Sample Title",
     "{{DESCRIPTION}}": "One-sentence summary of the sample page.",
@@ -44,6 +45,13 @@ TEMPLATE_TARGETS = {
     "ard.template.md": "concepts/ard-billing.md",
     "sad.template.md": "concepts/sad-billing.md",
     "adr.template.md": "concepts/adr-event-driven-billing.md",
+    # A pack's Guidance pages live in its bundle's concepts/ directory, so the
+    # synthesized Arche bundle is a fine place to prove they conform.
+    "guidance.template.md": "concepts/sample-guidance.md",
+    # None means "skill-owned template, but not an OKF page". pack-skill is a
+    # SKILL.md skeleton: it carries `name`/`description`, not `type`, so
+    # rendering it into a bundle would fail SPEC 11 rule 2 by design.
+    "pack-skill.template.md": None,
 }
 
 
@@ -54,19 +62,29 @@ def render(text: str) -> str:
 
 
 def find_templates(skills_dir: Path) -> list[Path]:
-    return sorted(skills_dir.glob("arche-*/assets/*.template.md"))
+    """Every skill-owned template, whichever family owns it.
+
+    `write-*` skills own templates too (write-guidance emits Guidance pages),
+    so discovery can't stay scoped to `arche-*`.
+    """
+    return sorted(
+        [*skills_dir.glob("arche-*/assets/*.template.md"),
+         *skills_dir.glob("write-*/assets/*.template.md")]
+    )
 
 
 def render_all(skills_dir: Path, dest: Path) -> list[Path]:
-    """Render every arche template into `dest`. Returns the paths written."""
+    """Render every skill template into `dest`. Returns the paths written."""
     written = []
     for template in find_templates(skills_dir):
-        target = TEMPLATE_TARGETS.get(template.name)
-        if target is None:
+        if template.name not in TEMPLATE_TARGETS:
             raise KeyError(
                 f"{template.name} has no entry in TEMPLATE_TARGETS; "
                 "add one so the harness knows where it belongs in a bundle"
             )
+        target = TEMPLATE_TARGETS[template.name]
+        if target is None:
+            continue
         out = dest / target
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(render(template.read_text(encoding="utf-8")), encoding="utf-8")
