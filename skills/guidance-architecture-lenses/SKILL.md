@@ -1,6 +1,6 @@
 ---
 name: guidance-architecture-lenses
-description: A roster of thirteen named architects — Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Richards, Helland, Vogels, Bass, Beck, Martin — with the territory each owns and the trigger cues that should surface them, plus guidance on when driving a design conversation through named lenses is the right technique and when it is theatre. Consult when running or reviewing an architecture design session, attacking written architectural guidance, or when a design question needs a viewpoint you would not have thought to apply. Read `bundle/` and cite the pages that inform a decision in that decision's record. This pack is knowledge, not a workflow: it decides nothing on its own and writes nothing.
+description: A roster of thirteen named architects — Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Richards, Helland, Vogels, Bass, Beck, Martin — with the territory each owns and the trigger cues that should surface them, plus guidance on when driving a design conversation through named lenses is the right technique and when it is theatre. Consult when running or reviewing an architecture design session, attacking written architectural guidance, or when a design question needs a viewpoint you would not have thought to apply. Read `bundle/` and cite the pages that inform a decision in that decision's record. This pack is knowledge, not a workflow — it decides nothing on its own and writes nothing.
 ---
 
 # guidance-architecture-lenses

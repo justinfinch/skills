@@ -1,6 +1,6 @@
 ---
 name: guidance-{{SLUG}}
-description: {{DESCRIPTION}} Consult when {{TRIGGER}}. Read `bundle/` and cite the pages that inform a decision in that decision's record — in an Arche, the ADR's `sources:`. This pack is knowledge, not a workflow: it decides nothing on its own and writes nothing.
+description: {{DESCRIPTION}} Consult when {{TRIGGER}}. Read `bundle/` and cite the pages that inform a decision in that decision's record — in an Arche, the ADR's `sources:`. This pack is knowledge, not a workflow — it decides nothing on its own and writes nothing.
 ---
 
 # guidance-{{SLUG}}

@@ -106,6 +106,7 @@ stays silent on the fixture's unknown types, missing indexes, and string
 | `test_templates.py` | A bundle synthesized from the 14 OKF-page templates, out of 15 skill-owned templates total (see the `None`-sentinel mechanism above for how the 15th, non-OKF template is excluded). The load-bearing one — it tests the exact text the skills emit. |
 | `test_okf_conformance.py` | Small hand-built bundles in temp dirs (unit coverage for the checker), plus the `pre_okf` fixture. |
 | `test_spec_pin.py` | No bundle. Checksums the vendored spec against `PROVENANCE.md`. |
+| `test_skill_frontmatter.py` | Every `skills/*/SKILL.md` in this repo. Parses its frontmatter with `yaml.safe_load` and checks `name` (present, matches the parent directory, matches `[a-z0-9]+(-[a-z0-9]+)*`) and `description` (present, 1–1024 chars). This is the shipped `SKILL.md` files themselves, not the OKF bundles the skills emit — nothing else in `tools/` looks at them, which is how an unparseable `description` shipped once. |
 
 Requirements: Python 3.12+ and PyYAML, both declared in the repo's
 `devbox.json`. Run `devbox shell` (or let direnv load it on `cd`) and they are
