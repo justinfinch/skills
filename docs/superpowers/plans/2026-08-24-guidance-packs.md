@@ -1064,11 +1064,28 @@ After Task 6, confirm the spec's success criteria hold:
 
 Criteria 4–6 exercise skills, which are prompts and cannot be unit tested — they are manual, the same way `arche-lint`'s verification is manual per `tools/README.md`.
 
-## Open risk
+## Resolved risk: does the installer carry `bundle/`?
 
-Success criterion 1 is the one that could force a design change. The vercel CLI
-discovers skills by walking for `SKILL.md`; whether it copies sibling
-directories like `bundle/` wholesale is assumed, not verified. If it doesn't,
-the options are to nest the bundle under `references/` (which the installer
-does carry), or to publish packs from a separate repo fetched by other means.
-Check this early — ideally before Task 3 — rather than discovering it at the end.
+**Yes. Verified 2026-08-24 against `skills@latest`, before implementation.**
+
+This was the one assumption that could have forced a packaging change. Two
+checks:
+
+1. **Empirical.** `npx skills add justinfinch/skills --skill arche-architect
+   --copy` into a scratch repo carried both `assets/` and `references/` intact.
+2. **Source.** `containsSupportingFiles` in the published `dist/cli.mjs`
+   recurses *any* directory and counts *any* file whose relative path isn't
+   `skill.md` as a supporting file:
+
+   ```js
+   if (entry.isDirectory()) {
+       if (await containsSupportingFiles(rootDir, entryPath)) return true;
+   } else if (relPath.toLowerCase() !== "skill.md") return true;
+   ```
+
+   There is no directory-name allowlist anywhere in the bundle — `assets`,
+   `references`, and `scripts` appear zero times as filters. A pack's `bundle/`
+   is carried at arbitrary depth like anything else.
+
+No fallback needed. Success criterion 1 should still be run at the end as an
+end-to-end check, but it is no longer a design risk.
