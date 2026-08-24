@@ -36,14 +36,13 @@ not the content: it carries the trigger and nothing that duplicates the bundle.
 
 1. Read this skill's [guidance.template.md](assets/guidance.template.md) and
    [pack-skill.template.md](assets/pack-skill.template.md).
-2. Read the lens roster this skill attacks with. It ships as the
-   `guidance-architecture-lenses` pack, installed alongside this skill, so it
-   resolves relative to this skill's own directory:
-   [lens-roster.md](../guidance-architecture-lenses/bundle/concepts/lens-roster.md).
-   If that path is unreachable the pack isn't installed — say so once, naming it
-   (`npx skills add justinfinch/skills --skill guidance-architecture-lenses`),
-   and proceed. The attacks below still work; they are just less specific. Never
-   improvise a roster of your own.
+2. Let guidance packs surface on their own. A `guidance-*` pack's `description`
+   is its own relevance trigger, so a pack covering the architect lenses loads
+   when this skill's work touches its territory — you do not enumerate packs,
+   path to them, or hard-code one that may not be installed. If a lens pack does
+   surface, attack with its roster and trigger cues. If none does, the attacks
+   below still work; they are just less specific. Never improvise a roster of
+   your own.
 3. Establish the mode: **extract**, **author**, or **revise**. If the user
    hasn't said, ask once.
 

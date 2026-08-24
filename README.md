@@ -50,7 +50,7 @@ flat alongside everyone else's.
 - **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
 - **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift; owns OKF v0.2 conformance detection and repair, including migrating an older Arche to the current era.
 - **[write-guidance](skills/write-guidance/SKILL.md)** — author or extract a guidance pack: extract mode generalizes recurring decisions out of existing project Arches into "applies when" conditions, author mode works greenfield, revise mode refreshes a pack that aged out. Uses the architect lenses adversarially and refuses to file a pack with an empty "Doesn't apply when".
-- **[guidance-architecture-lenses](skills/guidance-architecture-lenses/SKILL.md)** — the first guidance pack: thirteen named architects with trigger cues, plus when driving a design conversation through named lenses is the right technique and when it's theatre. Consumed by `arche-architect` and `write-guidance`; owned by neither.
+- **[guidance-architecture-lenses](skills/guidance-architecture-lenses/SKILL.md)** — the first guidance pack: thirteen named architects with trigger cues, plus when driving a design conversation through named lenses is the right technique and when it's theatre. Surfaces to `arche-architect` and `write-guidance` through its own trigger — neither names it, and neither breaks without it.
 
 ### Open Knowledge Format
 

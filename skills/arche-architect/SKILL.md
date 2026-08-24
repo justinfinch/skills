@@ -41,23 +41,19 @@ Rules:
 2. Read `./.arche/SCHEMA.md` end to end.
 3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-lint`, which owns conformance detection and repair — including bringing an older Arche's SCHEMA up to the current OKF era — and stop.
 4. Read `./.arche/index.md`.
-5. Read the lens roster. It ships as the `guidance-architecture-lenses` pack,
-   installed alongside this skill, so its pages resolve relative to this skill's
-   own directory:
-   [lens-roster.md](../guidance-architecture-lenses/bundle/concepts/lens-roster.md)
-   and
-   [expert-lens-interrogation.md](../guidance-architecture-lenses/bundle/concepts/expert-lens-interrogation.md).
-   If those paths are unreachable the pack isn't installed — say so once, *"lens
-   naming will be coarse; `npx skills add justinfinch/skills --skill
-   guidance-architecture-lenses` for the full roster"* — and continue. The branch
-   list in Phase 3 names the relevant architects inline, so the grill still works
-   without it; you lose the trigger cues, not the structure. Never improvise a
-   roster of your own.
+5. **Guidance packs surface themselves — do not go looking for them.** A
+   `guidance-*` pack's `description` is its own relevance trigger, so a pack
+   whose territory this session touches loads the way any skill loads. You never
+   enumerate packs, path to them, or need to know which exist. Consult whatever
+   surfaces; cite what informs a decision (Phase 4).
 
-   The same holds for any other installed `guidance-*` pack whose `description`
-   fires mid-grill: read it where it sits, but cite it by the pack-relative
-   identity in Phase 4 — where a pack happens to be installed is this machine's
-   business and belongs in nobody's ADR.
+   Never hard-code a pack. Naming one here would make this skill depend on
+   something that may not be installed, and would leave every future pack
+   invisible until someone edited this file.
+
+   If nothing covering the architect lenses surfaces, lens naming stays coarse:
+   Phase 3's branch list names the relevant architects inline, so you lose the
+   trigger cues, not the structure. Never improvise a roster of your own.
 6. Read the three templates so you write pages in the canonical layout:
    [ard.template.md](assets/ard.template.md),
    [sad.template.md](assets/sad.template.md),
@@ -87,7 +83,7 @@ Confirm with the user. Write nothing yet.
 
 One question at a time. Each question:
 
-1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. See the `guidance-architecture-lenses` pack for the roster and trigger cues.
+1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. If a guidance pack covering the architect lenses has surfaced, take the roster and trigger cues from it; otherwise name the lens from the branch list below.
 2. Offers a **recommended answer** grounded in the Arche context, codebase reality, and the lens.
 3. Includes **1–3 alternative angles** worth considering (different lenses, opposing trade-offs, common patterns you'd otherwise have to brainstorm). These become the other options in a structured-question UI, or are listed inline in prose.
 4. **Explores the Arche or codebase instead of asking** when the answer is already written down. Don't ask a question the repo can answer.
@@ -150,19 +146,23 @@ Only when the user signals the design tree is walked:
        - id: sad-billing
          resource: ./sad-billing.md
          title: Billing — Solution Architecture Document
-       - id: lens-roster
-         resource: guidance-architecture-lenses/concepts/lens-roster.md
-         title: The architect lens roster
+       - id: outbox-guidance
+         resource: guidance-outbox/concepts/transactional-outbox.md
+         title: Transactional outbox
      ```
 
      Then attribute at the point of claim in the body, using the `id` as the
      footnote label, exactly as SCHEMA.md specifies for any other source:
 
      ```markdown
-     Granularity was pushed on separately from the service boundary.[^lens-roster]
+     Events publish through an outbox rather than a direct broker write.[^outbox-guidance]
 
-     [^lens-roster]: guidance-architecture-lenses — Richards on disintegrators.
+     [^outbox-guidance]: guidance-outbox — applies when a single relational store
+     must not diverge from what it publishes.
      ```
+
+     The pack named above is illustrative. Use whichever pack actually informed
+     the decision, in the same shape.
    - On every page written this phase (ARD, SAD, and each ADR): write `description:` — one sentence, used as the index gloss. Write `generated: { by: arche-architect/<model-id>, at: <ISO 8601 UTC> }`. Never write `verified` — that is human sign-off only, via `/arche-lint`.
 5. **Update existing pages.** If the session touched entities or prior concept pages, append (don't overwrite) with citations to the new ARD/SAD/ADRs, and rewrite each edited page's whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now. If a new ADR supersedes a prior one, set the prior ADR's `status: deprecated` and `superseded_by:` to the new path. Do not delete the old page — the trail of "we reversed X after Y" is the institutional memory.
 6. **Update `index.md`.** Update both `concepts/index.md` and the root `index.md`. Add the new ARD/SAD/ADRs under Concepts (create the section if missing) as `* [Title](path) - description.`, where the gloss is exactly the page's `description` and nothing else — `/arche-lint`'s S2 check overwrites any gloss that does not match, so extra tags would be stripped on the next lint and re-added on the next run.
@@ -184,5 +184,5 @@ End with one line: `Architect session on <system> → ARD + SAD + <N> ADR(s) fil
 
 ## See also
 
-- `guidance-architecture-lenses` — the thirteen-architect panel with trigger cues, shipped as an installable guidance pack rather than owned by this skill
+- `guidance-*` packs — durable architectural knowledge, installed independently and picked up by their own triggers. The architect panel's roster and trigger cues live in one of them rather than in this skill, which is why no roster file ships here. This skill names no pack; whichever are installed surface on their own.
 - [ard.template.md](assets/ard.template.md), [sad.template.md](assets/sad.template.md), [adr.template.md](assets/adr.template.md) — page skeletons this skill writes

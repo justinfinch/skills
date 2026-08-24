@@ -106,6 +106,8 @@ Derived from `verified`, never stored: no `verified` → **unverified**; `verifi
 
 `sources` is a list of mappings, each with a required `resource` and a stable `id`. The `id` is the join key for per-claim attribution, and it is keyed rather than positional because agents constantly reorder these lists.
 
+`resource` is whatever identifies the cited thing most durably — an absolute URL, a relative path to another page in this bundle, or a stable identity string for something that lives outside it. Prefer the form that still resolves for someone else on another machine: a path that is only valid where the file happens to sit on this one is worse than useless in a committed page.
+
 Attribute a claim to an external source with a footnote whose label is a `sources[].id`:
 
 ```markdown
