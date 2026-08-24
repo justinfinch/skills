@@ -23,7 +23,19 @@ skills/
     └── SKILL.md
 ```
 
-Flat — one directory per skill, each containing a `SKILL.md` with YAML frontmatter (`name`, `description`).
+Flat — one directory per skill, each containing a `SKILL.md` with YAML
+frontmatter (`name`, `description`). The `name` must match the directory name,
+which is why the families are prefixes rather than subdirectories.
+
+| Prefix | Kind |
+| :--- | :--- |
+| `arche-*` | Workflows that act on the repo's Arche |
+| `devbox-*` | Workflows that act on the repo's dev environment |
+| `guidance-*` | Knowledge that is consulted and cited; never runs |
+| `write-*` | Tools that author the other kinds |
+
+The prefix says what kind of thing a skill is, which matters once these install
+flat alongside everyone else's.
 
 ## Skills
 
@@ -37,6 +49,8 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 - **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages.
 - **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
 - **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift; owns OKF v0.2 conformance detection and repair, including migrating an older Arche to the current era.
+- **[write-guidance](skills/write-guidance/SKILL.md)** — author or extract a guidance pack: extract mode generalizes recurring decisions out of existing project Arches into "applies when" conditions, author mode works greenfield, revise mode refreshes a pack that aged out. Uses the architect lenses adversarially and refuses to file a pack with an empty "Doesn't apply when".
+- **[guidance-architecture-lenses](skills/guidance-architecture-lenses/SKILL.md)** — the first guidance pack: thirteen named architects with trigger cues, plus when driving a design conversation through named lenses is the right technique and when it's theatre. Consumed by `arche-architect` and `write-guidance`; owned by neither.
 
 ### Open Knowledge Format
 
@@ -45,6 +59,47 @@ The Arche is a conformant [Open Knowledge Format v0.2](spec/okf/v0.2/SPEC.md) bu
 `/arche-init` creates the bundle; `/arche-lint` maintains it, including upgrading an older Arche to the current OKF era. `tools/okf_conformance.py` is a standalone checker used to verify lint against something independent of itself.
 
 The spec is vendored, unmodified and pinned, at [`spec/okf/v0.2/`](spec/okf/v0.2/) (Apache-2.0, quarantined from this repo's MIT license) so every `§` citation in the skills resolves locally and survives upstream renumbering — see its [PROVENANCE.md](spec/okf/v0.2/PROVENANCE.md). Worth knowing what conformance actually costs: §11 requires only parseable frontmatter, a non-empty `type`, and well-formed `index.md` / `log.md`. Everything else the Arche does — the type taxonomy, the field families, the index glosses — is house convention layered on top, and §11 explicitly forbids consumers from rejecting a bundle over unknown types, missing indexes, or broken links. Your Arche stays readable by any OKF tool even when `/arche-lint` has plenty to say about it.
+
+### Guidance packs
+
+A `guidance-*` skill is a **pack**: durable architectural knowledge that travels
+between projects, packaged as an installable skill whose `bundle/` is an OKF v0.2
+bundle of `Guidance` pages.
+
+```
+skills/guidance-<topic>/
+  SKILL.md       # relevance trigger; thin by design
+  bundle/
+    index.md
+    concepts/<slug>.md
+```
+
+Packs are deliberately **not** part of the Arche, and never get copied into one.
+The Arche holds what *this* organization decided; a pack holds knowledge that is
+true whether or not the organization exists. Those have different provenance
+(`generated.by` means nothing for a pack someone else wrote), different lifecycle
+(Arche pages accrete, packs are versioned dependencies), and different audiences.
+
+What connects them is citation. A `Guidance` page states when a technique is the
+right call and — the load-bearing half — when it isn't:
+
+```markdown
+## Applies when
+- Single relational store, and the write and the publish must not diverge.
+
+## Doesn't apply when
+- Your broker supports transactional publish.
+- You can tolerate lost events.
+```
+
+`/arche-architect` consults installed packs during a grill and cites the ones
+that informed a decision in the ADR's `sources:`. So a new project doesn't
+inherit old answers — it inherits the trade-off space already framed, and the
+ADR that comes out is genuinely its own. When a decision area has no pack
+covering it, the grill says so; that gap signal is what `/write-guidance`
+consumes, and the loop is why the next project doesn't start from scratch.
+
+Packs carry no `log.md` — git history is the changelog.
 
 ## Why "Arche"?
 
