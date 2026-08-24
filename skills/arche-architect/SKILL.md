@@ -1,6 +1,6 @@
 ---
 name: arche-architect
-description: Convergent technical-architecture skill for the Arche at ./.arche/. Acts as a panel of senior architects (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Helland, Vogels, Bass, Beck, Martin) invoked as lenses by topic. Interviews the user one branch at a time with recommended answers, then files outputs as an Architecture Requirements Document, a Solution Architecture Document, and Architecture Decision Records (the `ard-`/`sad-`/`adr-` filename prefixes are just the naming habit) as the problem decomposes — cites Arche context, updates index.md, inserts an `architect` log entry. Use when the user is deciding a technical architecture; says "design X", "architect this", "ADR for X", "SAD for Z"; OR is downstream of `/arche-discover` and wants to converge architectural ideas; OR `/arche-query` flagged no relevant SAD/ADR before planning. NOT for business / customer / market / regulatory ideation — that belongs to `/arche-discover`. NOT for code-implementation brainstorming — use your dev methodology's own skill.
+description: Convergent technical-architecture skill for the Arche at ./.arche/. Acts as a panel of senior architects (Fowler, Evans, Vernon, Nygard, Hohpe, Newman, Ford, Richards, Helland, Vogels, Bass, Beck, Martin) invoked as lenses by topic. Interviews the user one branch at a time with recommended answers, then files outputs as an Architecture Requirements Document, a Solution Architecture Document, and Architecture Decision Records as the problem decomposes — cites Arche context, updates index.md, inserts an `architect` log entry. Use when the user is deciding a technical architecture; says "design X", "architect this", "ADR for X", "SAD for Z"; OR is downstream of `/arche-discover` and wants to converge architectural ideas; OR `/arche-query` flagged no relevant SAD/ADR before planning. NOT for business / customer / market / regulatory ideation — that belongs to `/arche-discover`. NOT for code-implementation brainstorming — use your dev methodology's own skill.
 ---
 
 # arche-architect
@@ -41,7 +41,18 @@ Rules:
 2. Read `./.arche/SCHEMA.md` end to end.
 3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-lint`, which owns conformance detection and repair — including bringing an older Arche's SCHEMA up to the current OKF era — and stop.
 4. Read `./.arche/index.md`.
-5. Read this skill's [LENSES.md](references/LENSES.md) and the three templates so you write pages in the canonical layout: [ard.template.md](assets/ard.template.md), [sad.template.md](assets/sad.template.md), [adr.template.md](assets/adr.template.md).
+5. Read the lens roster. It ships as the `guidance-architecture-lenses` pack:
+   read its `bundle/concepts/lens-roster.md` and
+   `bundle/concepts/expert-lens-interrogation.md`. If the pack isn't installed,
+   say so once — *"lens naming will be coarse; `npx skills add
+   justinfinch/skills --skill guidance-architecture-lenses` for the full
+   roster"* — and continue. The branch list in Phase 3 names the relevant
+   architects inline, so the grill still works without it; you lose the trigger
+   cues, not the structure.
+6. Read the three templates so you write pages in the canonical layout:
+   [ard.template.md](assets/ard.template.md),
+   [sad.template.md](assets/sad.template.md),
+   [adr.template.md](assets/adr.template.md).
 
 ## Phase 1: Session setup
 
@@ -67,10 +78,17 @@ Confirm with the user. Write nothing yet.
 
 One question at a time. Each question:
 
-1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. See [LENSES.md](references/LENSES.md) for the roster and trigger cues.
+1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. See the `guidance-architecture-lenses` pack for the roster and trigger cues.
 2. Offers a **recommended answer** grounded in the Arche context, codebase reality, and the lens.
 3. Includes **1–3 alternative angles** worth considering (different lenses, opposing trade-offs, common patterns you'd otherwise have to brainstorm). These become the other options in a structured-question UI, or are listed inline in prose.
 4. **Explores the Arche or codebase instead of asking** when the answer is already written down. Don't ask a question the repo can answer.
+5. **Names the gap when no guidance covers the question.** If a decision area
+   has no installed `guidance-*` pack speaking to it, say so once as you enter
+   that branch: *"nothing in the installed guidance covers event-delivery
+   semantics — we're deciding this from first principles."* That is not an
+   apology; it tells the user which parts of the session are re-derivation and
+   flags a candidate for `/write-guidance` afterwards. Don't repeat it per
+   question — once per branch.
 
 Walk the design tree branch by branch. The standard branches (re-order to fit the problem):
 
@@ -91,6 +109,10 @@ When a real trade-off crystallizes — hard to reverse, surprising-without-conte
 - Always lead with the recommendation; the user redirects.
 - Name the lens when one applies. If two lenses disagree (Vernon and Helland on consistency, common case), surface both perspectives and ask the user to pick.
 - Inline-cite Arche pages as you go: *"this aligns with [ADR-N](../concepts/adr-foo.md) — but contradicts [Concept X](../concepts/x.md), which you'd be implicitly overturning."* Surface contradictions; do not silently overwrite.
+- Consult installed `guidance-*` packs when their territory comes up, and check
+  the page's **Doesn't apply when** against this project before recommending
+  anything from it. A pack whose conditions don't hold here is evidence
+  *against* the technique — say that out loud rather than skipping the page.
 - If the user's answer contradicts the codebase, name it: *"the code in `src/billing/` already does X — which is right?"*
 - No Arche writes during the grill. All artifacts batch into Phase 4.
 
@@ -102,6 +124,11 @@ Only when the user signals the design tree is walked:
 2. **Write the ARD** at `.arche/concepts/ard-<system>.md` using [ard.template.md](assets/ard.template.md). Cite the session's source pages, related entities, prior discoveries, the SAD it pairs with (forward link).
 3. **Write the SAD** at `.arche/concepts/sad-<system>.md` using [sad.template.md](assets/sad.template.md). The Decision Summary section links forward to every ADR this SAD relies on.
 4. **Write each ADR** at `.arche/concepts/adr-<name>.md` using [adr.template.md](assets/adr.template.md). Each ADR's frontmatter cites the SAD in `sources:` so the back-pointer exists. This skill converges on decisions, not proposals — a freshly filed ADR the user has confirmed typically lands as `stable`; use `draft` only if the user explicitly wants the decision left open for further debate.
+   - If a `guidance-*` pack informed the decision, cite it in `sources:` with a
+     stable `id`, the pack page's relative or installed path as `resource`, and
+     the page title. The pack is why the trade-off was already framed; without
+     the citation, that reasoning dies with the conversation. Cite the *page*,
+     not the pack directory.
    - On every page written this phase (ARD, SAD, and each ADR): write `description:` — one sentence, used as the index gloss. Write `generated: { by: arche-architect/<model-id>, at: <ISO 8601 UTC> }`. Never write `verified` — that is human sign-off only, via `/arche-lint`.
 5. **Update existing pages.** If the session touched entities or prior concept pages, append (don't overwrite) with citations to the new ARD/SAD/ADRs, and rewrite each edited page's whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now. If a new ADR supersedes a prior one, set the prior ADR's `status: deprecated` and `superseded_by:` to the new path. Do not delete the old page — the trail of "we reversed X after Y" is the institutional memory.
 6. **Update `index.md`.** Update both `concepts/index.md` and the root `index.md`. Add the new ARD/SAD/ADRs under Concepts (create the section if missing) as `* [Title](path) - description.`, where the gloss is exactly the page's `description` and nothing else — `/arche-lint`'s S2 check overwrites any gloss that does not match, so extra tags would be stripped on the next lint and re-added on the next run.
@@ -123,5 +150,5 @@ End with one line: `Architect session on <system> → ARD + SAD + <N> ADR(s) fil
 
 ## See also
 
-- [LENSES.md](references/LENSES.md) — the twelve-architect panel with trigger cues
+- `guidance-architecture-lenses` — the thirteen-architect panel with trigger cues, shipped as an installable guidance pack rather than owned by this skill
 - [ard.template.md](assets/ard.template.md), [sad.template.md](assets/sad.template.md), [adr.template.md](assets/adr.template.md) — page skeletons this skill writes
