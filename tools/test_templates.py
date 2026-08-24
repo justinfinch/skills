@@ -1,4 +1,4 @@
-"""Every arche-* skill template must render to a conformant OKF v0.2 page."""
+"""Every skill-owned template must render to a conformant OKF v0.2 page."""
 
 import tempfile
 import unittest
