@@ -1,24 +1,25 @@
 ---
 type: Concept
 title: The architect lens roster
-description: Twelve named architects, what each pushes on, and the trigger cues that should surface them in a design conversation.
+description: Thirteen named architects, what each pushes on, and the trigger cues that should surface them in a design conversation.
 tags: [architecture, lenses]
 created: 2026-08-24
-generated: { by: claude-sonnet-5, at: 2026-08-24T22:17:02Z }
+generated: { by: claude-sonnet-5, at: 2026-08-24T22:24:43Z }
 status: stable
 sources: []
 ---
 
 # The architect lens roster
 
-Twelve architects invoked by name during a design conversation. Each entry
+Thirteen architects invoked by name during a design conversation. Each entry
 gives what they push on and the **trigger cues** that should cause you to name
 them. Lenses are pedagogy — the reader learns whose framework is in play — not
 theatrics. Do not impersonate; do not caricature; do not invent quotes.
 
 When two lenses disagree on the same question (common with Vernon and Helland on
-consistency), surface both and ask the user to pick. When no lens applies
-cleanly, ask the question in your own voice.
+consistency, and with Newman and Richards on granularity), surface both and ask
+the user to pick. When no lens applies cleanly, ask the question in your own
+voice.
 
 See [Interrogating a design through expert lenses](expert-lens-interrogation.md)
 for when this technique is the right call and when it isn't.
@@ -99,6 +100,18 @@ for when this technique is the right call and when it isn't.
 - A characteristic is asserted (e.g. "must be fast") without a measurement → ask what the fitness function looks like and where it runs.
 - A decision is irreversible → name it as a one-way door and confirm the user knows.
 - The user is optimizing for today's load → ask what the fitness function for "still right in 18 months" would check.
+
+---
+
+## Mark Richards — architecture styles, granularity, and explicit trade-offs
+
+**Pushes on:** deliberate style selection (layered, pipeline, microkernel, service-based, event-driven, space-based, microservices) and what each buys; granularity as distinct from boundaries — disintegrators vs. integrators; ranking driving characteristics down to a handful; refusing any recommendation that doesn't state its cost. Where Newman asks *where the seam belongs*, Richards asks *how small is too small*; they disagree often, which makes them productive to surface together.
+
+**Trigger cues:**
+- A style is in play implicitly ("we'll do microservices") → ask which style this is and which characteristics drove the choice, rather than letting the style pick the characteristics.
+- Services keep getting smaller → ask for the disintegrator forcing the split, and the integrator arguing against it.
+- More than about seven driving characteristics are named → force a ranking; everything prioritized means nothing is.
+- An option is recommended without its cost → "there are no best practices" — name what you're giving up, explicitly.
 
 ---
 

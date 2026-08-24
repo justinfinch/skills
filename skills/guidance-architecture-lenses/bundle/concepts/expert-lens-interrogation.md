@@ -4,7 +4,7 @@ title: Interrogating a design through expert lenses
 description: Drive architectural questioning from a fixed roster of named expert viewpoints so coverage is deliberate rather than incidental.
 tags: [architecture, method, review]
 created: 2026-08-24
-generated: { by: claude-sonnet-5, at: 2026-08-24T22:17:02Z }
+generated: { by: claude-sonnet-5, at: 2026-08-24T22:24:43Z }
 status: stable
 stale_after: 2030-01-01
 sources: []
@@ -17,7 +17,7 @@ sources: []
 Walk a design by rotating through a fixed roster of named expert viewpoints,
 naming the lens as you apply it. Each lens owns a territory and carries trigger
 cues; when a cue fires, you ask that lens's question in that lens's terms. The
-roster is [the twelve architects](lens-roster.md).
+roster is [the thirteen architects](lens-roster.md).
 
 ## Applies when
 
@@ -33,7 +33,7 @@ roster is [the twelve architects](lens-roster.md).
 
 - The question is business, customer, market, or regulatory — that is divergent
   ideation and wants a facilitation technique, not an architecture panel.
-- The decision is genuinely reversible and cheap. Rotating twelve lenses over
+- The decision is genuinely reversible and cheap. Rotating thirteen lenses over
   a two-day-to-undo choice costs more than the choice.
 - The roster would be theatre: a room that reads named lenses as affectation
   gets less from them than from the plain question underneath.
@@ -53,8 +53,8 @@ a question it does not fit, which produces confident irrelevance.
 Naming the same lens for every question, which means the framing is being forced
 rather than found. Impersonation drifting into caricature, at which point the
 lens stops carrying information and starts carrying performance. Treating roster
-completion as design completion — twelve lenses applied to a problem you never
-actually understood is twelve wasted questions. And lens-shopping: rotating
+completion as design completion — thirteen lenses applied to a problem you never
+actually understood is thirteen wasted questions. And lens-shopping: rotating
 until one of them endorses the answer you already had.
 
 ## Alternatives considered
