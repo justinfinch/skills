@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render every arche-* skill template into a throwaway bundle.
+"""Render every skill-owned template into a throwaway bundle.
 
 Skills are prompts and cannot be unit tested. Their templates are static
 files, so rendering them with sample tokens and running the conformance

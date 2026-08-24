@@ -8,7 +8,7 @@ contents either.
 
 ## What `okf_conformance.py` is actually for
 
-Six skills ship 13 static page templates between them:
+Seven skills ship 14 static page templates between them:
 
 | Skill | Templates |
 | :--- | :--- |
@@ -18,17 +18,25 @@ Six skills ship 13 static page templates between them:
 | `arche-query` | `query` |
 | `arche-discover` | `discovery` |
 | `arche-tell` | `story` |
+| `write-guidance` | `guidance`, `pack-skill` |
 
-Those templates are the pages a user's Arche will actually be built from, and
-the whole OKF v0.2 migration was a rewrite of their frontmatter. A skill is a
-prompt and cannot be unit tested — but a template is a static file, and a
-static file can be rendered and checked.
+Of those 14, 13 render into the sample bundle. `pack-skill.template.md` (not
+yet created — Task 2 of the guidance-packs plan adds it) is a `SKILL.md`
+skeleton: it carries `name`/`description`, not `type`, so it is not an OKF
+page at all. `TEMPLATE_TARGETS` maps it to `None` and `render_all` skips it
+deliberately, rather than rendering it into a bundle where it would fail
+§11 rule 2 by design.
 
-So: `render_templates.py` substitutes sample tokens into all 13 and writes each
-to the path it would occupy in a real bundle (`story.template.md` →
-`stories/sample-story.md`, and so on), producing a throwaway directory with
-reserved files plus one page per type. `test_templates.py` runs
-`okf_conformance.py` over that directory.
+Those 13 rendered templates are the pages a user's Arche will actually be
+built from, and the whole OKF v0.2 migration was a rewrite of their
+frontmatter. A skill is a prompt and cannot be unit tested — but a template
+is a static file, and a static file can be rendered and checked.
+
+So: `render_templates.py` substitutes sample tokens into the 13 that render
+and writes each to the path it would occupy in a real bundle
+(`story.template.md` → `stories/sample-story.md`, and so on), producing a
+throwaway directory with reserved files plus one page per type.
+`test_templates.py` runs `okf_conformance.py` over that directory.
 
 **That is the entire automated job of this checker**: proving the pages these
 skills emit satisfy OKF §11. It is not a linter for the repo, and it is not
@@ -59,8 +67,9 @@ no validator and recommends none, so this file is the oracle.
 
 It is deliberately not built on `arche-lint`, because lint is the skill that
 *claims* to enforce conformance and testing that claim with the claimant is
-circular. Note what that does and does not buy: this checker verifies the six
-writer skills' output, and **nothing automated verifies `arche-lint` itself.**
+circular. Note what that does and does not buy: this checker verifies the
+seven writer skills' output, and **nothing automated verifies `arche-lint`
+itself.**
 Lint's remit is mostly Tier-2 house conventions this checker ignores on
 purpose, and §11 forbids consumers from rejecting a bundle over unknown `type`
 values, missing `index.md`, broken links, or missing optional fields — all of
@@ -89,7 +98,7 @@ stays silent on the fixture's unknown types, missing indexes, and string
 
 | Suite | Runs against |
 | :--- | :--- |
-| `test_templates.py` | A bundle synthesized from the 13 skill templates. The load-bearing one — it tests the exact text the skills emit. |
+| `test_templates.py` | A bundle synthesized from the 13 of 14 skill templates that render into it (the `pack-skill` sentinel is deliberately skipped — see above). The load-bearing one — it tests the exact text the skills emit. |
 | `test_okf_conformance.py` | Small hand-built bundles in temp dirs (unit coverage for the checker), plus the `pre_okf` fixture. |
 | `test_spec_pin.py` | No bundle. Checksums the vendored spec against `PROVENANCE.md`. |
 
