@@ -41,14 +41,23 @@ Rules:
 2. Read `./.arche/SCHEMA.md` end to end.
 3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-lint`, which owns conformance detection and repair — including bringing an older Arche's SCHEMA up to the current OKF era — and stop.
 4. Read `./.arche/index.md`.
-5. Read the lens roster. It ships as the `guidance-architecture-lenses` pack:
-   read its `bundle/concepts/lens-roster.md` and
-   `bundle/concepts/expert-lens-interrogation.md`. If the pack isn't installed,
-   say so once — *"lens naming will be coarse; `npx skills add
-   justinfinch/skills --skill guidance-architecture-lenses` for the full
-   roster"* — and continue. The branch list in Phase 3 names the relevant
-   architects inline, so the grill still works without it; you lose the trigger
-   cues, not the structure.
+5. Read the lens roster. It ships as the `guidance-architecture-lenses` pack,
+   installed alongside this skill, so its pages resolve relative to this skill's
+   own directory:
+   [lens-roster.md](../guidance-architecture-lenses/bundle/concepts/lens-roster.md)
+   and
+   [expert-lens-interrogation.md](../guidance-architecture-lenses/bundle/concepts/expert-lens-interrogation.md).
+   If those paths are unreachable the pack isn't installed — say so once, *"lens
+   naming will be coarse; `npx skills add justinfinch/skills --skill
+   guidance-architecture-lenses` for the full roster"* — and continue. The branch
+   list in Phase 3 names the relevant architects inline, so the grill still works
+   without it; you lose the trigger cues, not the structure. Never improvise a
+   roster of your own.
+
+   The same holds for any other installed `guidance-*` pack whose `description`
+   fires mid-grill: read it where it sits, but cite it by the pack-relative
+   identity in Phase 4 — where a pack happens to be installed is this machine's
+   business and belongs in nobody's ADR.
 6. Read the three templates so you write pages in the canonical layout:
    [ard.template.md](assets/ard.template.md),
    [sad.template.md](assets/sad.template.md),
@@ -125,10 +134,35 @@ Only when the user signals the design tree is walked:
 3. **Write the SAD** at `.arche/concepts/sad-<system>.md` using [sad.template.md](assets/sad.template.md). The Decision Summary section links forward to every ADR this SAD relies on.
 4. **Write each ADR** at `.arche/concepts/adr-<name>.md` using [adr.template.md](assets/adr.template.md). Each ADR's frontmatter cites the SAD in `sources:` so the back-pointer exists. This skill converges on decisions, not proposals — a freshly filed ADR the user has confirmed typically lands as `stable`; use `draft` only if the user explicitly wants the decision left open for further debate.
    - If a `guidance-*` pack informed the decision, cite it in `sources:` with a
-     stable `id`, the pack page's relative or installed path as `resource`, and
-     the page title. The pack is why the trade-off was already framed; without
-     the citation, that reasoning dies with the conversation. Cite the *page*,
-     not the pack directory.
+     stable `id`, a `resource`, and the page title. Cite the *page*, not the
+     pack directory — "the outbox pack" doesn't say which of its four pages
+     framed the trade-off. The `resource` is the **pack-relative page identity**,
+     `<pack-name>/<path-within-bundle>`. That value is stable, host-independent,
+     and resolvable by anyone who can install the pack; an installed path is
+     machine-local and a relative path from `.arche/concepts/` escapes the
+     bundle, so either would commit a citation that resolves for one person on
+     one machine. Where the page has a known canonical repo URL, that may be used
+     instead. The pack is why the trade-off was already framed; without the
+     citation, that reasoning dies with the conversation.
+
+     ```yaml
+     sources:
+       - id: sad-billing
+         resource: ./sad-billing.md
+         title: Billing — Solution Architecture Document
+       - id: lens-roster
+         resource: guidance-architecture-lenses/concepts/lens-roster.md
+         title: The architect lens roster
+     ```
+
+     Then attribute at the point of claim in the body, using the `id` as the
+     footnote label, exactly as SCHEMA.md specifies for any other source:
+
+     ```markdown
+     Granularity was pushed on separately from the service boundary.[^lens-roster]
+
+     [^lens-roster]: guidance-architecture-lenses — Richards on disintegrators.
+     ```
    - On every page written this phase (ARD, SAD, and each ADR): write `description:` — one sentence, used as the index gloss. Write `generated: { by: arche-architect/<model-id>, at: <ISO 8601 UTC> }`. Never write `verified` — that is human sign-off only, via `/arche-lint`.
 5. **Update existing pages.** If the session touched entities or prior concept pages, append (don't overwrite) with citations to the new ARD/SAD/ADRs, and rewrite each edited page's whole `generated` mapping — both `by` and `at` — so `by` names whoever wrote the content that is there now. If a new ADR supersedes a prior one, set the prior ADR's `status: deprecated` and `superseded_by:` to the new path. Do not delete the old page — the trail of "we reversed X after Y" is the institutional memory.
 6. **Update `index.md`.** Update both `concepts/index.md` and the root `index.md`. Add the new ARD/SAD/ADRs under Concepts (create the section if missing) as `* [Title](path) - description.`, where the gloss is exactly the page's `description` and nothing else — `/arche-lint`'s S2 check overwrites any gloss that does not match, so extra tags would be stripped on the next lint and re-added on the next run.

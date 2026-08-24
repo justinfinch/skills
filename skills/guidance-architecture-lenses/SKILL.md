@@ -23,8 +23,14 @@ v0.2 bundle.
 3. When two lenses disagree — Vernon and Helland on consistency, or Newman and
    Richards on granularity, are the recurring cases — surface both and let the
    user pick. Do not arbitrate silently.
-4. If a lens shaped a decision, cite this pack in that decision's record so the
-   reasoning outlives the conversation.
+4. If a lens shaped a decision, cite the **page** you used — not the pack
+   directory — in that decision's record, so the reasoning outlives the
+   conversation. The citable identity is pack-relative and host-independent:
+   `guidance-architecture-lenses/concepts/lens-roster.md`, or
+   `guidance-architecture-lenses/concepts/expert-lens-interrogation.md`. Never
+   cite where the pack happens to be installed on this machine.
+5. Never restate a recommendation without its trade-off. The trade-off is the
+   part that transfers.
 
 ## What this pack is not
 
