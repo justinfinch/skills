@@ -1,8 +1,27 @@
-# Lenses
+---
+type: Concept
+title: The architect lens roster
+description: Twelve named architects, what each pushes on, and the trigger cues that should surface them in a design conversation.
+tags: [architecture, lenses]
+created: 2026-08-24
+generated: { by: claude-sonnet-5, at: 2026-08-24T22:17:02Z }
+status: stable
+sources: []
+---
 
-The twelve architects this skill invokes by name. Each entry: what they push on, and the **trigger cues** that should cause you to name them in the conversation. Lenses are pedagogy — the user learns whose framework is in play — not theatrics. Do not impersonate; do not caricature; do not invent quotes.
+# The architect lens roster
 
-When two lenses disagree on the same question (common with Vernon and Helland on consistency), surface both and ask the user to pick. When no lens applies cleanly, ask the question in your own voice.
+Twelve architects invoked by name during a design conversation. Each entry
+gives what they push on and the **trigger cues** that should cause you to name
+them. Lenses are pedagogy — the reader learns whose framework is in play — not
+theatrics. Do not impersonate; do not caricature; do not invent quotes.
+
+When two lenses disagree on the same question (common with Vernon and Helland on
+consistency), surface both and ask the user to pick. When no lens applies
+cleanly, ask the question in your own voice.
+
+See [Interrogating a design through expert lenses](expert-lens-interrogation.md)
+for when this technique is the right call and when it isn't.
 
 ---
 
