@@ -1,40 +1,8 @@
----
-type: Concept
-title: The architect lens roster
-description: Thirteen named architects, what each pushes on, and the trigger cues that should surface them in a design conversation.
-tags: [architecture, lenses]
-created: 2026-08-24
-generated: { by: claude-opus-5, at: 2026-08-24T23:12:00Z }
-status: stable
-sources:
-  - id: fowler-poeaa
-    resource: https://martinfowler.com/books/eaa.html
-    title: Martin Fowler — Patterns of Enterprise Application Architecture (2002)
-  - id: evans-ddd
-    resource: https://www.domainlanguage.com/ddd/
-    title: Eric Evans — Domain-Driven Design (2003)
-  - id: nygard-release-it
-    resource: https://pragprog.com/titles/mnee2/release-it-second-edition/
-    title: Michael Nygard — Release It! 2nd edition (2018)
-  - id: richards-ford-fundamentals
-    resource: https://fundamentalsofsoftwarearchitecture.com/
-    title: Mark Richards and Neal Ford — Fundamentals of Software Architecture
----
+# Lenses
 
-# The architect lens roster
+The thirteen architects this skill invokes by name. Each entry: what they push on, and the **trigger cues** that should cause you to name them in the conversation. Lenses are pedagogy — the user learns whose framework is in play — not theatrics. Do not impersonate; do not caricature; do not invent quotes.
 
-Thirteen architects invoked by name during a design conversation. Each entry
-gives what they push on and the **trigger cues** that should cause you to name
-them. Lenses are pedagogy — the reader learns whose framework is in play — not
-theatrics. Do not impersonate; do not caricature; do not invent quotes.
-
-When two lenses disagree on the same question (common with Vernon and Helland on
-consistency, and with Newman and Richards on granularity), surface both and ask
-the user to pick. When no lens applies cleanly, ask the question in your own
-voice.
-
-See [Interrogating a design through expert lenses](expert-lens-interrogation.md)
-for when this technique is the right call and when it isn't.
+When two lenses disagree on the same question (common with Vernon and Helland on consistency, and with Newman and Richards on granularity), surface both and ask the user to pick. When no lens applies cleanly, ask the question in your own voice.
 
 ---
 

@@ -41,7 +41,11 @@ Rules:
 2. Read `./.arche/SCHEMA.md` end to end.
 3. Check SCHEMA defines the **architecture page types** — `Architecture Requirements Document`, `Solution Architecture Document`, `Architecture Decision Record` — AND has `architect` in the log ops list. If any are missing, tell the user to run `/arche-lint`, which owns conformance detection and repair — including bringing an older Arche's SCHEMA up to the current OKF era — and stop.
 4. Read `./.arche/index.md`.
-5. **Guidance packs surface themselves — do not go looking for them.** A
+5. Read this skill's [LENSES.md](references/LENSES.md) — the thirteen-architect
+   panel with trigger cues. It ships here because the panel is what this skill
+   *is*, not knowledge it consults: the frontmatter promises a panel, so the
+   panel travels with the skill.
+6. **Guidance packs surface themselves — do not go looking for them.** A
    `guidance-*` pack's `description` is its own relevance trigger, so a pack
    whose territory this session touches loads the way any skill loads. You never
    enumerate packs, path to them, or need to know which exist. Consult whatever
@@ -50,11 +54,7 @@ Rules:
    Never hard-code a pack. Naming one here would make this skill depend on
    something that may not be installed, and would leave every future pack
    invisible until someone edited this file.
-
-   If nothing covering the architect lenses surfaces, lens naming stays coarse:
-   Phase 3's branch list names the relevant architects inline, so you lose the
-   trigger cues, not the structure. Never improvise a roster of your own.
-6. Read the three templates so you write pages in the canonical layout:
+7. Read the three templates so you write pages in the canonical layout:
    [ard.template.md](assets/ard.template.md),
    [sad.template.md](assets/sad.template.md),
    [adr.template.md](assets/adr.template.md).
@@ -83,7 +83,7 @@ Confirm with the user. Write nothing yet.
 
 One question at a time. Each question:
 
-1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. If a guidance pack covering the architect lenses has surfaced, take the roster and trigger cues from it; otherwise name the lens from the branch list below.
+1. Names the **lens** if a specific architect's territory is in play: *"Evans would push on the ubiquitous language here — what does the business call this thing?"* Lens names are pedagogy, not theatrics. See [LENSES.md](references/LENSES.md) for the roster and trigger cues.
 2. Offers a **recommended answer** grounded in the Arche context, codebase reality, and the lens.
 3. Includes **1–3 alternative angles** worth considering (different lenses, opposing trade-offs, common patterns you'd otherwise have to brainstorm). These become the other options in a structured-question UI, or are listed inline in prose.
 4. **Explores the Arche or codebase instead of asking** when the answer is already written down. Don't ask a question the repo can answer.
@@ -184,5 +184,6 @@ End with one line: `Architect session on <system> → ARD + SAD + <N> ADR(s) fil
 
 ## See also
 
-- `guidance-*` packs — durable architectural knowledge, installed independently and picked up by their own triggers. The architect panel's roster and trigger cues live in one of them rather than in this skill, which is why no roster file ships here. This skill names no pack; whichever are installed surface on their own.
+- [LENSES.md](references/LENSES.md) — the thirteen-architect panel with trigger cues
+- `guidance-*` packs — durable architectural knowledge, installed independently and picked up by their own triggers. This skill names no pack; whichever are installed surface on their own, and none is required.
 - [ard.template.md](assets/ard.template.md), [sad.template.md](assets/sad.template.md), [adr.template.md](assets/adr.template.md) — page skeletons this skill writes

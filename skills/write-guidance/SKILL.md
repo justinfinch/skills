@@ -36,13 +36,10 @@ not the content: it carries the trigger and nothing that duplicates the bundle.
 
 1. Read this skill's [guidance.template.md](assets/guidance.template.md) and
    [pack-skill.template.md](assets/pack-skill.template.md).
-2. Let guidance packs surface on their own. A `guidance-*` pack's `description`
-   is its own relevance trigger, so a pack covering the architect lenses loads
-   when this skill's work touches its territory — you do not enumerate packs,
-   path to them, or hard-code one that may not be installed. If a lens pack does
-   surface, attack with its roster and trigger cues. If none does, the attacks
-   below still work; they are just less specific. Never improvise a roster of
-   your own.
+2. The attack table below is self-contained — you do not need any other skill's
+   roster to run it. If a `guidance-*` pack surfaces on its own because this
+   work touches its territory, consult it; you never enumerate packs, path to
+   them, or hard-code one that may not be installed.
 3. Establish the mode: **extract**, **author**, or **revise**. If the user
    hasn't said, ask once.
 
