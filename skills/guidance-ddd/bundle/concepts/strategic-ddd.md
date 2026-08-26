@@ -4,7 +4,7 @@ title: Whether strategic DDD is warranted
 description: Decide whether to treat the domain model as the primary design artifact, before adopting any of the machinery that follows from it.
 tags: [ddd, domain-modelling, strategy]
 created: 2026-08-26
-generated: { by: write-guidance/claude-opus-5, at: 2026-08-26T00:00:00Z }
+generated: { by: write-guidance/claude-opus-5, at: 2026-08-26T13:22:32Z }
 status: stable
 stale_after: 2031-01-01
 sources:
@@ -85,7 +85,17 @@ as overhead until they hit the change it was there to absorb.
   distinguishing symptom is that people check the code to find out what is true.
 - **The language lives in documents but not in conversation or code.** If the
   standup still says "the record" while the model says "policy", the language was
-  never adopted; it was published.
+  never adopted; it was published. The practice that holds the line is treating a
+  domain rename as an architectural change rather than a refactor: one term means
+  one thing in code, schema, and interface, and changing it is a decision with a
+  record, not a find-and-replace someone does on a Friday.
+- **The model decays through changes that each look reasonable.** Nobody
+  overturns the design; it erodes one pragmatic exception at a time, and no single
+  diff looks wrong enough to reject. This is worse now than it used to be —
+  a coding agent working one task at a time against local context will
+  cheerfully add the exception and cannot see the pattern it completes. Whatever
+  the model's load-bearing rules are, the ones you can assert in CI are the ones
+  that will still be true in two years.
 
 ## Alternatives considered
 

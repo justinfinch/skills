@@ -4,7 +4,7 @@ title: Where a bounded context boundary belongs
 description: Draw boundaries where the language changes meaning, not where the org chart or the deployment topology happens to fall.
 tags: [ddd, bounded-context, boundaries]
 created: 2026-08-26
-generated: { by: write-guidance/claude-opus-5, at: 2026-08-26T00:00:00Z }
+generated: { by: write-guidance/claude-opus-5, at: 2026-08-26T13:22:32Z }
 status: stable
 stale_after: 2031-01-01
 sources:
@@ -74,7 +74,10 @@ somebody must own.
   story.
 - **A shared database under two contexts.** The boundary exists in the code and
   not in the data, so a schema change silently breaks the other side. This
-  nullifies the seam while leaving all of its cost in place.
+  nullifies the seam while leaving all of its cost in place. The inverse is the
+  test worth applying: a context boundary is real when it is enforced *at the
+  data layer*, and decorative when it exists only in naming, folder structure, or
+  the UI.
 - **The language leaks anyway.** The translation layer passes the upstream
   model's shapes through under local names. Six months later both models are the
   upstream one, and nobody noticed it happen.
@@ -85,6 +88,14 @@ somebody must own.
 
 ## Alternatives considered
 
+- **Real contexts inside one deployable** — distinct from the option below, and
+  the one most often skipped. The contexts are genuine and enforced at the data
+  layer; they simply ship together as a modular monolith. Wins whenever the
+  modelling case for a boundary is made but the operational case is not, which is
+  most of the time and for longer than teams expect. Treat a bounded context as a
+  **modelling commitment first and a deployment commitment only if scale forces
+  it** — the two decisions are routinely collapsed, and collapsing them is how a
+  correct boundary arrives wrapped in distributed-systems cost nobody needed.
 - **One model, well-factored modules** — wins when the boundary is real but the
   coordination cost of separate contexts isn't yet warranted. Keeps the seam
   visible and cheap to move, which matters while you are still wrong about where
