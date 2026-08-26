@@ -46,7 +46,7 @@ and wires each into the framework's router. The application's composition file
 constructs dependencies and calls that step, and contains **no route definition
 with an inline handler body** — which is a one-line static check, not a
 convention. (Naming the check and putting it in a CI lane is the practice
-`guidance-fitness-functions/bundle/concepts/architectural-fitness-functions.md`
+`guidance-fitness-functions/concepts/architectural-fitness-functions.md`
 covers; this page only supplies the check that is worth naming.)
 
 **The registration helper is explicitly not a command bus.** This is the line

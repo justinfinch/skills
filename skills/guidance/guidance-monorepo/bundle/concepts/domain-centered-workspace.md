@@ -86,7 +86,7 @@ Every rule must be **verified to bite** at authoring time: write the violating
 import, watch CI fail, delete it. A boundary rule keyed on a path that does not
 exist passes vacuously and reads as coverage. Naming these checks, assigning
 them a lane, and tracking whether they still run is the practice in
-`guidance-fitness-functions/bundle/concepts/architectural-fitness-functions.md`;
+`guidance-fitness-functions/concepts/architectural-fitness-functions.md`;
 this page only supplies the direction worth checking.
 
 **Orchestrate builds with a task graph keyed on the workspace graph.** A runner
@@ -252,7 +252,7 @@ with different inputs.
   fitness-function candidate and should be one of the first checks a project
   writes**: a CI rule asserting the domain's import list, plus a test job that
   runs the domain suite with no services running at all. See
-  `guidance-fitness-functions/bundle/concepts/architectural-fitness-functions.md`
+  `guidance-fitness-functions/concepts/architectural-fitness-functions.md`
   for how to name it, lane it, and keep it from silently ceasing to run; the
   topology claim — that the direction is what makes the domain independently
   testable — is this page's.

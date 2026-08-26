@@ -91,7 +91,7 @@ from a rule matching nothing, and the second is the common case: rules keyed on 
 directory layout that does not exist yet pass vacuously and read as coverage.
 Naming these checks, choosing their lane, and tracking whether they still run is
 the practice in
-`guidance-fitness-functions/bundle/concepts/architectural-fitness-functions.md`;
+`guidance-fitness-functions/concepts/architectural-fitness-functions.md`;
 this page only supplies the rules worth naming.
 
 A per-feature public-surface barrel — a feature importable only through its

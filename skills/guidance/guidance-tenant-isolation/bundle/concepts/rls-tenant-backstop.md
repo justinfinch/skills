@@ -28,15 +28,16 @@ CREATE POLICY tenant_isolation ON <tenant_table>
   USING (tenant_id = current_setting('app.current_tenant')::uuid);
 
 -- once per request / per command, inside the transaction:
-SET LOCAL app.current_tenant = :tenant_from_session;
+SELECT set_config('app.current_tenant', $1, true);
 ```
 
 The point is not defence in depth as a slogan. It is that a cross-tenant read or
 write becomes **structurally impossible even when an application query forgets
 its `WHERE tenant_id = ?`** — the failure mode that turns a one-line omission
-into a disclosure incident. `SET LOCAL` is deliberate: the variable dies with the
-transaction, so a pooled connection cannot carry one tenant's context into the
-next tenant's work.
+into a disclosure incident. The transaction-local flag on `set_config` is
+deliberate — unlike bare `SET LOCAL`, which accepts only literals, `set_config`
+takes a bind parameter, and the variable still dies with the transaction, so a
+pooled connection cannot carry one tenant's context into the next tenant's work.
 
 **One term, one column.** Whatever the business calls a tenant — organization,
 account, workspace — pick that word and use it for the column on every table and
