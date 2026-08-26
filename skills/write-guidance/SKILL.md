@@ -155,6 +155,15 @@ body, rather than shipping a testimonial.
    [skills-ref](https://github.com/agentskills/agentskills/tree/main/skills-ref)
    is available, `skills-ref validate <pack-dir>` checks this and the naming
    rules together.
+
+   Then hold the `description` to its job: it is the pack's entire activation
+   surface — the only text an agent sees when deciding whether to load the
+   pack. Check three things before moving on: it covers *what* and *when* in
+   the domain's literal vocabulary (pattern names double as trigger keywords);
+   it includes the decision moment for a user who doesn't know the technique's
+   name yet; and it contains no usage instructions — a sentence that would
+   only help an agent that has already loaded the pack belongs in the body.
+   Keep the folded value under the spec's 1024-character cap.
 4. Write each page to `<pack-dir>/bundle/concepts/<slug>.md` from
    [guidance.template.md](assets/guidance.template.md). Set `description:` — it
    is the index gloss. Write `generated: { by: write-guidance/<model-id>, at:
@@ -185,7 +194,10 @@ body, rather than shipping a testimonial.
    catalog of its skills (a `README.md` list, a docs page), add the pack to it in
    the same shape as its neighbours. If it doesn't, skip this step — do not
    invent a catalog, and do not edit a `README.md` that isn't already a skill
-   index.
+   index. For host projects driven by agents that do not scan skill
+   directories at all, the fallback is a one-line pointer to the pack in the
+   project's agent context file (`AGENTS.md`, `CLAUDE.md`) — offer it, don't
+   impose it.
 
 A page whose reasoning is genuinely general but whose *type* isn't `Guidance` —
 a roster, a taxonomy, a comparison table — is a `Concept` page in the same
@@ -195,6 +207,8 @@ bundle. Don't force the six sections onto content that isn't a technique.
 
 - Two projects minimum for extract mode. One is a testimonial.
 - Conditions must be checkable facts, not preferences.
+- The description is the activation surface: what and when, in the domain's
+  vocabulary — never how. Instructions live in the body.
 - `Doesn't apply when` is a gate, not a section.
 - Sanitize by default; ask before including any identifier.
 - Never file a guidance page into a project's `./.arche/`.
