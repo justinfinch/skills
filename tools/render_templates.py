@@ -36,6 +36,13 @@ SAMPLE_TOKENS = {
 # Where each template's rendered output must live inside the bundle. The
 # destination matters: index.md and log.md are reserved filenames (SPEC 3.1),
 # so they are checked by different rules than concept documents.
+#
+# Keyed on basename, which is only safe while basenames are unique across the
+# whole repo. find_templates() discovers templates repo-wide, so two skills that
+# both own an `index.template.md` would collide here — same key, same
+# destination, second render silently overwriting the first, and one template
+# never conformance-checked. `test_template_targets_are_distinct` and
+# `test_template_basenames_are_unique` are what turn that into a failure.
 TEMPLATE_TARGETS = {
     "SCHEMA.template.md": "SCHEMA.md",
     "index.template.md": "index.md",

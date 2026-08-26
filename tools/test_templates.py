@@ -15,6 +15,28 @@ class TemplateTargetTests(unittest.TestCase):
         missing = [t.name for t in find_templates(SKILLS) if t.name not in TEMPLATE_TARGETS]
         self.assertEqual(missing, [], f"templates with no TEMPLATE_TARGETS entry: {missing}")
 
+    def test_template_basenames_are_unique(self):
+        """TEMPLATE_TARGETS is keyed on basename while discovery is repo-wide.
+
+        Two skills owning a same-named template would map to one entry, so the
+        second rendered over the first and one of them was never checked. No
+        error is raised on that path, which is what makes it worth a test.
+        """
+        names = [t.name for t in find_templates(SKILLS)]
+        dupes = sorted({n for n in names if names.count(n) > 1})
+        self.assertEqual(
+            dupes,
+            [],
+            f"template basenames owned by more than one skill: {dupes}; "
+            "key TEMPLATE_TARGETS on the skill-relative path instead",
+        )
+
+    def test_template_targets_are_distinct(self):
+        """Two entries rendering to the same destination silently lose one."""
+        targets = [t for t in TEMPLATE_TARGETS.values() if t is not None]
+        dupes = sorted({t for t in targets if targets.count(t) > 1})
+        self.assertEqual(dupes, [], f"TEMPLATE_TARGETS destinations claimed twice: {dupes}")
+
 
 class RenderedTemplateTests(unittest.TestCase):
     def test_rendered_templates_conform(self):
