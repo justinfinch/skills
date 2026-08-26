@@ -78,7 +78,10 @@ def find_templates(skills_dir: Path) -> list[Path]:
     template has a TEMPLATE_TARGETS entry. TEMPLATE_TARGETS still gates what
     actually renders, so widening discovery only widens what gets noticed.
     """
-    return sorted(skills_dir.glob("*/assets/*.template.md"))
+    # rglob so a skill nested in a category directory
+    # (skills/guidance/guidance-ddd/) is still discovered. TEMPLATE_TARGETS
+    # gates what actually renders, so widening discovery is safe.
+    return sorted(skills_dir.rglob("assets/*.template.md"))
 
 
 def render_all(skills_dir: Path, dest: Path) -> list[Path]:

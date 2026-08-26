@@ -35,7 +35,10 @@ PACK_SKILL_TEMPLATE = SKILLS / "write-guidance" / "assets" / "pack-skill.templat
 
 
 def skill_files() -> list[Path]:
-    return sorted(SKILLS.glob("*/SKILL.md"))
+    # rglob, not glob: skills may sit one level down in a category directory
+    # (skills/guidance/guidance-ddd/SKILL.md). A one-level glob would drop those
+    # silently, which is the exact shape of miss this suite exists to prevent.
+    return sorted(SKILLS.rglob("SKILL.md"))
 
 
 class SkillFrontmatterTests(unittest.TestCase):

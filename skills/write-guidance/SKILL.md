@@ -26,8 +26,12 @@ and must never be filed into one.
 ```
 
 `<skills-dir>` is wherever the host project keeps its skills — see step 2 of
-[Writing the pack](#writing-the-pack). It is `skills/` in the library this skill
-came from, and that is a default, not an assumption.
+[Writing the pack](#writing-the-pack). It is `skills/guidance/` in the library
+this skill came from, which groups packs under a category directory; that is a
+default, not an assumption. A category directory is safe because the installer
+walks each container up to three levels deep, but the pack's own directory name
+must still equal its `name`, so keep the `guidance-` prefix on the directory
+itself rather than folding it into the category.
 
 No `log.md` — a pack's changelog is its git history. `SKILL.md` is the doorbell,
 not the content: it carries the trigger and nothing that duplicates the bundle.
@@ -133,7 +137,9 @@ body, rather than shipping a testimonial.
    the `name:` frontmatter must match exactly.
 2. **Ask where the pack should live.** Extract mode runs inside *other people's*
    repos, so never assume a layout. If the project has a `skills/` directory at
-   its root, propose `skills/guidance-<topic>/` and confirm. Otherwise ask — some
+   its root, propose `skills/guidance/guidance-<topic>/` when it already groups
+   packs that way and `skills/guidance-<topic>/` when it is flat — match the
+   neighbours rather than imposing a shape. Otherwise ask — some
    projects keep skills under `.claude/skills/`, `.agent/skills/`, or nowhere at
    all, in which case ask whether the pack belongs in this repo or in the user's
    own skills library. Call the answer `<pack-dir>` from here on.

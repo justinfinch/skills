@@ -19,13 +19,15 @@ npx skills add justinfinch/skills -g
 
 ```
 skills/
-└── <skill-name>/
-    └── SKILL.md
+├── <skill-name>/              # arche-*, devbox-*, write-*
+│   └── SKILL.md
+└── guidance/                  # packs grouped: content, not workflows
+    └── guidance-<topic>/
+        └── SKILL.md
 ```
 
-Flat — one directory per skill, each containing a `SKILL.md` with YAML
-frontmatter (`name`, `description`). The `name` must match the directory name,
-which is why the families are prefixes rather than subdirectories.
+One directory per skill, each containing a `SKILL.md` with YAML frontmatter
+(`name`, `description`).
 
 | Prefix | Kind |
 | :--- | :--- |
@@ -34,8 +36,18 @@ which is why the families are prefixes rather than subdirectories.
 | `guidance-*` | Knowledge that is consulted and cited; never runs |
 | `write-*` | Tools that author the other kinds |
 
-The prefix says what kind of thing a skill is, which matters once these install
-flat alongside everyone else's.
+The prefix says what kind of thing a skill is, and it does the real work: skills
+install into one flat namespace alongside everyone else's, where a directory
+here is invisible. Guidance packs additionally sit under a `guidance/` category
+directory, because they are content rather than workflows and will outnumber
+everything else as the library grows.
+
+Two constraints that make this layout work. The installer walks each container
+directory up to three levels deep, so a category directory is discovered
+normally. And `name` must match its **own** parent directory — not the path — so
+a pack keeps the `guidance-` prefix in its directory name rather than shortening
+to `ddd` and losing the prefix at install time. `skills/guidance/guidance-ddd/`
+reads redundantly in the tree and never appears that way anywhere else.
 
 ## Skills
 
@@ -49,7 +61,7 @@ flat alongside everyone else's.
 - **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages.
 - **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
 - **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift; owns OKF v0.2 conformance detection and repair, including migrating an older Arche to the current era.
-- **[guidance-ddd](skills/guidance-ddd/SKILL.md)** — the first guidance pack: strategic domain-driven design, led by the page arguing when *not* to adopt it. Covers bounded-context boundaries, context-map relationships, and aggregate sizing; tactical patterns are deliberately out of scope.
+- **[guidance-ddd](skills/guidance/guidance-ddd/SKILL.md)** — the first guidance pack: strategic domain-driven design, led by the page arguing when *not* to adopt it. Covers bounded-context boundaries, context-map relationships, and aggregate sizing; tactical patterns are deliberately out of scope.
 - **[write-guidance](skills/write-guidance/SKILL.md)** — author or extract a guidance pack: extract mode generalizes recurring decisions out of existing project Arches into "applies when" conditions, author mode works greenfield, revise mode refreshes a pack that aged out. Uses the architect lenses adversarially and refuses to file a pack with an empty "Doesn't apply when".
 
 ### Open Knowledge Format
@@ -68,7 +80,7 @@ bundle of `Guidance` pages, plus whatever supporting `Concept` pages the topic
 needs — a roster, a taxonomy, a comparison table.
 
 ```
-skills/guidance-<topic>/
+skills/guidance/guidance-<topic>/
   SKILL.md       # relevance trigger; thin by design
   bundle/
     index.md     # frontmatter carries okf_version and nothing else
