@@ -4,7 +4,7 @@ title: Naming the relationship between two contexts
 description: Choose and state the integration relationship explicitly, so translation cost and the power balance between teams are visible rather than assumed.
 tags: [ddd, context-map, integration]
 created: 2026-08-26
-generated: { by: write-guidance/claude-opus-5, at: 2026-08-26T00:00:00Z }
+generated: { by: write-guidance/claude-fable-5, at: 2026-08-26T14:24:19Z }
 status: stable
 stale_after: 2031-01-01
 sources:
@@ -28,6 +28,9 @@ different answer to "how much of the other model are we willing to let in."
 | :--- | :--- |
 | **Anticorruption layer** | The upstream model would distort yours, and your model is worth protecting. You pay for a translation layer and own it forever. |
 | **Conformist** | You have no leverage over upstream and its model is tolerable. You adopt their model wholesale and spend nothing on translation. |
+| **Customer/supplier** | You are downstream but have real leverage: upstream agrees to take your needs into its planning, and you hold them to it with agreed acceptance tests. The middle ground between conformist and anticorruption — and it only exists while upstream honours the agreement. |
+| **Partnership** | The two contexts succeed or fail together and neither ships without the other. Joint planning replaces a power balance; the coordination cost is the price of the mutual dependency, not overhead to optimize away. |
+| **Big ball of mud** | The other side has no coherent model to relate to. Draw the line around the mess, integrate defensively, and refuse to let its shapes leak across. Naming it is the decision to stop pretending a clean relationship exists. |
 | **Shared kernel** | Two teams share a genuinely common subset AND can coordinate releases. The coordination requirement is the whole condition. |
 | **Published language** | Many consumers, none of whom should know your internals. You invest in a stable contract that is nobody's internal model. |
 | **Open host service** | You are upstream, consumers are numerous, and per-consumer integration has become the bottleneck. |
@@ -79,6 +82,11 @@ and is sometimes right.
   first integration just adopted upstream's model and everything since inherited
   it. This is the most common state and the least examined — it is only a failure
   when the model was in fact worth protecting.
+- **Customer/supplier declared without the leverage.** Upstream agreed to the
+  meetings, not the priorities; downstream's needs are minuted and never
+  scheduled. It is conformist wearing a service-level agreement, and the honest
+  names — conformist, or anticorruption if the model is worth protecting — were
+  avoided because both admit the actual power balance.
 - **Shared kernel between teams that cannot coordinate.** The condition on the
   pattern is release coordination, and it is the one people skip. Without it, the
   kernel becomes a contended file that breaks both sides on alternate weeks.
