@@ -49,15 +49,23 @@ not the content: it carries the trigger and nothing that duplicates the bundle.
 
 ## Mode: extract
 
-Generalize recurring decisions out of existing projects.
+Generalize recurring decisions out of existing projects. The point of extraction
+is **sharing** — getting hard-won reasoning out of one project's Arche and into a
+form the next project can pick up — not validation by project count. One
+well-reasoned project is enough to extract from; what makes the result guidance
+rather than a testimonial is the conditioning work in step 4 and the attacks,
+not a second data point. When more projects are available, use them — recurrence
+across projects sharpens conditions — but never block on them.
 
-1. Ask for the project paths. Two or more is the point — one project yields a
-   testimonial, not guidance.
+1. Ask for the project path(s).
 2. In each project, read `./.arche/concepts/` for pages typed `Architecture
    Decision Record` and `Solution Architecture Document`, plus any infra
    manifests the decisions reference.
-3. Find techniques that recur **under different names**. Project A's
-   `adr-event-delivery` and project B's `adr-outbox` are one candidate, not two.
+3. Find techniques that recur **under different names** — across projects
+   (project A's `adr-event-delivery` and project B's `adr-outbox` are one
+   candidate, not two) or within one (a supersession trail, or the same move
+   showing up in three ADRs, is recurrence too — and a supersession trail is
+   prime material, because it carries real failure modes).
    Report the candidate set with one-line glosses and let the user cut it.
 4. For each surviving candidate, do the central move: **convert project
    particulars into conditions, never delete them.**
@@ -164,6 +172,18 @@ body, rather than shipping a testimonial.
    name yet; and it contains no usage instructions — a sentence that would
    only help an agent that has already loaded the pack belongs in the body.
    Keep the folded value under the spec's 1024-character cap.
+
+   **Stack-bound guidance declares its stack.** Some packs reason at a level
+   any stack can use; others recommend named libraries in a named ecosystem.
+   When the recommendations are stack-bound, say so in the `description`
+   ("in React/TypeScript apps"; the library names double as trigger keywords)
+   and carry the stack as an explicit **Applies when** condition on each page —
+   an agent in another ecosystem should load the pack, keep the reasoning, and
+   know exactly which parts to re-derive for its own stack. Keep the slug
+   generic (`guidance-client-state`, not `guidance-react-client-state`) unless
+   the technique's reasoning itself assumes the stack, or a sibling pack for
+   another stack exists — the slug is namespace, and per-framework slugs
+   proliferate; the description and conditions are where scope belongs.
 4. Write each page to `<pack-dir>/bundle/concepts/<slug>.md` from
    [guidance.template.md](assets/guidance.template.md). Set `description:` — it
    is the index gloss. Write `generated: { by: write-guidance/<model-id>, at:
@@ -205,8 +225,12 @@ bundle. Don't force the six sections onto content that isn't a technique.
 
 ## Discipline
 
-- Two projects minimum for extract mode. One is a testimonial.
+- Extraction is for sharing, not validation. One project extracts fine; the
+  conditioning work and the attacks are what separate guidance from testimony.
 - Conditions must be checkable facts, not preferences.
+- Stack-bound guidance declares its stack. Generic slug when the reasoning is
+  stack-agnostic; the stack goes in the slug only when the technique itself
+  assumes it.
 - The description is the activation surface: what and when, in the domain's
   vocabulary — never how. Instructions live in the body.
 - `Doesn't apply when` is a gate, not a section.
