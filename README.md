@@ -42,12 +42,33 @@ here is invisible. Guidance packs additionally sit under a `guidance/` category
 directory, because they are content rather than workflows and will outnumber
 everything else as the library grows.
 
-Two constraints that make this layout work. The installer walks each container
-directory up to three levels deep, so a category directory is discovered
-normally. And `name` must match its **own** parent directory — not the path — so
+Two constraints that make this layout work. The installer recurses through
+container directories (`findSkillDirs`, `maxDepth = 5`), so a category directory
+is discovered normally, and it then writes each skill to
+`<agent-skills-dir>/<name>/` — flat, keyed on `name` rather than on the path in
+this repo. And `name` must match its **own** parent directory — not the path — so
 a pack keeps the `guidance-` prefix in its directory name rather than shortening
 to `ddd` and losing the prefix at install time. `skills/guidance/guidance-ddd/`
 reads redundantly in the tree and never appears that way anywhere else.
+
+### Dogfooding
+
+`.claude/skills/` holds one symlink per skill, flat, pointing back into
+`skills/`, so this repo loads its own skills while you work on them.
+
+It has to be per-skill rather than a single `.claude/skills -> ../skills`. That
+one-line version skips the flattening the installer does and hands the repo's
+own layout to the agent's loader, which does **not** descend into a category
+directory — so every `guidance-*` pack silently fails to load, with no error
+anywhere, while flat skills keep working and hide the gap. The mirror reproduces
+what an install actually produces.
+
+```bash
+python tools/dogfood_links.py    # repair after adding or renaming a skill
+```
+
+`tools/test_dogfood_links.py` fails when the mirror is stale, because a missing
+link has no other symptom: the skill is simply never offered.
 
 ## Skills
 

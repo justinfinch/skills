@@ -29,9 +29,13 @@ and must never be filed into one.
 [Writing the pack](#writing-the-pack). It is `skills/guidance/` in the library
 this skill came from, which groups packs under a category directory; that is a
 default, not an assumption. A category directory is safe because the installer
-walks each container up to three levels deep, but the pack's own directory name
-must still equal its `name`, so keep the `guidance-` prefix on the directory
-itself rather than folding it into the category.
+recurses through containers and then writes each skill *flat*, under its `name`.
+Two things follow. The pack's own directory name must equal its `name`, so keep
+the `guidance-` prefix on the directory itself rather than folding it into the
+category. And anything reading the repo directly rather than through the
+installer — a symlinked development setup, say — sees the nesting the installer
+would have flattened, and most loaders will not descend into it; mirror the
+packs flat there or they never load.
 
 No `log.md` — a pack's changelog is its git history. `SKILL.md` is the doorbell,
 not the content: it carries the trigger and nothing that duplicates the bundle.
