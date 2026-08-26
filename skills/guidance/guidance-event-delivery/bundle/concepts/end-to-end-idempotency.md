@@ -51,6 +51,14 @@ event, and conflating them means either the client controls your event identity 
 your event identity cannot survive a client retry. Carry both, and document which
 boundary each one guards.
 
+**Where the first row's obligation is discharged.** This page owns the hops from
+the ingestion commit onward — relay to broker, broker to consumer. The capture
+key's own design (client-side minting, the unique constraint, the
+`ON CONFLICT DO NOTHING` insert, and the append-only table it lands in) belongs
+to `guidance-cqrs-projections/concepts/append-only-source-stream.md`; that page
+is the other end of this chain, and the two are one decision seen from either
+side of the ingestion boundary.
+
 **Dedup must wrap the effect, not just the write.** Recording the id after an
 upsert protects the row and does nothing for the notification, the webhook, the
 external posting, or the counter increment that ran beside it. The idempotency

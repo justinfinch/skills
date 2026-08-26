@@ -61,6 +61,24 @@ state the threshold as a number or a binary event, you have not found the
 trigger yet — you have found a feeling, and a feeling does not survive the
 personnel change that guidance like this exists to survive.
 
+The four dimensions worth a threshold are **cost**, **latency**, **consumer
+count**, and a **named feature gap**, and latency is the one most often left as
+a feeling. Write it as a percentile against a named observation point, because
+"the database feels far away" is unactionable and a p99 is not:
+
+> *Trigger (database layer): p99 read latency measured from the EU worker pool
+> against the US-region managed Postgres exceeds 120 ms for seven consecutive
+> days on the existing APM dashboard. Rationale: 120 ms is the point at which
+> the worker's 400 ms end-to-end budget stops absorbing a retry, measured in
+> the March soak. Firing this reopens the decision toward the named target — the
+> same vendor's multi-region offering — not automatically toward leaving.*
+
+That row has everything the other three dimensions need too: the metric, the
+observation point, the number, the duration, the dashboard it is read from, and
+why the number is that number. A latency trigger stated without an observation
+point is ambiguous by construction — the same system is fast from one region and
+slow from another, and the trigger has to say which one it is watching.
+
 **Per layer, not per platform.** A single-vendor commitment is not one decision;
 it is one decision per layer — compute, database, object storage, identity,
 messaging, media transform — bundled for operational convenience. Each layer has

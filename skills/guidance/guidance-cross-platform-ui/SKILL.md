@@ -63,14 +63,6 @@ references" are the two that have to be answered locally.
 
 ## What this pack is not
 
-It is not a visual design language. It says nothing about what your product
-should look like — only about where the values live and who is allowed to read
-them.
-
-It is not app-strategy advice about whether to build native at all. The
-cross-platform page assumes the decision to ship two surfaces has been made
-elsewhere, and reasons about how to build them.
-
 It is not a workflow — it decides nothing on its own and writes nothing; it
 informs decisions that are recorded elsewhere.
 

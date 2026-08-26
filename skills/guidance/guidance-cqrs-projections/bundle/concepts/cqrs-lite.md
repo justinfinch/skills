@@ -91,9 +91,8 @@ result — ids plus the facts just committed — which the client renders
 **optimistically**. The authoritative projected read model arrives
 asynchronously and reconciles against that echo on a stable key. Projection
 does **not** run synchronously inside the command transaction. This is a
-[session guarantee](https://doi.org/10.1109/PDIS.1994.331722) implemented in the
-client, not a consistency property of the server, and the difference matters the
-moment the client is not yours.
+*session guarantee* implemented in the client, not a consistency property of the
+server, and the difference matters the moment the client is not yours.
 
 **Implementation is deliberately un-framework'd.** Commands are plain
 application-service functions. Queries are a separate read module of

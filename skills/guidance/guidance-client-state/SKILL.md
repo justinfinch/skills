@@ -61,15 +61,6 @@ Each page says which of its parts transfer and which must be re-derived.
 
 ## What this pack is not
 
-It is not guidance on local-first sync engines. Both pages name a sync engine as
-the counter-case that subsumes them, and neither tells you how to choose or
-operate one. If a sync engine is in play, it *is* the state architecture, and
-layering this pack's stores on top of it is the mistake the pages warn about.
-
-It is not about server-side caching. Nothing here concerns HTTP cache headers,
-CDNs, or a read-through cache in front of a database — only state held on the
-client and who owns it.
-
 It is not a workflow — it decides nothing on its own and writes nothing; it
 informs decisions that are recorded elsewhere.
 

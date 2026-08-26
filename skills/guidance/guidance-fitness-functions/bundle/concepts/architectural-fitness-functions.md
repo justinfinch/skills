@@ -154,11 +154,11 @@ and isolation checks, **security**; what it spends is **build speed** and
 **change latency**. It is a good trade when violations are expensive and
 frequent, and a bad one when the boundary was never really under pressure.
 
-The practice itself is durable, but two of its assumptions are not: that CI is a
-gate a human respects, and that structural violations are hard to detect any
-other way. If automated review reliably catches boundary violations at authoring
-time, the static lane's job shrinks to the ones that must be *proved* rather than
-noticed — grants, policies, budgets.
+**What would make this stale.** The practice itself is durable, but two of its
+assumptions are not: that CI is a gate a human respects, and that structural
+violations are hard to detect any other way. If automated review reliably
+catches boundary violations at authoring time, the static lane's job shrinks to
+the ones that must be *proved* rather than noticed — grants, policies, budgets.
 
 ## Failure modes
 

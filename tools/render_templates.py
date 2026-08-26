@@ -18,6 +18,12 @@ SAMPLE_TOKENS = {
     "{{TITLE}}": "Sample Title",
     "{{DESCRIPTION}}": "One-sentence summary of the sample page.",
     "{{TRIGGER}}": "a sample decision is on the table",
+    # The three slots of a guidance pack's SKILL.md description. {{TRIGGERS}}
+    # deliberately shares a prefix with {{TRIGGER}} above; `render` substitutes
+    # longest-token-first so the shorter one cannot eat the longer one's name.
+    "{{WHAT}}": "Sample guidance decisions, named in the domain's own vocabulary",
+    "{{TRIGGERS}}": "a sample decision is on the table or a user names the pattern",
+    "{{SCOPE_EXCLUSION}}": "Not a product comparison and not tactical implementation detail",
     "{{SLUG}}": "sample-slug",
     "{{EXT}}": "pdf",
     "{{URL}}": "https://example.com/sample",
@@ -62,8 +68,15 @@ def render(text: str, tokens: dict[str, str] | None = None) -> str:
     `tokens` exists so a test can render a template with deliberately hostile
     values — a description containing a colon-space, say — without perturbing
     the shared sample set every other template is rendered with.
+
+    Substitution is longest-token-first, not dict order. `{{TRIGGER}}` is a
+    prefix of `{{TRIGGERS}}`, so plain insertion order would let the short
+    token rewrite the long one's name into `<value>S}}` — an unsubstituted
+    token that no longer looks like one. Ordering by descending token length
+    makes the prefix relation harmless for any future pair.
     """
-    for token, value in (SAMPLE_TOKENS if tokens is None else tokens).items():
+    table = SAMPLE_TOKENS if tokens is None else tokens
+    for token, value in sorted(table.items(), key=lambda kv: -len(kv[0])):
         text = text.replace(token, value)
     return text
 

@@ -59,8 +59,7 @@ rather than what is newer than a timestamp.
 
 **The outbox is a transient delivery queue, not a state log.** Rows are claimed,
 marked, and pruned. The system of record for history is whatever table the
-aggregate lives in — the outbox is [data on the
-outside](https://www.cidrdb.org/cidr2005/papers/P12.pdf): the message being
+aggregate lives in — the outbox is *data on the outside*: the message being
 forwarded, not the truth being kept. Rebuilds and backfills read the aggregate
 tables; they never read the outbox.
 
@@ -153,8 +152,8 @@ immediately," the outbox does not deliver that and no amount of relay tuning
 makes it a synchronous call.
 
 It also fixes the consistency model in place, so state it out loud: **atomic
-publish-intent, at-least-once delivery, per-row ordering at best, no global
-ordering**. A consumer that assumes it sees events in commit order across
+publish-intent, at-least-once delivery, per-aggregate-key ordering at best, no
+global ordering**. A consumer that assumes it sees events in commit order across
 different aggregates is relying on something the outbox never promised — and the
 promise gets weaker the moment a second relay instance or a parallel batch is
 introduced.

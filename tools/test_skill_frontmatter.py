@@ -116,8 +116,8 @@ class PackSkillTemplateTests(unittest.TestCase):
     # no agent can load. `Outbox: deliver events atomically` is not a contrived
     # string — it is how a pack author writes a title-cased description.
     HOSTILE = {
-        "{{DESCRIPTION}}": "Outbox: deliver events atomically with the state change.",
-        "{{TRIGGER}}": "a service must publish an event and commit state: both or neither.",
+        "{{WHAT}}": "Outbox: deliver events atomically with the state change",
+        "{{TRIGGERS}}": "a service must publish an event and commit state: both or neither",
     }
 
     def _frontmatter(self, tokens: dict[str, str]) -> dict:

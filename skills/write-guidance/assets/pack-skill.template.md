@@ -1,11 +1,7 @@
 ---
 name: guidance-{{SLUG}}
 description: >-
-  {{WHAT — the decisions this pack covers, in the domain's own vocabulary;
-  pattern names double as trigger keywords}}. Use when {{TRIGGERS — the tasks,
-  decision moments, and literal words a user would say, including the upstream
-  moment where the user doesn't yet know the technique's name}}.
-  {{SCOPE EXCLUSION — what this pack deliberately does not cover}}.
+  {{WHAT}}. Use when {{TRIGGERS}}. {{SCOPE_EXCLUSION}}.
 ---
 
 <!-- AUTHORING NOTES — delete this block when you file the pack.
@@ -17,17 +13,21 @@ instructions live in the body below, which loads only after activation; a
 sentence that would only help an agent that has already loaded the pack
 belongs in the body, not here.
 
-Three rules for the description:
+Three slots, three rules:
 
-- Matching is substantially lexical. Include the topic's literal vocabulary —
-  the pattern names in {{WHAT}} double as trigger keywords, so an agent whose
-  user asks about one of them by name matches directly.
-- Include the trigger for the user who doesn't know the topic's name yet: the
-  upstream decision moment or observable symptom ("starting a greenfield
+- {{WHAT}} — the decisions this pack covers, in the domain's own vocabulary.
+  Matching is substantially lexical, so include the topic's literal
+  vocabulary; the pattern names here double as trigger keywords, and an agent
+  whose user asks about one of them by name matches directly.
+- {{TRIGGERS}} — the tasks, decision moments, and literal words a user would
+  say. Include the trigger for the user who doesn't know the topic's name yet:
+  the upstream decision moment or observable symptom ("starting a greenfield
   service", "the same term means different things to different teams"), not
   just the jargon.
-- State the scope exclusion. For a knowledge pack a false-positive load costs
-  more than a false-negative, and the exclusion is itself signal.
+- {{SCOPE_EXCLUSION}} — what this pack deliberately does not cover. For a
+  knowledge pack a false-positive load costs more than a false-negative, and
+  the exclusion is itself signal. Naming another pack that owns an adjacent
+  decision belongs here.
 
 `description` is a folded block scalar (`>-`) on purpose. A plain YAML scalar
 breaks on a colon followed by a space, and "Outbox: deliver events atomically"

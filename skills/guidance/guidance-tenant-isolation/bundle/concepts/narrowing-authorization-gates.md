@@ -7,7 +7,22 @@ created: 2026-08-26
 generated: { by: write-guidance/claude-fable-5, at: 2026-08-26T15:35:34Z }
 status: stable
 stale_after: 2028-09-01
-sources: []
+sources:
+  - id: zanzibar
+    resource: https://www.usenix.org/conference/atc19/presentation/pang
+    title: Pang et al. — Zanzibar, Google's Consistent, Global Authorization System (USENIX ATC 2019)
+  - id: nist-abac
+    resource: https://csrc.nist.gov/pubs/sp/800/162/upd2/final
+    title: NIST SP 800-162 — Guide to Attribute Based Access Control (ABAC) Definition and Considerations
+  - id: owasp-authz
+    resource: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
+    title: OWASP — Authorization Cheat Sheet
+  - id: karwin-sql-antipatterns
+    resource: https://pragprog.com/titles/bksqla/sql-antipatterns/
+    title: Bill Karwin — SQL Antipatterns (Naive Trees; the closure-table alternative)
+  - id: postgres-recursive-cte
+    resource: https://www.postgresql.org/docs/current/queries-with.html
+    title: PostgreSQL — WITH Queries (Common Table Expressions), including RECURSIVE
 ---
 
 # Composing authorization as strictly-narrowing gates

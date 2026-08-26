@@ -55,8 +55,8 @@ The table carries an explicit **rebuild guarantee**: dropping it and replaying
 every projector against the source stream reproduces it, within a stated time
 budget, and **that budget is verified in CI** — a scheduled job that rebuilds
 against a production-shaped dataset and fails when it exceeds the number
-(`rebuild-within-budget`). A rebuild guarantee that is never exercised is not a
-guarantee; it is a belief that other decisions are resting on.
+(`full-rebuild-within-budget`). A rebuild guarantee that is never exercised is
+not a guarantee; it is a belief that other decisions are resting on.
 
 Then the move this whole page exists for: **split the durability targets
 deliberately.**
