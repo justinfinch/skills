@@ -57,7 +57,7 @@ the meaning, with the vendor library sitting behind it as one adapter. The
 direction of the dependency is the whole point: the domain declares the port,
 the edge implements it, and no vendor type crosses the line.
 
-Three commitments make the difference between a seam and a decorative interface:
+Four commitments make the difference between a seam and a decorative interface:
 
 **The local development double sits on the same seam.** If local development
 talks to a vendor emulator while production talks through the commodity API, the
@@ -146,13 +146,21 @@ if the concepts on either side stay separate.
   are unreachable through it, and the abstraction protects a migration you would
   not want.
 - **The commodity API is a least-common-denominator that forfeits the capability
-  that justified the dependency.** Resumable and chunked upload sessions,
-  lifecycle and tiering policy, server-side transforms, event notifications and
-  fine-grained IAM all sit off the commodity object-storage path. If one of those
-  is load-bearing, the honest options are to go vendor-native and record the
-  reversal cost, or to put the vendor-native path through a labelled escape hatch
-  on the seam so the exception is visible and countable — not to pretend the
-  commodity API covers it.
+  that justified the dependency.** Sort the capability into one of two buckets
+  first, because they have different remedies and conflating them is how teams
+  reach for an escape hatch they did not need. *In the API and unevenly
+  implemented*: multipart upload and lifecycle configuration are both part of the
+  S3 API and both implemented by the mainstream alternatives — the risk is not
+  absence but divergence in part-size rules, expiration semantics and error
+  codes, and the remedy is the contract test suite described under the drift
+  failure mode below, not a vendor-native path. *Genuinely off the commodity
+  path*: server-side transforms, tiering across proprietary storage classes,
+  event notification wiring, and fine-grained IAM have no portable equivalent —
+  the alternatives either do not implement them or express them in a different
+  model entirely. If something in the second bucket is load-bearing, the honest
+  options are to go vendor-native and record the reversal cost, or to put the
+  vendor-native path through a labelled escape hatch on the seam so the exception
+  is visible and countable — not to pretend the commodity API covers it.
 - **There is only one implementation.** A "standard" with one implementation is a
   vendor API with extra ceremony. This is worth re-checking rather than assuming:
   implementations get abandoned, and a two-implementation commodity can quietly

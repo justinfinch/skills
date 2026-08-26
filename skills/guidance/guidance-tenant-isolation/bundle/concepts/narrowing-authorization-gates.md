@@ -51,15 +51,27 @@ is a recursive traversal down from each granted node:
 ```sql
 WITH RECURSIVE reachable AS (
   SELECT node_id FROM user_node_grants WHERE user_id = :user
-  UNION ALL
+  UNION
   SELECT c.node_id FROM nodes c JOIN reachable r ON c.parent_id = r.node_id
 )
 SELECT node_id FROM reachable;
 ```
 
+`UNION` rather than `UNION ALL`, and the difference is a liveness property, not
+a tidiness one. The parent pointers are *supposed* to form a forest, but nothing
+in that schema enforces it: a re-parent that closes a loop, a restored backup, a
+bulk import, and the graph has a cycle. Under `UNION ALL` this query then never
+terminates — it is on the request path, holding a connection, for a question the
+application asked about a single user. `UNION` deduplicates each iteration
+against what it has already produced, so a cycle simply stops adding rows and
+the traversal ends. The cost is a distinct check per iteration on a set that is
+already small; the alternative is a pool exhausted by one bad row.
+
 **Resolve the reachable set once per request, into a set, and filter rows
 against it.** The wrong shape asks "can they see *this* node?" per row and runs
 the traversal two hundred times to render one list. Same answer, one traversal.
+`UNION` is also what makes "into a set" true of the query itself rather than
+only of the code that consumes it.
 
 Two rules keep the composition honest. **Roles seed, they do not decide**: an
 application role may create a user's default grants at provisioning time, but it
@@ -157,6 +169,15 @@ to justify it.
   written, and none of them changes when the gate logic does. Months later the
   evaluator has a fix that three call sites never received. The tell is a
   hierarchy join appearing anywhere outside the evaluator.
+- **A cycle in the parent pointers hangs the request path.** The hierarchy is a
+  forest by convention and a general graph by schema, so one loop — introduced by
+  a re-parent, a restored backup, or an import that reused ids — is enough. Under
+  `UNION ALL` the traversal never terminates, and because it is per-request it
+  takes a pooled connection with it; enough concurrent requests and the pool is
+  gone, presenting as a site-wide outage rather than as one bad row. `UNION`
+  makes the query self-limiting, which is the cheap half of the fix. The other
+  half is refusing to write the cycle: a constraint or a check on re-parent that
+  rejects making a node its own ancestor.
 - **The evaluator called per row.** Correct, and quadratic. A list page that was
   fast with ten items times out at two hundred, and the fix looks like "add
   caching" rather than "hoist the traversal". The symptom arrives with a

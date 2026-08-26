@@ -28,7 +28,7 @@ sources:
     title: Ford, Parsons and Kua — Building Evolutionary Architectures
   - id: eu-data-act
     resource: https://digital-strategy.ec.europa.eu/en/policies/data-act
-    title: European Commission — Data Act (cloud switching and egress-charge provisions)
+    title: European Commission — Data Act (Reg. (EU) 2023/2854), Art. 29 withdrawal of switching charges
 ---
 
 # Naming the escape valve and the triggers that reopen the decision
@@ -230,10 +230,20 @@ things to monitor), and the analytical effort itself.
 
 **What would make this stale.** The whole technique is priced off switching
 costs, and switching costs are under active downward pressure from two
-directions. Regulation is one: European data-portability rules are phasing out
-provider switching and egress charges, which removes the single most common
-trigger variable in practice — the egress-cost threshold — from a large slice of
-the market. Standardization is the other: as container runtimes, managed
+directions. Regulation is one, and it is worth reading precisely, because the
+loose version of this claim inverts what the rule actually does. The EU Data Act
+(Reg. (EU) 2023/2854, Art. 29) withdraws **switching charges** — what a provider
+bills for the switching process itself, including the egress incurred in moving
+data out — and it explicitly carves out charges for services rendered in the
+ordinary course. So it lowers the *one-time exit bill*, which is the denominator
+of the reversal-cost estimate; it does **not** touch routine operational egress
+billing, which is the numerator of a running-cost trigger. The worked example
+above — "sustained egress above fifty dollars a month" — is ordinary service
+consumption and survives the regulation unchanged. What genuinely gets staler is
+any trigger phrased around the exit event: "migration would cost us N in egress
+fees" stops being a threshold worth tracking in the covered market, because the
+answer trends to zero by statute. Standardization is the other: as container
+runtimes, managed
 Postgres, and object-storage APIs converge, the reversal cost for the middle of
 the stack falls toward the "cheap to reverse anyway" counter-case above. Push in
 the other direction and the technique gets *more* load-bearing, not less: as

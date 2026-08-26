@@ -3,9 +3,10 @@ name: guidance-tenant-isolation
 description: >-
   Multi-tenant isolation and authorization — Postgres Row-Level Security as a
   database-level tenant backstop behind application query filters,
-  per-transaction tenant context via `SET LOCAL`, the choice between a
-  permissive and a fail-closed policy for authentication-framework tables, and
-  strictly-narrowing authorization gates (tenant, then reachable subgraph, then
+  per-transaction tenant context via a transaction-local `set_config`, the
+  choice between a permissive and a fail-closed policy for
+  authentication-framework tables, and strictly-narrowing authorization gates
+  (tenant, then reachable subgraph, then
   specific grant) through a single evaluator for within-tenant access. Use when
   designing a multi-tenant schema, adding a `tenant_id` or `organization_id`
   column, running background workers or a connection pooler against

@@ -86,7 +86,7 @@ condition at a moment in time, a measurement, a photograph of something that has
 since changed — the asymmetry is total, and it justifies bespoke code on the
 write path that would be indefensible anywhere else in the client.
 
-Two supporting rules fall out of practice:
+Three supporting rules fall out of practice:
 
 - **Buy the transfer machinery; build only the queue's bookkeeping.** Durable
   storage, background execution, and retry with backoff are all solved by

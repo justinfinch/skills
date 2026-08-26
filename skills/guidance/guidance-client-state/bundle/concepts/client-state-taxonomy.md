@@ -84,8 +84,8 @@ mutation model with persistence bolted behind it, tuned for resuming a
 convenience retry, and it is not a durability guarantee that survives process
 kill, low battery, and an OS reclaiming the app mid-upload. See
 `guidance-client-state/concepts/store-and-forward-capture.md` for when this
-fourth store is worth building at all — for most applications it is not, and
-this taxonomy then has three members.
+third store is worth building at all — for most applications it is not, and
+this taxonomy then has three kinds and two stores.
 
 **4 — Real-time push: events patch the query cache.** One subscription
 (SSE or WebSocket), owned in one place, receives server events and **patches or
@@ -105,7 +105,8 @@ provide. This page owns the client half: the echo is a cache entry, the
 reconciliation is a cache patch, and both live in the query cache rather than in
 a bespoke "pending" structure beside it.
 
-Two ownership rules make the four stores hold:
+Four kinds, three stores — kind 4 has no store of its own by construction, and
+that is the point of it. Two ownership rules keep the kinds from bleeding:
 
 - **One direction of copying.** Server state may be *read* by UI state through a
   selector or an id lookup; it is never *copied into* it. A component that needs
@@ -128,13 +129,17 @@ taxonomy transfers whole: it is a statement about lifetimes and sources of
 truth, and it holds in Vue, Svelte, SwiftUI, Flutter, Android, or a server-driven
 UI. So does the ownership pair above, and so does the claim that durable pending
 writes are a separate store from the disposable cache. What is stack-bound and
-must be re-derived locally is the *library assignment* — TanStack Query, Zustand,
-and this ecosystem's persisted-mutation machinery are the current best fits in
-React/TypeScript, not the technique. Other ecosystems answer the same four
-questions with different components (SWR or a framework loader; Pinia or a view
-model; Room or Core Data behind the queue; a first-party observable store), and
-some collapse two kinds into one framework primitive, which is fine as long as
-the collapse is a decision rather than an accident.
+must be re-derived locally is the *library assignment* — TanStack Query for kind
+1 and Zustand for kind 2 are the current best fits in React/TypeScript, not the
+technique. Kind 3 is deliberately absent from that list: this ecosystem's
+persisted-mutation machinery is the thing that *looks* like the answer and
+is not one, for the reasons given above, so the assignment there is a durable
+store (SQLite on native, IndexedDB on web) plus platform background transfer,
+not a library that ships with the query client. Other ecosystems answer the same
+four questions with different components (SWR or a framework loader; Pinia or a
+view model; Room or Core Data behind the queue; a first-party observable store),
+and some collapse two kinds into one framework primitive, which is fine as long
+as the collapse is a decision rather than an accident.
 
 ## Applies when
 

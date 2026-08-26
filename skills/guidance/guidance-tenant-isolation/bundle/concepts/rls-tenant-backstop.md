@@ -25,7 +25,7 @@ transaction:
 ```sql
 ALTER TABLE <tenant_table> ENABLE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON <tenant_table>
-  USING (tenant_id = current_setting('app.current_tenant')::uuid);
+  USING (tenant_id = NULLIF(current_setting('app.current_tenant', true), '')::uuid);
 
 -- once per request / per command, inside the transaction:
 SELECT set_config('app.current_tenant', $1, true);
@@ -38,6 +38,19 @@ into a disclosure incident. The transaction-local flag on `set_config` is
 deliberate — unlike bare `SET LOCAL`, which accepts only literals, `set_config`
 takes a bind parameter, and the variable still dies with the transaction, so a
 pooled connection cannot carry one tenant's context into the next tenant's work.
+
+**Both halves of `NULLIF(current_setting(var, true), '')` are load-bearing, and
+each guards a different way of having no tenant.** The `true` is
+`missing_ok`: without it, a variable that was never set raises
+`unrecognized configuration parameter` and aborts the transaction, so the very
+first request on a fresh connection fails loudly instead of returning nothing.
+The `NULLIF` covers the *other* absence — once a transaction-local `set_config`
+has run and ended, the placeholder does not disappear, it reverts to the empty
+string, and `''::uuid` raises `invalid input syntax for type uuid`. On a pooled
+connection that is the common case, not the edge case: every checkout after the
+first tenant transaction sees `''`. Together they make both absences behave the
+same way and produce the fail-closed result the rest of this page describes.
+Written any other way, the policy raises where it claims to return nothing.
 
 **One term, one column.** Whatever the business calls a tenant — organization,
 account, workspace — pick that word and use it for the column on every table and
@@ -61,9 +74,18 @@ tenant context. Those tables get a **permissive** variant that admits the
 null-context read and scopes everything else:
 
 ```sql
-USING (current_setting('app.current_tenant', true) IS NULL
-       OR tenant_id = current_setting('app.current_tenant', true)::uuid)
+USING (NULLIF(current_setting('app.current_tenant', true), '') IS NULL
+       OR tenant_id = NULLIF(current_setting('app.current_tenant', true), '')::uuid)
 ```
+
+The `NULLIF` is not decoration here either, and this is the shape where omitting
+it does the most damage. A bare `IS NULL` test is false for the empty string a
+transaction-local `set_config` leaves behind, so the policy falls through to the
+comparison and `''::uuid` raises — on exactly the pooled connection that just
+finished serving a tenant request and has now been handed to the login path.
+The permissive variant exists to keep login working without a tenant context;
+written with `IS NULL` alone it reintroduces the outage it was added to prevent,
+one checkout later.
 
 Write both shapes down, and write down *which tables get which*. The backstop on
 those tables is real — it still scopes any query issued from inside a tenant
@@ -101,7 +123,7 @@ own scoping is the isolation of record.
 - **A connection pooler prevents reliable per-transaction session state.**
   Transaction-mode pooling that multiplexes statements across sessions, or a
   serverless data proxy that does not guarantee the whole unit of work runs in
-  one transaction on one session, breaks the `SET LOCAL` contract. Verify it on
+  one transaction on one session, breaks the transaction-local contract. Verify it on
   your actual pooler configuration; do not infer it from the engine's docs.
 - **The application must legitimately span tenants on the request path.**
   Cross-tenant marketplaces, brokered supplier access, or aggregate reporting
@@ -136,7 +158,7 @@ worse in exchange for breaches getting impossible.
 
 ## Failure modes
 
-- **A forgotten `SET LOCAL` presents as data loss, not as an auth error.** Under
+- **A forgotten tenant `set_config` presents as data loss, not as an auth error.** Under
   a fail-closed policy the query is valid, the transaction commits, and zero rows
   come back. The 3am version: a new endpoint, or a background job that acquired
   its own connection, reports "the customer's data is gone." Hours go into the
@@ -165,9 +187,11 @@ worse in exchange for breaches getting impossible.
   events across tenants on one long-lived connection, and sets the variable
   rather than scoping it to the transaction, applies message N-1's tenant to
   message N when a code path skips the set — writing one tenant's projection row
-  into another's. Silent, durable, and discovered by a customer. `SET LOCAL`
-  inside a per-message transaction, with a reset on the error path, is the whole
-  fix.
+  into another's. Silent, durable, and discovered by a customer. The whole fix is
+  the same transaction-local `set_config` the request path uses, issued inside a
+  per-message transaction so it dies with the message — with the tenant id passed
+  as a bind parameter, never interpolated into the statement, because the value
+  arrived from a message body.
 - **A new table ships without a policy.** The tenant key is copied from a
   neighbouring table, the policy is not, and nothing fails. Every subsequent
   query against that table is unbackstopped. This is the regression the CI
