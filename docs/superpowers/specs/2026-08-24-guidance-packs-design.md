@@ -2,7 +2,27 @@
 
 **Date:** 2026-08-24
 **Branch:** `guidance-packs`
-**Status:** approved, ready for planning
+**Status:** implemented, with two reversals recorded below
+
+> **What shipped differs from this spec in two places.** Both were deliberate;
+> the spec is kept as written rather than rewritten, so the reasoning that was
+> overturned stays legible.
+>
+> **Decision 5 (flat layout) was reversed.** Packs live under
+> `skills/guidance/guidance-<topic>/`. The installer recurses through container
+> directories and then writes each skill out flat under its `name`, so a category
+> directory costs nothing at install time and keeps a family that will outnumber
+> everything else out of the top-level listing. The pack directory keeps its
+> `guidance-` prefix, since `name` must match its own parent directory. The
+> catch — agent loaders do *not* descend into the category directory — is real
+> and is what `tools/dogfood_links.py` exists to absorb.
+>
+> **`guidance-architecture-lenses` (Decision 7, and the "First pack" section)
+> was not built.** `LENSES.md` stayed in `arche-architect/references/` and
+> `write-guidance` carries its own attack table, self-contained by design so it
+> depends on no pack that may not be installed. Success criteria 1 and 6 do not
+> apply. The shape was instead proven by eleven packs extracted on real topics,
+> which is a stronger test than round-tripping content the repo already trusted.
 
 ## Goal
 

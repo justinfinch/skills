@@ -5,15 +5,31 @@ Justin Finch's library of agent skills. Compatible with the open [agent skills](
 ## Install
 
 ```bash
-# Install all skills to your detected agents
-npx skills add justinfinch/skills
-
 # Install a specific skill
 npx skills add justinfinch/skills --skill write-a-skill
+
+# Install one guidance pack
+npx skills add justinfinch/skills --skill guidance-tenant-isolation
+
+# Install all skills to your detected agents
+npx skills add justinfinch/skills
 
 # Install globally (available across all projects)
 npx skills add justinfinch/skills -g
 ```
+
+Prefer `--skill` for the [guidance packs](#guidance-packs). Every installed
+skill's `description` is loaded into the agent's context for the whole session —
+all eleven packs together cost roughly 3k tokens of that budget — and several
+packs assume a specific stack (TypeScript, React, pnpm, Postgres). On a Go or
+Python repo those are context spent to make a wrong match slightly more likely.
+Install the packs whose territory the project actually has.
+
+**Don't clone or symlink this repo into a skills directory.** Agent loaders do
+not descend into the `skills/guidance/` category directory, so all eleven packs
+would silently fail to load while the flat skills kept working — no error
+anywhere. `npx skills add` recurses and writes each skill out flat, which is the
+layout the loaders need; see [Layout](#layout).
 
 ## Layout
 
@@ -141,11 +157,51 @@ phase, where every branch of the design gets pushed on one question at a time �
 and cites the pages that informed a decision in the ADR's `sources:`, by their
 host-independent `<pack-name>/<path-within-bundle>` identity. So a new project
 doesn't inherit old answers — it inherits the trade-off space already framed, and the
-ADR that comes out is genuinely its own. When a decision area has no pack
-covering it, the grill says so; that gap signal is what `/write-guidance`
-consumes, and the loop is why the next project doesn't start from scratch.
+ADR that comes out is genuinely its own. When no pack surfaces for a decision
+area, the grill says so; that gap signal is what `/write-guidance` consumes, and
+the loop is why the next project doesn't start from scratch.
 
 Packs carry no `log.md` — git history is the changelog.
+
+#### Getting them picked up
+
+A pack loads because its `description` matched what you were doing. That is the
+whole mechanism: nothing enumerates packs, there is no registry, and
+`/arche-architect` is explicitly forbidden from pathing to one — naming a pack
+there would make it depend on something that may not be installed and leave
+every future pack invisible. So a pack whose description doesn't match simply
+never loads, and nothing announces that it didn't.
+
+**If one doesn't fire when it should, name it** — say "check the tenant-isolation
+guidance", or invoke `/guidance-tenant-isolation` directly. Worth knowing before
+the first session rather than after one that re-derived a decision the pack had
+already framed. The grill's gap signal cannot tell an absent pack from an
+installed one that didn't match, and says so rather than claiming coverage it
+can't verify.
+
+For a standing nudge instead of a per-session one, paste this into the project's
+`AGENTS.md`. It is independent of the Arche — `/arche-init` does not write it,
+and packs need no Arche to be useful:
+
+```markdown
+<!-- guidance-packs -->
+This repo relies on installed `guidance-*` skills — durable architectural
+knowledge, consulted and cited, never executed. Before an architectural
+decision, consult the packs whose territory the decision touches, and check each
+page's **Doesn't apply when** against this project before recommending anything
+from it. A page whose conditions don't hold is evidence *against* the technique
+here.
+```
+
+**Without an Arche, cite the page wherever the project already records
+decisions** — the PR description, the commit message, a `docs/adr/` entry. A
+pack's instruction to cite the page it used assumes only that decisions get
+written down somewhere; don't stand up an Arche to hold a citation.
+
+One thing to know when following a reference from inside a bundle page: a
+cross-pack reference like `guidance-portability-seams/concepts/named-migration-triggers.md`
+is the pack-relative **identity**, not a path. On disk the page is at
+`guidance-portability-seams/bundle/concepts/named-migration-triggers.md`.
 
 ## Why "Arche"?
 

@@ -87,13 +87,16 @@ One question at a time. Each question:
 2. Offers a **recommended answer** grounded in the Arche context, codebase reality, and the lens.
 3. Includes **1–3 alternative angles** worth considering (different lenses, opposing trade-offs, common patterns you'd otherwise have to brainstorm). These become the other options in a structured-question UI, or are listed inline in prose.
 4. **Explores the Arche or codebase instead of asking** when the answer is already written down. Don't ask a question the repo can answer.
-5. **Names the gap when no guidance covers the question.** If a decision area
-   has no installed `guidance-*` pack speaking to it, say so once as you enter
-   that branch: *"nothing in the installed guidance covers event-delivery
-   semantics — we're deciding this from first principles."* That is not an
-   apology; it tells the user which parts of the session are re-derivation and
-   flags a candidate for `/write-guidance` afterwards. Don't repeat it per
-   question — once per branch.
+5. **Names the gap when no guidance surfaces.** If no `guidance-*` pack
+   surfaced for a decision area, say so once as you enter that branch: *"no
+   installed guidance surfaced for event-delivery semantics — we're deciding
+   this from first principles. If you have a pack covering it, name it and I'll
+   load it."* Report only what you can know: packs surface themselves and you
+   never enumerate them (Preflight 6), so an absent pack and an installed one
+   that didn't match are indistinguishable from here — don't claim the former.
+   That is not an apology; it tells the user which parts of the session are
+   re-derivation, hands them the override, and flags a candidate for
+   `/write-guidance` afterwards. Don't repeat it per question — once per branch.
 
 Walk the design tree branch by branch. The standard branches (re-order to fit the problem):
 
