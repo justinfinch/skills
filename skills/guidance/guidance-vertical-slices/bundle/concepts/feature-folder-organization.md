@@ -4,7 +4,7 @@ title: Organizing an application by feature with a tool-enforced import directio
 description: Organize a client application's source by product capability rather than by file role — one folder per feature, a shared tier for cross-feature code, a single checkable sorting rule (knows business logic goes to the feature, dumb visual goes to shared), features as non-importing peers, and an import boundary enforced by a dependency tool rather than by review.
 tags: [architecture, frontend, feature-folders, vertical-slice, module-boundaries, import-rules]
 created: 2026-08-26
-generated: { by: write-guidance/claude-fable-5, at: 2026-08-26T16:22:41Z }
+generated: { by: write-guidance/claude-opus-5, at: 2026-09-01T00:00:00Z }
 status: stable
 stale_after: 2028-09-01
 sources:
@@ -66,6 +66,15 @@ when a category has enough members to warrant one. Mandating a per-feature
 segment skeleton means every feature pays a fixed structural cost from its first
 file, and most features never grow into it.
 
+A third constraint applies to whatever lands in the shared tier: it holds
+**functions, types, and render-only components — not composed behavior**. No
+module-level state, no configured instances assembled at import time, no
+aggregation function that reaches back across features. A shared module holding
+behavior has gravity: the next feature that needs it lands beside it, and the
+hub the feature split removed reassembles inside `shared/`. The shape rule, its
+counter-case, and what to check are in
+[sharing code between peer slices](shared-code-between-peers.md).
+
 Where a shared package holds render-free logic used by more than one application,
 give it the **same feature axis** so the two sides are namesakes: the split is
 *render-free and portable → the package; renders or is platform glue → the
@@ -103,9 +112,9 @@ external consumers.
 **This is the same move as [REPR endpoint slices](repr-endpoints.md), applied at
 the presentation layer.** Slice by capability; keep the slices from importing
 each other; make the composition root do nothing but compose. The API side calls
-a slice an endpoint directory and enforces it with a no-inline-handlers check;
-the client side calls it a feature folder and enforces it with import-direction
-rules. Adopting one and not the other is coherent — they are separate decisions
+a slice an endpoint file and enforces it with checks on route count per file,
+registration reachability, and cross-slice imports; the client side calls it a
+feature folder and enforces it with import-direction rules. Adopting one and not the other is coherent — they are separate decisions
 in separate codebases — but a team that has adopted both should say so out loud,
 because the shared principle is what makes the two conventions predict each other
 for anyone (or any agent) moving between them.
