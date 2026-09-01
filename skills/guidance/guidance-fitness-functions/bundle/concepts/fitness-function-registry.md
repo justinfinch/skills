@@ -4,7 +4,7 @@ title: The fitness-function registry
 description: One table in the architecture document listing every named check, the exact script or test that enforces it, its CI lane, and whether it is active, pending a milestone, or deferred — so "we have a check for that" is a claim a reader can verify.
 tags: [architecture, fitness-functions, ci, registry, governance]
 created: 2026-08-26
-generated: { by: write-guidance/claude-fable-5, at: 2026-08-26T15:58:59Z }
+generated: { by: write-guidance/claude-opus-5, at: 2026-09-01T00:00:00Z }
 status: stable
 stale_after: 2029-06-01
 sources:
@@ -75,18 +75,33 @@ shape without the entries meaning anything in their own system:
 | read-model-does-not-import-domain | `.dependency-cruiser.cjs` rule `read-model-not-domain` | static | ✅ active |
 | feature-does-not-import-sibling-feature | `.dependency-cruiser.cjs` rule `feature-isolation` | static | ✅ active |
 | semantic-tokens-only-in-components | `lint/rules/no-primitive-tokens.mjs` | static | ✅ active |
-| no-inline-route-handlers | `scripts/check-route-registration.mjs` | static | ⏳ pending → M2 (endpoint refactor) |
+| no-inline-route-handlers | `scripts/fitness/no-inline-handlers.mjs` | static | ⏳ pending → M2 (endpoint refactor) |
+| one-route-per-slice-file | `scripts/fitness/one-route-per-slice.mjs` (allowlist inline) | static | ⏳ pending → M2 (endpoint refactor) |
+| every-slice-reachable-from-root | `scripts/fitness/slice-registration.mjs` | static | ⏳ pending → M2 (endpoint refactor) |
+| slice-does-not-import-sibling-slice | `.dependency-cruiser.cjs` rule `slice-isolation` | static | ⏳ pending → M2 (endpoint refactor) |
 | full-rebuild-within-budget | `ci/nightly/replay.integration.test.ts` (synthetic seed) | nightly | ✅ active |
 | cold-start-within-budget | `ci/perf/cold-start.mjs` | nightly | 📊 reporting |
 | surface-boundary (no app imports another app) | — (needs the shared logic package to exist) | — | ⏸ deferred → M3 (second client surface) |
 
-Two things the example is meant to show. First, the **append-only role** row is
+Three things the example is meant to show. First, the **append-only role** row is
 guarded from both sides — a static grant lint and a runtime probe — because a
 check that only reads the migration source cannot see a grant applied by hand,
 and a check that only probes the running database cannot see a grant about to be
 applied by a merged migration. Second, the **surface-boundary** row is deferred
 with its milestone and its reason, rather than being quietly absent; the absence
 is the thing worth writing down.
+
+Third, the four endpoint rows are **one decision with four checks**, each
+catching a different increment of the same erosion — a handler defined inline, a
+second route joining a slice, a slice never wired up, a slice importing its
+neighbour. Decisions rarely have one violation shape, and a registry that shows
+only the first check written is how a decision comes to look guarded while three
+of its four failure paths are open. The row count per decision is itself
+diagnostic: one row against a decision with several ways to decay is a gap the
+table is supposed to make visible. Note too that one of those rows carries its
+exemption mechanism in the *Enforced by* cell — an enumerated allowlist inside
+the check rather than a pattern — because how an exception is expressed
+determines whether widening it is ever noticed.
 
 ## Rules that keep it honest
 

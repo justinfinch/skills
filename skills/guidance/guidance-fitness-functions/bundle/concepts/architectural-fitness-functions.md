@@ -4,7 +4,7 @@ title: Making a load-bearing decision executable in CI
 description: Name, at decision time, the executable check that detects each load-bearing decision's violation, and run it in CI in a fast static lane and a slower integration lane, so architectural erosion fails a build instead of surfacing in production.
 tags: [architecture, fitness-functions, ci, evolutionary-architecture, governance]
 created: 2026-08-26
-generated: { by: write-guidance/claude-fable-5, at: 2026-08-26T15:58:59Z }
+generated: { by: write-guidance/claude-opus-5, at: 2026-09-01T00:00:00Z }
 status: stable
 stale_after: 2029-06-01
 sources:
@@ -44,6 +44,34 @@ static lane is where a violation is stopped, the nightly lane is where a
 violation is *discovered*, and moving a check from the first to the second is a
 deliberate reduction in guarantee that should be recorded as such.
 
+The lane decides *when* a check runs. A second decision, easier to get wrong and
+almost never recorded, is **where it reads** — and the default is wrong in a
+specific way. A check is usually written just after a violation was found, keyed
+on the place it was found, which is the place least likely to host the next one.
+Once a decision is enforced somewhere, that location stops eroding; the pressure
+moves to the surface the decision *created*, which the check does not read. A
+guard placed where the last failure happened watches the wrong place for the
+next one. Choose the scope from where violations will come from, not from where
+the last one came from.
+
+Two check shapes are worth naming because they are cheap and routinely skipped:
+
+- **Cardinality within a file or module** — *at most one of X here*. Most checks
+  assert an end state, so they fire once the decay has fully arrived and the fix
+  is a refactor. A cardinality check fires at increment one — when a second thing
+  joins a file that was meant to hold one — which is the only moment the fix is
+  still a two-line move.
+- **Transitive reachability from a root** — *every declared thing is reachable
+  from the composition root*. This catches the artifact that was written,
+  reviewed, unit-tested in isolation, and never wired: a failure no unit test can
+  see, because the unit passes. Resolve it **transitively** through whatever
+  intermediate aggregation exists, or the check verifies one hop and reports
+  success over a chain that is broken further down.
+
+Both shapes, and the guard-placement problem that motivates them, are worked
+through at an HTTP boundary in
+`guidance-vertical-slices/concepts/repr-endpoints.md`.
+
 One sentence is the contract, and it belongs beside every check:
 
 > **Tripping this means a real architectural regression, not a flaky test.**
@@ -76,9 +104,11 @@ that" is a claim someone can check rather than a thing someone remembers.
 - **The decision has a structural expression a machine can check.** Dependency
   direction, module and package boundaries, database grants and role privileges,
   schema properties (a policy exists on every table carrying a given column),
-  file placement and registration conventions, build-output size, replay or
-  rebuild duration. If you can say what a violating commit looks like in the
-  repository or in the database catalog, the check is writable.
+  file placement and registration conventions, cardinality within a file (at
+  most one route definition per slice), reachability from a composition root,
+  build-output size, replay or rebuild duration. If you can say what a violating
+  commit looks like in the repository or in the database catalog, the check is
+  writable.
 - **CI exists and its failures actually block.** A merge gate on a protected
   branch. Where a red build can be force-merged as routine, the check reports
   rather than enforces, and should be labelled as reporting.
@@ -171,6 +201,23 @@ the ones that must be *proved* rather than noticed — grants, policies, budgets
   the exemption is older than anyone's memory of it. Treat exemption lines as
   architectural changes — require the decision record to change with them, and
   make the exemption list something a human reads at each milestone.
+- **A legitimate exception is written as a pattern, and the pattern silently
+  widens.** Some checks genuinely need exceptions: the passthrough registration
+  that does not go through the helper, the generated file that cannot satisfy the
+  rule. Expressed as a glob or a filename pattern, the exception admits every
+  future file that happens to match — with no diff, no review, and no decision.
+  Expressed as an **enumerated allowlist inside the check**, each addition is a
+  line someone wrote on purpose and a reviewer can see. Same exception, same
+  coverage today; the difference is whether widening it is an event. Enumerate
+  wherever the exempt set is small and nameable, and treat reaching for a pattern
+  as a claim that the set is genuinely open-ended.
+- **Everything the checks read is clean, and the architecture eroded anyway.**
+  The lane is green all year and a boundary is gone regardless, because every
+  check keys on the surface where the original violation was found. The tell is a
+  decision whose check has *never* failed: either nothing is under pressure — in
+  which case the decision did not need a check — or the pressure is landing
+  somewhere the check does not look. A check that has never fired deserves the
+  same suspicion as a rule matching zero files.
 - **A check pins implementation detail rather than the decision, so honest
   refactors trip it.** The rule keys on a filename, a directory that moved, or a
   helper's exact name instead of the property. Every legitimate rename produces a
