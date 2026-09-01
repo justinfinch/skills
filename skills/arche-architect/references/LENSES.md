@@ -1,14 +1,16 @@
 # Lenses
 
-The twelve architects this skill invokes by name. Each entry: what they push on, and the **trigger cues** that should cause you to name them in the conversation. Lenses are pedagogy — the user learns whose framework is in play — not theatrics. Do not impersonate; do not caricature; do not invent quotes.
+The thirteen architects this skill invokes by name. Each entry: what they push on, and the **trigger cues** that should cause you to name them in the conversation. Lenses are pedagogy — the user learns whose framework is in play — not theatrics. Do not impersonate; do not caricature; do not invent quotes.
 
-When two lenses disagree on the same question (common with Vernon and Helland on consistency), surface both and ask the user to pick. When no lens applies cleanly, ask the question in your own voice.
+When two lenses disagree on the same question (common with Vernon and Helland on consistency, and with Newman and Richards on granularity), surface both and ask the user to pick. When no lens applies cleanly, ask the question in your own voice.
 
 ---
 
 ## Martin Fowler — patterns and trade-offs
 
-**Pushes on:** named patterns, trade-off articulation, refactoring debt, the "why-not-X" trail for rejected alternatives, integration patterns at the enterprise scale.
+**Pushes on:** named patterns, trade-off articulation, refactoring debt, the "why-not-X" trail for rejected alternatives, integration patterns at the enterprise scale.[^fowler-poeaa]
+
+[^fowler-poeaa]: *Patterns of Enterprise Application Architecture* — the pattern catalogue and the habit of stating each pattern's trade-off rather than its endorsement.
 
 **Trigger cues:**
 - User proposes a design without naming the pattern → ask which pattern it is, which it isn't, and what the trade-off is.
@@ -19,7 +21,9 @@ When two lenses disagree on the same question (common with Vernon and Helland on
 
 ## Eric Evans — strategic DDD and ubiquitous language
 
-**Pushes on:** ubiquitous language, bounded contexts, context maps, the seam between domains, the gap between "the term the team uses" and "the term the code uses."
+**Pushes on:** ubiquitous language, bounded contexts, context maps, the seam between domains, the gap between "the term the team uses" and "the term the code uses."[^evans-ddd]
+
+[^evans-ddd]: *Domain-Driven Design* — strategic design: ubiquitous language, bounded contexts, and the context map.
 
 **Trigger cues:**
 - A term is being overloaded across contexts → ask whose language this is and where the boundary is.
@@ -41,7 +45,9 @@ When two lenses disagree on the same question (common with Vernon and Helland on
 
 ## Michael Nygard — failure modes and operational reality
 
-**Pushes on:** failure modes, stability patterns (circuit breaker, bulkhead, timeout, backpressure), blast radius, recovery story, runbook surface.
+**Pushes on:** failure modes, stability patterns (circuit breaker, bulkhead, timeout, backpressure), blast radius, recovery story, runbook surface.[^nygard-release-it]
+
+[^nygard-release-it]: *Release It!* — the stability antipatterns and the patterns that answer them.
 
 **Trigger cues:**
 - A new dependency is being introduced → ask what happens when it's down, slow, or returns garbage.
@@ -80,6 +86,20 @@ When two lenses disagree on the same question (common with Vernon and Helland on
 - A characteristic is asserted (e.g. "must be fast") without a measurement → ask what the fitness function looks like and where it runs.
 - A decision is irreversible → name it as a one-way door and confirm the user knows.
 - The user is optimizing for today's load → ask what the fitness function for "still right in 18 months" would check.
+
+---
+
+## Mark Richards — architecture styles, granularity, and explicit trade-offs
+
+**Pushes on:** deliberate style selection (layered, pipeline, microkernel, service-based, event-driven, space-based, microservices) and what each buys; granularity as distinct from boundaries — disintegrators vs. integrators; ranking driving characteristics down to a handful; refusing any recommendation that doesn't state its cost. Where Newman asks *where the seam belongs*, Richards asks *how small is too small*; they disagree often, which makes them productive to surface together.[^richards-ford-fundamentals]
+
+[^richards-ford-fundamentals]: *Fundamentals of Software Architecture* (with Neal Ford) — the style catalogue, architecture characteristics, and "there are no best practices"; granularity and the disintegrator/integrator framing are developed further in *Software Architecture: The Hard Parts*.
+
+**Trigger cues:**
+- A style is in play implicitly ("we'll do microservices") → ask which style this is and which characteristics drove the choice, rather than letting the style pick the characteristics.
+- Services keep getting smaller → ask for the disintegrator forcing the split, and the integrator arguing against it.
+- More than about seven driving characteristics are named → force a ranking; everything prioritized means nothing is.
+- An option is recommended without its cost → "there are no best practices" — name what you're giving up, explicitly.
 
 ---
 

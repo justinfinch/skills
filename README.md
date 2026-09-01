@@ -5,25 +5,86 @@ Justin Finch's library of agent skills. Compatible with the open [agent skills](
 ## Install
 
 ```bash
-# Install all skills to your detected agents
-npx skills add justinfinch/skills
-
 # Install a specific skill
 npx skills add justinfinch/skills --skill write-a-skill
+
+# Install one guidance pack
+npx skills add justinfinch/skills --skill guidance-tenant-isolation
+
+# Install all skills to your detected agents
+npx skills add justinfinch/skills
 
 # Install globally (available across all projects)
 npx skills add justinfinch/skills -g
 ```
 
+Prefer `--skill` for the [guidance packs](#guidance-packs). Every installed
+skill's `description` is loaded into the agent's context for the whole session —
+all eleven packs together cost roughly 3k tokens of that budget — and several
+packs assume a specific stack (TypeScript, React, pnpm, Postgres). On a Go or
+Python repo those are context spent to make a wrong match slightly more likely.
+Install the packs whose territory the project actually has.
+
+**Don't clone or symlink this repo into a skills directory.** Agent loaders do
+not descend into the `skills/guidance/` category directory, so all eleven packs
+would silently fail to load while the flat skills kept working — no error
+anywhere. `npx skills add` recurses and writes each skill out flat, which is the
+layout the loaders need; see [Layout](#layout).
+
 ## Layout
 
 ```
 skills/
-└── <skill-name>/
-    └── SKILL.md
+├── <skill-name>/              # arche-*, devbox-*, write-*
+│   └── SKILL.md
+└── guidance/                  # packs grouped: content, not workflows
+    └── guidance-<topic>/
+        └── SKILL.md
 ```
 
-Flat — one directory per skill, each containing a `SKILL.md` with YAML frontmatter (`name`, `description`).
+One directory per skill, each containing a `SKILL.md` with YAML frontmatter
+(`name`, `description`).
+
+| Prefix | Kind |
+| :--- | :--- |
+| `arche-*` | Workflows that act on the repo's Arche |
+| `devbox-*` | Workflows that act on the repo's dev environment |
+| `guidance-*` | Knowledge that is consulted and cited; never runs |
+| `write-*` | Tools that author the other kinds |
+
+The prefix says what kind of thing a skill is, and it does the real work: skills
+install into one flat namespace alongside everyone else's, where a directory
+here is invisible. Guidance packs additionally sit under a `guidance/` category
+directory, because they are content rather than workflows and will outnumber
+everything else as the library grows.
+
+Two constraints that make this layout work. The installer recurses through
+container directories (`findSkillDirs`, `maxDepth = 5`), so a category directory
+is discovered normally, and it then writes each skill to
+`<agent-skills-dir>/<name>/` — flat, keyed on `name` rather than on the path in
+this repo. And `name` must match its **own** parent directory — not the path — so
+a pack keeps the `guidance-` prefix in its directory name rather than shortening
+to `ddd` and losing the prefix at install time. `skills/guidance/guidance-ddd/`
+reads redundantly in the tree and never appears that way anywhere else.
+
+### Dogfooding
+
+`.claude/skills/` holds one symlink per skill, flat, pointing back into
+`skills/`, so this repo loads its own skills while you work on them.
+
+It has to be per-skill rather than a single `.claude/skills -> ../skills`. That
+one-line version skips the flattening the installer does and hands the repo's
+own layout to the agent's loader, which does **not** descend into a category
+directory — so every `guidance-*` pack silently fails to load, with no error
+anywhere, while flat skills keep working and hide the gap. The mirror reproduces
+what an install actually produces.
+
+```bash
+python tools/dogfood_links.py    # repair after adding or renaming a skill
+```
+
+`tools/test_dogfood_links.py` fails when the mirror is stale, because a missing
+link has no other symptom: the skill is simply never offered.
 
 ## Skills
 
@@ -37,6 +98,18 @@ Flat — one directory per skill, each containing a `SKILL.md` with YAML frontma
 - **[arche-architect](skills/arche-architect/SKILL.md)** — convergent technical-architecture skill: panel of senior-architect lenses, files Architecture Requirements Document, Solution Architecture Document, and Architecture Decision Record pages.
 - **[arche-tell](skills/arche-tell/SKILL.md)** — interview the user on audience + action ask + narrative framework, then produce a shareable HTML artifact (reveal.js deck or scrollable narrative) for communicating Arche content. Files `stories/<slug>.md` + `assets/stories/<slug>.html`.
 - **[arche-lint](skills/arche-lint/SKILL.md)** — audit the Arche for contradictions, stale dates, orphans, broken links, gaps, discovery-promotion drift; owns OKF v0.2 conformance detection and repair, including migrating an older Arche to the current era.
+- **[guidance-ddd](skills/guidance/guidance-ddd/SKILL.md)** — the first guidance pack: strategic domain-driven design, led by the page arguing when *not* to adopt it. Covers bounded-context boundaries, context-map relationships, and aggregate sizing; tactical patterns are deliberately out of scope.
+- **[guidance-tenant-isolation](skills/guidance/guidance-tenant-isolation/SKILL.md)** — multi-tenant isolation and authorization: Postgres RLS as the database-level tenant backstop behind application filters, per-transaction tenant context, and strictly-narrowing authorization gates through a single evaluator for within-tenant access. Not an auth-provider comparison, not encryption or residency.
+- **[guidance-event-delivery](skills/guidance/guidance-event-delivery/SKILL.md)** — reliable event delivery from a relational system of record: the transactional outbox, a single relay claiming rows and publishing under the row id, a durable broker fanning out to independent consumers, and end-to-end idempotency keys — including when `LISTEN/NOTIFY` is still enough. Not event sourcing as a persistence model, not a broker product comparison.
+- **[guidance-fitness-functions](skills/guidance/guidance-fitness-functions/SKILL.md)** — architectural fitness functions: encoding each load-bearing decision as a named CI check in a static and an integration/nightly lane, so erosion fails a build rather than surfacing in production, plus the registry tracking each check's name, enforcement point, lane, and status. Not general test strategy or coverage practice.
+- **[guidance-cqrs-projections](skills/guidance/guidance-cqrs-projections/SKILL.md)** — command–query separation over one relational database: three models (command unit-of-work, projection, thin DTO query) with the separation held by a dependency rule, read projections that are rebuildable on a CI-verified budget instead of backed up, and append-only source streams enforced by database-role grants. Not full CQRS with separate read stores; strategic aggregate sizing lives in `guidance-ddd`.
+- **[guidance-vertical-slices](skills/guidance/guidance-vertical-slices/SKILL.md)** — vertical-slice organization inside one application, at two layers: REPR endpoint slices on the API side (one route per file named for the command or query it calls, schema-validated request, thin handler, response DTO, wired by a registration helper that is deliberately not a command bus) and by-feature folders on the client side, with a knows-business-logic sorting rule and tool-enforced, direction-only import boundaries — plus the force that undoes both, genuinely shared code, and the shape constraints that keep a controller from reassembling inside a sliced tree. Not service granularity, not a framework recommendation.
+- **[guidance-portability-seams](skills/guidance/guidance-portability-seams/SKILL.md)** — keeping expensive platform commitments reversible: a named escape valve with measurable per-layer migration triggers written at commitment time, and commodity-standard APIs as the seam between the system and the vendor (the S3 API across a local double, cloud interop and an alternative provider; a domain-owned provider interface for auth), with the local double chosen on upstream health. Not a multi-cloud advocacy piece, not a cloud-provider comparison.
+- **[guidance-cross-platform-ui](skills/guidance/guidance-cross-platform-ui/SKILL.md)** — cross-platform UI without a universal renderer: sharing design tokens and headless render-free logic while each platform owns its render stack (one language, two dialects), and two-tier design tokens (a primitive scale behind semantic aliases) with components consuming semantic tokens only. Examples assume React / React Native / Tailwind; the layering reasoning is stack-agnostic. Not a visual design language, not native-vs-cross-platform app-strategy advice.
+- **[guidance-client-state](skills/guidance/guidance-client-state/SKILL.md)** — client state in React/TypeScript apps: a four-way taxonomy giving each kind its own store (server cache via TanStack Query, ephemeral UI state via Zustand or component state, durable pending writes in a purpose-built queue rather than a persisted mutation cache, and SSE/WebSocket push patching the query cache — the client home of an optimistic read-your-writes echo), plus store-and-forward capture as a deliberately narrower promise than offline mode. Not local-first sync engines, not server-side caching.
+- **[guidance-monorepo](skills/guidance/guidance-monorepo/SKILL.md)** — monorepo workspace topology: the apps/packages split with the domain package at the dependency center, an inward-pointing import direction enforced by a dependency tool rather than by review, task-graph builds keyed on the workspace graph, and the single-language-end-to-end bet that lets domain types and validation schemas travel from the database boundary to the UI without translation layers. Examples assume TypeScript with pnpm and Turborepo; the topology reasoning is stack-agnostic. Not a package-manager or build-tool comparison and not dev-environment tooling; intra-app folder structure lives in `guidance-vertical-slices`.
+- **[guidance-clean-architecture](skills/guidance/guidance-clean-architecture/SKILL.md)** — Clean Architecture as a pragmatic synthesis: the Dependency Rule as the invariant with layers collapsing when they'd be pass-through, ports and adapters with the driving/driven asymmetry and a repository port on the write side only, a use-case layer organized as vertical slices inside the boundary, sociable tests driven through use-case boundaries, and a lineage map of hexagonal/onion/BCE. Examples assume TypeScript/Node; the reasoning is stack-agnostic. Not monorepo topology (`guidance-monorepo`), not endpoint/folder organization (`guidance-vertical-slices`), not domain-model content (`guidance-ddd`).
+- **[write-guidance](skills/write-guidance/SKILL.md)** — author or extract a guidance pack: extract mode generalizes recurring decisions out of existing project Arches into "applies when" conditions, author mode works greenfield, revise mode refreshes a pack that aged out. Uses the architect lenses adversarially and refuses to file a pack with an empty "Doesn't apply when".
 
 ### Open Knowledge Format
 
@@ -45,6 +118,90 @@ The Arche is a conformant [Open Knowledge Format v0.2](spec/okf/v0.2/SPEC.md) bu
 `/arche-init` creates the bundle; `/arche-lint` maintains it, including upgrading an older Arche to the current OKF era. `tools/okf_conformance.py` is a standalone checker used to verify lint against something independent of itself.
 
 The spec is vendored, unmodified and pinned, at [`spec/okf/v0.2/`](spec/okf/v0.2/) (Apache-2.0, quarantined from this repo's MIT license) so every `§` citation in the skills resolves locally and survives upstream renumbering — see its [PROVENANCE.md](spec/okf/v0.2/PROVENANCE.md). Worth knowing what conformance actually costs: §11 requires only parseable frontmatter, a non-empty `type`, and well-formed `index.md` / `log.md`. Everything else the Arche does — the type taxonomy, the field families, the index glosses — is house convention layered on top, and §11 explicitly forbids consumers from rejecting a bundle over unknown types, missing indexes, or broken links. Your Arche stays readable by any OKF tool even when `/arche-lint` has plenty to say about it.
+
+### Guidance packs
+
+A `guidance-*` skill is a **pack**: durable architectural knowledge that travels
+between projects, packaged as an installable skill whose `bundle/` is an OKF v0.2
+bundle of `Guidance` pages, plus whatever supporting `Concept` pages the topic
+needs — a roster, a taxonomy, a comparison table.
+
+```
+skills/guidance/guidance-<topic>/
+  SKILL.md       # relevance trigger; thin by design
+  bundle/
+    index.md     # frontmatter carries okf_version and nothing else
+    concepts/<slug>.md
+```
+
+Packs are deliberately **not** part of the Arche, and never get copied into one.
+The Arche holds what *this* organization decided; a pack holds knowledge that is
+true whether or not the organization exists. Those have different provenance
+(`generated.by` means nothing for a pack someone else wrote), different lifecycle
+(Arche pages accrete, packs are versioned dependencies), and different audiences.
+
+What connects them is citation. A `Guidance` page states when a technique is the
+right call and — the load-bearing half — when it isn't:
+
+```markdown
+## Applies when
+- Single relational store, and the write and the publish must not diverge.
+
+## Doesn't apply when
+- Your broker supports transactional publish.
+- You can tolerate lost events.
+```
+
+`/arche-architect` consults installed packs during a **grill** — its interview
+phase, where every branch of the design gets pushed on one question at a time —
+and cites the pages that informed a decision in the ADR's `sources:`, by their
+host-independent `<pack-name>/<path-within-bundle>` identity. So a new project
+doesn't inherit old answers — it inherits the trade-off space already framed, and the
+ADR that comes out is genuinely its own. When no pack surfaces for a decision
+area, the grill says so; that gap signal is what `/write-guidance` consumes, and
+the loop is why the next project doesn't start from scratch.
+
+Packs carry no `log.md` — git history is the changelog.
+
+#### Getting them picked up
+
+A pack loads because its `description` matched what you were doing. That is the
+whole mechanism: nothing enumerates packs, there is no registry, and
+`/arche-architect` is explicitly forbidden from pathing to one — naming a pack
+there would make it depend on something that may not be installed and leave
+every future pack invisible. So a pack whose description doesn't match simply
+never loads, and nothing announces that it didn't.
+
+**If one doesn't fire when it should, name it** — say "check the tenant-isolation
+guidance", or invoke `/guidance-tenant-isolation` directly. Worth knowing before
+the first session rather than after one that re-derived a decision the pack had
+already framed. The grill's gap signal cannot tell an absent pack from an
+installed one that didn't match, and says so rather than claiming coverage it
+can't verify.
+
+For a standing nudge instead of a per-session one, paste this into the project's
+`AGENTS.md`. It is independent of the Arche — `/arche-init` does not write it,
+and packs need no Arche to be useful:
+
+```markdown
+<!-- guidance-packs -->
+This repo relies on installed `guidance-*` skills — durable architectural
+knowledge, consulted and cited, never executed. Before an architectural
+decision, consult the packs whose territory the decision touches, and check each
+page's **Doesn't apply when** against this project before recommending anything
+from it. A page whose conditions don't hold is evidence *against* the technique
+here.
+```
+
+**Without an Arche, cite the page wherever the project already records
+decisions** — the PR description, the commit message, a `docs/adr/` entry. A
+pack's instruction to cite the page it used assumes only that decisions get
+written down somewhere; don't stand up an Arche to hold a citation.
+
+One thing to know when following a reference from inside a bundle page: a
+cross-pack reference like `guidance-portability-seams/concepts/named-migration-triggers.md`
+is the pack-relative **identity**, not a path. On disk the page is at
+`guidance-portability-seams/bundle/concepts/named-migration-triggers.md`.
 
 ## Why "Arche"?
 
